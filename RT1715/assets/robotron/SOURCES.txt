@@ -1,0 +1,29 @@
+Robotron 1715M scene sources
+
+Canonical assembly: ../3d-models/models/robotron-1715m (from repository root).
+OpenSCAD source and browser exports by Danila, MIT. This builder reads those
+exports and checks their SHA-256 values against browser/model.json. It does
+not modify either sibling repository. Generated meshes are reduced derivatives;
+small holes, fittings and hidden surfaces are omitted for the DOS renderer.
+The generated build/robotron/report.json records each source mesh hash.
+
+Assembly/specification evidence:
+  3d-models/models/robotron-1715m/README.md
+  3d-models/models/robotron-1715m/board-layout.json
+  3d-models/models/robotron-1715m/browser/model.json
+  dac/src/inspection.js
+  dac/src/main.js
+
+The W/M motherboard has an A1 UA880 CPU and 256 KB RAM. The keyboard's
+UB880D is a separate controller. The display-board photograph identifies
+SAB8275P and three UL6516D memories. The drive suffix is not established;
+no exact drive capacity is claimed. PSU internals are not reconstructed.
+
+KiCad package bodies are used for the board population. See KICAD-NOTICE.txt
+and the canonical components/kicad/source directory for original notices,
+licences, design exceptions and credited source models. DOS derivatives
+simplify package bodies and omit leads; their original licences continue to
+apply. Do not describe these imported package meshes as MIT.
+
+Original Second Reality drone geometry and its palette entries are preserved.
+Its trajectory is newly authored for the Robotron scene.

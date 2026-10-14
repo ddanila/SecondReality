@@ -1,0 +1,189 @@
+{
+  "frames": 1801,
+  "fps": 35,
+  "fov": 52,
+  "keyframes": [
+    {
+      "time": 0,
+      "eye": [
+        -128,
+        42,
+        31
+      ],
+      "target": [
+        -112,
+        82,
+        18
+      ],
+      "subject": "U880 CPU"
+    },
+    {
+      "time": 5,
+      "eye": [
+        -100,
+        55,
+        30
+      ],
+      "target": [
+        -112,
+        88,
+        18
+      ],
+      "subject": "CPU pins"
+    },
+    {
+      "time": 9,
+      "eye": [
+        -230,
+        -143,
+        36
+      ],
+      "target": [
+        -185,
+        -140,
+        18
+      ],
+      "subject": "RAM bank"
+    },
+    {
+      "time": 14,
+      "eye": [
+        -175,
+        -160,
+        155
+      ],
+      "target": [
+        -155,
+        -90,
+        100
+      ],
+      "subject": "Floppy mechanism"
+    },
+    {
+      "time": 19,
+      "eye": [
+        10,
+        -130,
+        155
+      ],
+      "target": [
+        -4,
+        -45,
+        100
+      ],
+      "subject": "Second drive"
+    },
+    {
+      "time": 24,
+      "eye": [
+        28,
+        40,
+        165
+      ],
+      "target": [
+        80,
+        115,
+        100
+      ],
+      "subject": "Fan and PSU"
+    },
+    {
+      "time": 29,
+      "eye": [
+        -30,
+        -322,
+        37
+      ],
+      "target": [
+        -3,
+        -273,
+        18
+      ],
+      "subject": "Keyboard controller"
+    },
+    {
+      "time": 33,
+      "eye": [
+        -130,
+        -410,
+        65
+      ],
+      "target": [
+        -110,
+        -360,
+        22
+      ],
+      "subject": "Keyboard PCB"
+    },
+    {
+      "time": 37,
+      "eye": [
+        -170,
+        -415,
+        100
+      ],
+      "target": [
+        -115,
+        -385,
+        40
+      ],
+      "subject": "Keycap landscape"
+    },
+    {
+      "time": 42,
+      "eye": [
+        -65,
+        -217,
+        309
+      ],
+      "target": [
+        0,
+        -140,
+        324
+      ],
+      "subject": "CRT glass"
+    },
+    {
+      "time": 45,
+      "eye": [
+        100,
+        -330,
+        375
+      ],
+      "target": [
+        0,
+        -90,
+        250
+      ],
+      "subject": "Pullback begins"
+    },
+    {
+      "time": 49,
+      "eye": [
+        720,
+        -1250,
+        740
+      ],
+      "target": [
+        0,
+        -100,
+        190
+      ],
+      "subject": "Robotron reveal"
+    },
+    {
+      "time": 51.43,
+      "eye": [
+        770,
+        -1300,
+        760
+      ],
+      "target": [
+        0,
+        -100,
+        190
+      ],
+      "subject": "Hold full assembly"
+    }
+  ]
+}

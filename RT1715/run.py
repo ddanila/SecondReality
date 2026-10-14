@@ -33,7 +33,7 @@ def main():
     # or other shell commands have a chance to change ERRORLEVEL.
     batch = """@echo off
 set BLASTER=A220 I7 D1 T4
-dx-capture /V /A /-D rt1715.exe
+dx-capture /V /A /-D rt1715.exe > demo.log
 if errorlevel 1 goto failed
 echo PASS > result.txt
 goto done
@@ -56,6 +56,8 @@ exit
         except subprocess.TimeoutExpired:
             raise SystemExit(f"Playback exceeded {args.timeout}s; inspect {capture / 'dosbox.log'}")
     status = result.read_text().strip() if result.exists() else "NO DOS EXIT STATUS"
+    if (dos / "DEMO.LOG").exists():
+        shutil.copyfile(dos / "DEMO.LOG", capture / "demo.log")
     if completed.returncode or status != "PASS":
         raise SystemExit(f"Playback failed ({status}); inspect {capture / 'dosbox.log'}")
     if (dos / "CRED.IDX").exists():

@@ -48,8 +48,6 @@ def decode(data, count):
         delta += [take(2 if mask & 64 else 1, True) if mask & (128 << k) else 0
                   for k in range(9)]
         states[obj] = [a+b for a,b in zip(states[obj],delta)]
-        # Matrix additions wrap at 16 bits in the DOS player.
-        states[obj][3:] = [(v+32768) % 65536-32768 for v in states[obj][3:]]
         if flag & 0xc0:
             visible[obj] = bool(flag & 0x80)
         records.append({'object':obj, 'flag':flag, 'payload':data[payload_start:pos],

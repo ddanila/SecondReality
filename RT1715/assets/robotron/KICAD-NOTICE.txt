@@ -1,0 +1,35 @@
+KiCad DIP component models used in the Robotron reference-board reconstruction
+
+Upstream: https://gitlab.com/kicad/libraries/kicad-packages3D
+Pinned revision: 8975715167d1a76f9b44be155ac02326f704cdbb
+Directory: Package_DIP.3dshapes
+Main author credited upstream: Maurice (easyw); further contributors in the
+upstream generator and CREDITS.md, preserved in source/.
+
+Six STEP files carry GPL-3.0-or-later with the design exception.
+DIP-24_W15.24mm.step credits kicad StepUp (2018) and carries CC-BY-SA-4.0
+with the KiCad libraries exception. These file-specific notices are preserved
+verbatim in source/*.step, with the full GPL and CC BY-SA texts in source/.
+The upstream collection LICENSE.md (CC BY-SA 4.0 with the KiCad libraries
+exception) is also preserved. This notice does not replace either licence.
+The redistributed component library and its derived meshes are NOT MIT assets.
+
+Modifications by the DAC project, 2026-10-11:
+- tessellated STEP geometry using CadQuery 2.5.2 / OCP 7.7.2;
+- centered each package in X/Y, retaining its original board plane and scale;
+- split the fused solid at its plastic side walls into body and lead meshes;
+- retained the design exception for these derivatives.
+No intentional change to the outer package shape or dimensions was made.
+See tools/convert-kicad.py, sources.json and models.json for reproduction,
+source hashes, mesh hashes and geometry bounds.
+
+The models identify physical package families, not the exact DDR manufacturer,
+mould revision or electrical function of every photographed chip. Pin-count
+matches, placement and orientation are provisional where the reference photo
+is ambiguous. No unverified electrical part numbers or resistor values are added.
+Board images remain separately credited to Old Crap Vintage Computing. They
+show another PC 1715, not Danila's exact 1715M/W motherboard.
+
+The derived models.json footprint coordinates are measured from STEP lead
+sections at the seating plane by tools/convert-kicad.py. They retain the
+corresponding source model licence, like the derived tessellated meshes.

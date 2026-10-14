@@ -1,7 +1,10 @@
 Second Reality: RT1715 extraction
 ================================
 
-Sequence: 3D city flyover -> original end-logo transition -> credit cards ->
+The Robotron build is documented under "Robotron 1715M fly-through" below.
+It replaces the city and goes directly to component/spec cards.
+
+Original extraction sequence: 3D city flyover -> original end-logo transition -> credit cards ->
 music fade and return to DOS. The long ENDSCRL text scroller and all earlier
 effects are omitted. All compilation, conversion, and OpenSCAD rendering
 run on the HOST. DOSBox-X only executes the finished DOS programs.
@@ -172,8 +175,9 @@ at runtime, so images/text can change without editing the C source. It logs
 each card and successful completion to CRED.LOG. The headless runner checks
 that log for custom builds as well as checking DOS exit and recorded audio.
 build/assets.json and build/prepared/report.json record source paths,
-hashes, counts and the protected assets. U2E.028, .00M and .0AA always
-match the originals, preserving drone geometry, palette and scene mapping.
+hashes, counts and the protected assets. With --project, U2E.028, .00M
+and .0AA match the originals, preserving drone geometry, palette and scene
+mapping. The separate --robotron mode replaces the scene mapping/palette.
 U2E.0AB also stays exact with the default visibility mode (original).
 
 Format and validation tests:
@@ -220,3 +224,61 @@ report lists the affected instances. Tests compare all retained camera and
 moving-object records and all originally visible static poses frame by
 frame. A future host visibility bake can reduce work again after geometry,
 complete motion tracks and the new camera path are settled.
+
+Robotron 1715M fly-through
+--------------------------
+Use Python 3.11 or newer for the optional mesh simplifier. From the repo root:
+
+    python3 -m venv RT1715/build/host-python
+    RT1715/build/host-python/bin/pip install -r RT1715/requirements-robotron.txt
+    RT1715/build/host-python/bin/python RT1715/build.py --robotron
+    python3 RT1715/run.py
+
+--robotron defaults to ../3d-models/models/robotron-1715m. Supply another
+canonical model directory after the option if needed. Its browser/model.json
+and exported STL files must be present; each consumed mesh hash is checked.
+The sibling 3d-models and dac repositories are read only. OpenSCAD, mesh
+conversion, image rendering, assembly and compilation all run on the host.
+Only playback runs in headless DOSBox-X.
+
+This mode replaces the city geometry, scene-instance mapping, palette ramps
+and animation stream. It retains the original DOS renderer and byte-exact
+drone mesh. Shared chip-package and keycap meshes keep conventional-memory
+usage down. Polygon normals are shared and adjacent coplanar triangles are
+joined when their union is a convex quad. Small holes and fittings may be
+removed by the mesh reduction; this is a DOS adaptation of the source model.
+
+assets/robotron/flight.json contains the camera time/eye/target keyframes in
+canonical millimetres. The scene runs for 1801 samples at 35 Hz. Position and
+look-at values use smoothstep interpolation between keys. The escort's new
+trajectory follows ahead of the camera. Unlike the original city stream,
+complete transforms are retained while objects are hidden. Conservative
+sphere/frustum visibility is rebuilt on the host for every camera sample.
+Covers and the display board are staged as a cutaway, then the covers close
+for the pullback. Board surfaces use the original background-object ordering
+convention so their large centres do not cause them to paint over nearby ICs.
+
+The authored sequence visits CPU/RAM, drives, fan/PSU, keyboard electronics,
+keys and CRT, then pulls back to the assembled machine. Robotron mode skips
+the original Future Crew end logo and proceeds directly to seven component
+cards. Credit images are rendered from the canonical exports; their source
+SCAD wrappers and PNGs are in build/robotron. ASCII captions are currently
+listed in robotron.py. Evidence and source notices are in assets/robotron.
+
+build/robotron/report.json records source hashes, generated object slots,
+instance count and flight settings. build/assets.json records installed DOS
+file hashes. The host now propagates a failed Robotron flyover as an error;
+run.py also preserves DOS stdout in capture/<timestamp>/demo.log.
+
+Run all conversion/animation tests in the optional environment:
+
+    RT1715/build/host-python/bin/python -m unittest discover -s RT1715 -v
+
+Make a shareable, aspect-correct MP4 after a completed capture:
+
+    python3 RT1715/preview.py RT1715/capture/<timestamp>
+
+This requires ffmpeg and writes build/robotron-preview.mp4 by default. It
+joins display-mode segments and uses the continuous captured WAV audio.
+The drone stays near the machine during the pullback. Enclosed contents
+are disabled after the lids close to avoid painter-order show-through.

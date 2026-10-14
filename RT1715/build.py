@@ -35,7 +35,7 @@ def expand(path):
     return re.sub(r"^\s*include\s+([^\s;]+).*$", include, source, flags=re.M | re.I)
 
 
-def masm_source(custom=False):
+def masm_source(custom=False, robotron=False):
     """Translate the few TASM dialect differences without changing algorithms."""
     source = expand(ROOT / "MAIN/U2.ASM")
     source = re.sub(r"^\s*LOCALS\s*$", "", source, flags=re.M | re.I)
@@ -46,6 +46,8 @@ def masm_source(custom=False):
     # TASM allows global entry labels inside PROCs. Preserve those while
     # explicitly scoping @@ labels (JWasm otherwise hides the entry labels).
     lines = ["OPTION NOSCOPED", "RT1715=1"]
+    if robotron:
+        lines.append("RT_ROBOTRON=1")
     if custom:
         lines.append("RT_CUSTOM_CREDITS=1")
     scope = "global"
@@ -85,16 +87,24 @@ def main():
     parser.add_argument("--wcc", default=os.environ.get("WCC", "wcc"))
     parser.add_argument("--watcom-root", type=Path, default=os.environ.get("WATCOM"),
                         help="Watcom installation with h/ and lib286/dos/")
+    parser.add_argument("--robotron", type=Path, nargs="?",
+                        const=ROOT.parent/"3d-models/models/robotron-1715m",
+                        help="Build Robotron fly-through from canonical model exports")
     args = parser.parse_args()
+    if args.robotron and args.project:
+        parser.error("Choose --robotron or --project")
     assembler, linker = tool(args.jwasm), tool(args.wlink)
     build = HERE / "build"
     dos = build / "dos"
     dos.mkdir(parents=True, exist_ok=True)
     (HERE / "capture").mkdir(exist_ok=True)
+    if args.robotron:
+        from robotron import prepare as prepare_robotron
+        args.project = prepare_robotron(args.robotron, build, args.openscad)
     if args.project:
         from prepare import load_project
         load_project(args.project.resolve())
-    (build / "RT1715.ASM").write_text(masm_source(bool(args.project)), encoding="cp437")
+    (build / "RT1715.ASM").write_text(masm_source(bool(args.project), bool(args.robotron)), encoding="cp437")
     subprocess.run([assembler, "-q", "-Cp", "-omf", "-FoRT1715.OBJ", "RT1715.ASM"],
                    cwd=build, check=True)
     shutil.copyfile(ROOT / "MAIN/STMIK.300", build / "STMIK.OBJ")
@@ -139,6 +149,9 @@ def main():
                         "option", "map=CRED.MAP", "name", "dos/CRED.EXE", "file", "CRED.OBJ",
                         "libpath", str(watcom / "lib286/dos"),
                         "libpath", str(watcom / "lib286")], cwd=build, check=True)
+        if args.robotron:
+            from robotron import install
+            install(build, dos)
         for item in manifest:
             path = dos / item["file"]
             if "sha256" in item and hashlib.sha256(path.read_bytes()).hexdigest() != item["sha256"]:

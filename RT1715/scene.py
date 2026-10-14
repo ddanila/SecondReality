@@ -111,6 +111,7 @@ def encode(name, triangles, color=64, shades=32):
     if not 0 < len(triangles) <= MAX_FACES:
         raise ValueError("Too many triangles")
     vertices, faces, normals, mapping = [], [], [], {}
+    normal_ids, normal_mapping = [], {}
     for tri in triangles:
         ids = []
         for point in tri:
@@ -120,13 +121,19 @@ def encode(name, triangles, color=64, shades=32):
                 mapping[point] = len(vertices)
                 vertices.append(point)
             ids.append(mapping[point])
-        a, b, c = tri
+        if not 3 <= len(tri) <= 4:
+            raise ValueError("Expected triangles or convex quads")
+        a, b, c = tri[:3]
         u, v = [b[k]-a[k] for k in range(3)], [c[k]-a[k] for k in range(3)]
         n = (u[1]*v[2]-u[2]*v[1], u[2]*v[0]-u[0]*v[2], u[0]*v[1]-u[1]*v[0])
         length = math.sqrt(sum(x*x for x in n))
         if length == 0:
             raise ValueError("Triangle collapsed after scene scaling; simplify or enlarge the model")
-        normals.append(tuple(round(x * 16384 / length) for x in n))
+        normal = tuple(round(x * 16384 / length) for x in n)
+        if normal not in normal_mapping:
+            normal_mapping[normal] = len(normals)
+            normals.append(normal)
+        normal_ids.append(normal_mapping[normal])
         faces.append(ids)
     if len(vertices) + 9 > MAX_VERTICES:
         raise ValueError(f"Mesh exceeds {MAX_VERTICES - 9} geometry vertices")
@@ -144,7 +151,7 @@ def encode(name, triangles, color=64, shades=32):
     poly, offsets = bytearray(b"\0\0"), []
     for i, face in enumerate(faces):
         offsets.append(len(poly))
-        poly.extend(struct.pack("<6H", 3 | flags, color, i, *face))
+        poly.extend(struct.pack(f"<{3+len(face)}H", len(face) | flags, color, normal_ids[i], *face))
 
     def order(probe, ids):
         return struct.pack(f"<{len(ids)+3}H", len(ids)+3, probe, *(offsets[i] for i in ids), 0)
