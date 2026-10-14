@@ -45,7 +45,7 @@ void rt_depth_begin(void) {
         for(i=0;i<4;i++) mapped[i]=-1;
         active=1;
     }
-    for(i=0;i<8;i++) _fmemset(page(i),0,16384);
+    for(i=0;i<8;i++) rt_clear386(page(i),16384);
 #endif
 }
 void rt_depth_end(void) {
@@ -82,7 +82,7 @@ static void span(int y,int left,int right,long z,long dz,long c,long dc,int deca
     unsigned depth,offset,video_offset;
 #ifndef RT_HOST_TEST
     unsigned short far *buffer;
-    unsigned char far *video=(unsigned char far *)MK_FP(vramseg,0);
+    rt_span_args args;
 #endif
     while(left<right) {
         index=(unsigned long)y*320+left;
@@ -96,20 +96,25 @@ static void span(int y,int left,int right,long z,long dz,long c,long dc,int deca
             q=z+dz*(first-left);shade=c+dc*(first-left);
             offset=(unsigned)(((unsigned long)y*320+first)&8191);
             video_offset=y*80+(first>>2);
+#ifndef RT_HOST_TEST
+            if(first<end) {
+                args.depth_seg=FP_SEG(buffer);args.depth_off=offset*2;
+                args.video_seg=vramseg;args.video_off=video_offset;
+                args.count=(end-first+3)/4;args.decal=decal;
+                args.z=q;args.dz=(unsigned long)dz*4;
+                args.color=shade;args.dcolor=(unsigned long)dc*4;
+                rt_span386(&args);
+            }
+#else
             for(x=first;x<end;x+=4,q+=dz*4,shade+=dc*4,offset+=4,video_offset++) {
                 depth=(unsigned)(q>>6);
                 if(decal && depth<65535) depth++;
-#ifdef RT_HOST_TEST
                 index=(unsigned long)y*320+x;
                 if(depth>=test_depth[index]) {
                     test_depth[index]=depth;test_color[index]=(unsigned char)(shade>>6);
                 }
-#else
-                if(depth>=buffer[offset]) {
-                    buffer[offset]=depth;video[video_offset]=(unsigned char)(shade>>6);
-                }
-#endif
             }
+#endif
         }
         z+=dz*(end-left);c+=dc*(end-left);left=end;
     }
@@ -129,6 +134,9 @@ static void triangle(rt_vertex *a,rt_vertex *b,rt_vertex *c,int decal) {
     vertices[0]=*a;vertices[1]=*b;vertices[2]=*c;
     for(i=0;i<3;i++) { if(vertices[i].y<miny) miny=(int)vertices[i].y;if(vertices[i].y>maxy) maxy=(int)vertices[i].y; }
     if(miny>=maxy) return;
+#ifndef RT_HOST_TEST
+    rt_edges386(vertices,lx,rx,miny,maxy);
+#else
     for(y=miny;y<maxy;y++) { lx[y]=0x7fffffffL;rx[y]=-0x7fffffffL; }
     for(i=0;i<3;i++) {
         v=vertices[i];w=vertices[(i+1)%3];if(v.y>w.y) { t=v;v=w;w=t; }
@@ -139,6 +147,7 @@ static void triangle(rt_vertex *a,rt_vertex *b,rt_vertex *c,int decal) {
             if(x>rx[y]) rx[y]=x;
         }
     }
+#endif
     for(y=miny;y<maxy;y++) {
         left=(int)((lx[y]+32767L)>>16);right=(int)((rx[y]+32767L)>>16);
         lx[y]=left;rx[y]=right;
@@ -162,8 +171,17 @@ static void triangle(rt_vertex *a,rt_vertex *b,rt_vertex *c,int decal) {
 }
 void rt_raster(rt_vertex *vertices,int count,int decal) {
     rt_vertex a[16],b[16];
-    int n=count,i;
+    int n=count,i,inside=1;
     if(n<3 || n>12) return;
+    /* Most close-up faces are entirely in the viewport: avoid four clipping
+     * passes and their vertex copies when no edge needs intersection. */
+    for(i=0;i<n;i++)
+        if(vertices[i].x<clip_left || vertices[i].x>clip_right ||
+           vertices[i].y<clip_top || vertices[i].y>clip_bottom) { inside=0;break; }
+    if(inside) {
+        for(i=1;i<n-1;i++) triangle(&vertices[0],&vertices[i],&vertices[i+1],decal);
+        return;
+    }
     memcpy(a,vertices,n*sizeof(rt_vertex));
     n=clip(a,b,n,0,clip_left,0);if(n<3) return;
     n=clip(b,a,n,0,clip_right,1);if(n<3) return;

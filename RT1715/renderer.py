@@ -26,6 +26,7 @@ def assembly(path):
 
 def build_renderer(build,compiler,assembler,linker,watcom):
     out=build/'renderer';out.mkdir(exist_ok=True)
+    shutil.copyfile(ROOT/'RT1715/fast.h',out/'fast.h')
     from music import flight_header
     (out/'MUSIC.H').write_text(flight_header(ROOT/'MAIN/MUSIC0.S3M'))
     for name in ('C.H','CD.H'):
@@ -39,7 +40,7 @@ def build_renderer(build,compiler,assembler,linker,watcom):
         path=ROOT/('VISU/C/U2E.C' if name=='U2E' else 'VISU/VISU.C')
         s=path.read_text(encoding='cp437')
         s=s.replace('"..\\cd.h"','"CD.H"').replace('"..\\c.h"','"C.H"').replace('"c.h"','"C.H"')
-        s='void rt_depth_end(void);\nvoid rt_begin(void);\nvoid rt_flush(void);\n#include <stdlib.h>\n#include <dos.h>\n#include "DIS.H"\nvoid vid_setswitch(int,int);\nvoid vid_clear255(void);\n'+s
+        s='#include "fast.h"\nvoid rt_depth_end(void);\nvoid rt_begin(void);\nvoid rt_flush(void);\n#include <stdlib.h>\n#include <dos.h>\n#include "DIS.H"\nvoid vid_setswitch(int,int);\nvoid vid_clear255(void);\n'+s
         if name=='U2E':
             # Pointer arithmetic is huge-pointer aware in Watcom; avoid the
             # original compiler-specific stack-slot manipulation.
@@ -59,7 +60,7 @@ static FILE *rt_anim;
 static void rt_refill(void) {
     unsigned used=(unsigned)(sp-rt_buffer),left=rt_loaded-used;
     if(left<4096U && !feof(rt_anim)) {
-        memmove(rt_buffer,sp,left);
+        rt_copy386(rt_buffer,sp,left);
         rt_loaded=left+fread(rt_buffer+left,1,8192U-left,rt_anim);
         if(ferror(rt_anim)) exit(3);
         sp=rt_buffer;
@@ -165,13 +166,15 @@ main(int argc,char *argv[])''')
         (out/(name+'.C')).write_text(s)
         subprocess.run([compiler,'-zq','-bt=dos','-ml','-3','-os','-s','-j','-ecc',f'-i={watcom / "h"}',f'-fo={name}.OBJ',name+'.C'],cwd=out,check=True)
     shutil.copyfile(ROOT/'RT1715/depth.h',out/'depth.h')
+    shutil.copyfile(ROOT/'RT1715/fast.asm',out/'FAST.ASM')
+    subprocess.run([assembler,'-q','-Cp','-omf','-FlFAST.LST','-FoFAST.OBJ','FAST.ASM'],cwd=out,check=True)
     shutil.copyfile(ROOT/'RT1715/depth.c',out/'DEPTH.C')
     subprocess.run([compiler,'-zq','-bt=dos','-ml','-3','-ot','-s','-j','-ecc',
                     f'-i={watcom / "h"}','-fo=DEPTH.OBJ','DEPTH.C'],cwd=out,check=True)
     shutil.copyfile(ROOT/'RT1715/painter.c',out/'PAINTER.C')
     subprocess.run([compiler,'-zq','-bt=dos','-ml','-3','-os','-s','-j','-ecc',
                     f'-i={watcom / "h"}','-fo=PAINTER.OBJ','PAINTER.C'],cwd=out,check=True)
-    objects=['U2E','VISU','PAINTER','DEPTH']
+    objects=['U2E','VISU','PAINTER','DEPTH','FAST']
     for name in ('AMAIN','ADATA','ACALC','AVID','ADRAW','DISC'):
         src=ROOT/('DIS' if name=='DISC' else 'VISU')/(name+'.ASM')
         if name in ('AVID','ADRAW'):
@@ -194,7 +197,7 @@ main(int argc,char *argv[])''')
         (out/(name+'.ASM')).write_text(s,encoding='cp437')
         subprocess.run([assembler,'-q','-Cp','-omf','-Fo'+name+'.OBJ',name+'.ASM'],cwd=out,check=True)
         objects.append(name)
-    cmd=[linker,'format','dos','option','quiet','option','stack=4096','name',str(build/'dos/U2E.EXE')]
+    cmd=[linker,'format','dos','option','quiet','option','stack=4096','option','map=U2E.MAP','name',str(build/'dos/U2E.EXE')]
     for name in objects: cmd+=['file',name+'.OBJ']
     cmd+=['libpath',str(watcom/'lib286/dos'),'library','clibl']
     subprocess.run(cmd,cwd=out,check=True)

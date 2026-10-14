@@ -22,13 +22,15 @@ static int shade(nlist *normal,int flags) {
 }
 static void polygon(object *o,int *face,int decal) {
     rt_vertex a[16],b[16],v,w,t,lo,hi;
-    int n=face[0]&255,i,m=0,inside,previous,index,all_inside=1;
+    int n=face[0]&255,i,m=0,inside,previous,index,all_inside=1,flat_color;
     long d,num;
     if(n>8) exit(3);
+    flat_color=face[1];
+    if(!(face[0]&F_GOURAUD)) flat_color+=shade(&normals[face[2]],face[0]);
     for(i=0;i<n;i++) {
         index=face[i+3];a[i].x=vertices[index].x;a[i].y=vertices[index].y;a[i].z=vertices[index].z;
         if(a[i].z<512) all_inside=0;
-        a[i].c=face[1]+shade(&normals[(face[0]&F_GOURAUD)?o->v0[index].normal:face[2]],face[0]);
+        a[i].c=(face[0]&F_GOURAUD)?face[1]+shade(&normals[o->v0[index].normal],face[0]):flat_color;
     }
     if(all_inside) {
         for(i=0;i<n;i++) { b[i]=screen[face[i+3]];b[i].c=a[i].c; }

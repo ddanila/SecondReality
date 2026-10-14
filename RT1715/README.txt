@@ -273,7 +273,8 @@ Faces no longer depend on centroid sorting for visibility. Near-plane and
 screen clipping use consistent edge intersections; the original letterboxed
 viewport and drone Gouraud shading are retained. Key legends use a one-unit
 depth bias. Finite depth precision still requires care with coplanar surfaces.
-Wide intermediate arithmetic prevents overflow in projection and clipping.
+The 386 arithmetic kernel uses a signed 64-bit product and hardware division
+for bounded 32-bit results in projection, clipping and interpolation.
 
 Robotron meshes omit the obsolete eight precomputed sort lists, reserve slot
 28 for the unchanged drone, and share transform scratch buffers. The animation
@@ -453,3 +454,54 @@ Depth testing trades speed for correct per-pixel visibility: this capture has
 184 visible image updates in its first 20 seconds versus 350 for the preceding
 painter build. Camera holds and the adaptive CPU budget also affect this count;
 it is not a fixed frame-rate guarantee. Music-position timing remains intact.
+
+Assembly kernels
+----------------
+fast.asm contains five real-mode 386 routines, host-assembled with JWasm:
+- rt_span386: depth-tested VGA plane spans with shading interpolation and a
+  saturating decal bias. Interpolants and addresses remain in registers.
+- rt_edges386: initializes scanline bounds and walks all three triangle edges
+  inside one assembly call, including signed fixed-point slope calculation.
+- rt_muldiv: signed IMUL/IDIV with a 64-bit intermediate product, a nonzero
+  divisor and a result constrained to signed 32 bits by the renderer.
+- rt_clear386: REP STOSD plus byte tails, used to clear EMS depth pages.
+- rt_copy386: REP MOVSD plus byte tails, used for animation buffer compaction.
+  It supports disjoint buffers or forward overlap (destination before source).
+
+fast.h explicitly declares far stack-cdecl functions; long results return in
+DX:AX. This avoids mixing Watcom's register convention with the original C ABI.
+All far buffers must remain within their 64 KB segment windows. The original
+library's memcpy/memmove already use REP MOVSW and its fills use REP STOSW;
+small ordinary copies retain those routines. The generated U2E.MAP and FAST.LST
+make the native symbols and emitted instructions inspectable.
+
+C retains scene management, clipping and scanline setup. Fully onscreen faces
+bypass clipping, and flat lighting is evaluated once per face. Host tests keep
+an independent portable arithmetic/span path. Run the actual assembly tests:
+
+    RT1715/build/host-python/bin/python RT1715/verify_native.py
+
+This host-builds fast_test.c and runs it in an isolated headless DOSBox-X with
+fixed 300000 cycles. It checks 2000 signed arithmetic vectors, 200 span cases
+(including rejected pixels, shading slopes, decal saturation and EMS-page-edge
+addresses), 400 triangle edge cases, and buffer alignment, odd tails, guard
+bytes and forward overlap.
+Results and a kernel benchmark are saved in build/native-tests/result.json.
+The span benchmark processes 10.24 million pixels; timings are emulator-specific.
+Bulk operations can fall below the DOS clock resolution; zero ticks do not
+establish a throughput improvement. Full-demo captures remain the final check.
+
+Assembly validation: capture/20261014-184149-318314, all 38 host tests and the
+native kernel suite pass. The complete headless run exits normally after all
+21 cards; wall time 175.89 seconds, captured audio 175.358 seconds. Overview
+24:54, swoosh 25:6, credits 28:0–43:29. No confirmation dialogs. Source and
+built asset hashes match; the original drone mesh and palette are preserved.
+
+At fixed 300000 cycles, the native span benchmark measured 2197 ms for C and
+549 ms for assembly (~4x); edge processing measured 604 vs 385 ms (~1.6x).
+Against capture/20261014-182143-295674 under the same adaptive CPU setting,
+visible RGB frame updates increased from 184 to 219 in the first 20 seconds
+(+19%), and 941 to 1006 in the first 50 seconds (+7%). These full-scene counts
+include holds and depend on host load; kernel speedups do not imply the same
+whole-demo speedup. The final preview, review reel and contact sheet were
+regenerated and the keyboard, drive fronts, CRT and diagonal pass inspected.

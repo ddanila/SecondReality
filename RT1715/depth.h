@@ -1,10 +1,14 @@
 #ifndef RT_DEPTH_H
 #define RT_DEPTH_H
+#ifdef RT_HOST_TEST
 static long rt_muldiv(long a,long b,long d) {
     if(a>=-32767L && a<=32767L && b>=-32767L && b<=32767L)
         return (a*b)/d;
     return (long)(((long long)a*b)/d);
 }
+#else
+#include "fast.h"
+#endif
 /* Screen coordinates, reciprocal depth (larger = nearer), palette index. */
 typedef struct { long x,y,z,c; } rt_vertex;
 void rt_depth_begin(void);
