@@ -12,6 +12,7 @@ import subprocess
 from PIL import Image, ImageDraw, ImageFont, ImageOps
 
 import scene
+import animation
 
 HERE = Path(__file__).resolve().parent
 ORIGINAL = HERE.parent / "MAIN/DATA"
@@ -27,8 +28,10 @@ def printable(lines):
 
 def load_project(path):
     config = json.loads(path.read_text())
-    if not isinstance(config,dict) or config.get("version") != 1 or set(config) - {"version", "models", "credits"}:
+    if not isinstance(config,dict) or config.get("version") != 1 or set(config) - {"version", "models", "credits", "visibility"}:
         raise ValueError("Expected project version 1 with models and credits")
+    if config.get("visibility", "original") not in ("original", "static"):
+        raise ValueError("visibility must be original or static")
     models, cards = config.get("models", []), config.get("credits", [])
     if not isinstance(models, list) or not isinstance(cards, list) or not 1 <= len(cards) <= 99:
         raise ValueError("Expected a models list and 1..99 credit cards")
@@ -170,12 +173,24 @@ def prepare(project, build, dos, command="openscad"):
         report["credits"].append({"file":name,"lines":card["lines"],
                                    "image":str(image_path),"hold_frames":card.get("hold_frames",200)})
     (output/"CRED.IDX").write_bytes(("\r\n".join(index)+"\r\n").encode("ascii"))
-    # Only install a fully prepared set. The drone and all animation stay exact.
+    visibility = config.get("visibility", "original")
+    report["visibility"] = {"mode": visibility}
+    if visibility == "static":
+        stream, report["visibility"] = animation.static_visibility(
+            (ORIGINAL/"U2E.0AB").read_bytes(),
+            animation.mapping((ORIGINAL/"U2E.00M").read_bytes()))
+        (output/"U2E.0AB").write_bytes(stream)
+    # Only install a fully prepared set. Drone geometry and motion stay exact.
     names = [f"U2E.{m['slot']:03}" for m in config["models"]]
     names += [c["file"] for c in report["credits"]]+["CRED.IDX"]
+    if visibility == "static":
+        names.append("U2E.0AB")
     for name in names:
         shutil.copyfile(output/name,dos/name)
-    for name in ("U2E.028","U2E.00M","U2E.0AA","U2E.0AB"):
+    protected = ["U2E.028","U2E.00M","U2E.0AA"]
+    if visibility == "original":
+        protected.append("U2E.0AB")
+    for name in protected:
         data = (dos/name).read_bytes()
         if data != (ORIGINAL/name).read_bytes():
             raise ValueError(f"Protected asset changed: {name}")

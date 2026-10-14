@@ -172,9 +172,9 @@ at runtime, so images/text can change without editing the C source. It logs
 each card and successful completion to CRED.LOG. The headless runner checks
 that log for custom builds as well as checking DOS exit and recorded audio.
 build/assets.json and build/prepared/report.json record source paths,
-hashes, counts and the protected assets. U2E.028, .00M, .0AA and .0AB must
-always match the originals, preserving drone geometry, palette, scene
-mapping and all camera/object animation.
+hashes, counts and the protected assets. U2E.028, .00M and .0AA always
+match the originals, preserving drone geometry, palette and scene mapping.
+U2E.0AB also stays exact with the default visibility mode (original).
 
 Format and validation tests:
 
@@ -191,3 +191,32 @@ continuously through the logo and credits. REALITY.FC is rebuilt as a
 
 The repository's root README.md and UNLICENSE contain the public-domain
 release terms. Original art, code, and music are by Future Crew.
+
+City visibility preparation
+---------------------------
+The project may set "visibility": "original" (default) or "static". The
+example explicitly selects static. The host rewrites U2E.0AB; the DOS city
+executable stays unchanged. Camera records, moving-object records (including
+the drone), frame count and FOV values are preserved.
+
+Static mode initializes 51 city object instances at their recovered fixed
+poses on the first frame and keeps them enabled throughout. The renderer
+still clips and draws them normally. This removes their original baked
+visibility restrictions, including when replacement geometry reveals more
+of the surroundings. It increases rendering work, so inspect captures for
+performance and painter-order artifacts when changing models.
+
+This is not yet unrestricted camera-path editing. Six moving instances
+(2, 28, 35, 51, 52, 57; instance IDs, not mesh slots) retain their original
+visibility. The exporter omitted motion while objects were hidden; those
+missing poses cannot be recovered exactly from U2E.0AB. A new path revealing
+those intervals needs source animation or explicitly authored replacement
+tracks. Static classification is inferred from constant visible poses; it
+cannot prove an object never moved while hidden. This mode is intended for
+the supplied city data, not arbitrary animation streams.
+
+animation.py decodes and rewrites the stream on the host. The preparation
+report lists the affected instances. Tests compare all retained camera and
+moving-object records and all originally visible static poses frame by
+frame. A future host visibility bake can reduce work again after geometry,
+complete motion tracks and the new camera path are settled.

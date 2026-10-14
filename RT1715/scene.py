@@ -1,7 +1,8 @@
 """Second Reality VERS/NAME/VERT/NORM/POLY/ORD geometry, from VISU/C/SAVE.C.
 
 Coordinates are Z-up. Animation references are preserved by replacing whole
-numbered mesh slots, retaining their names and all scene/animation files.
+numbered mesh slots and retaining their names. Visibility rewriting lives
+in animation.py; mesh conversion itself does not alter animation.
 """
 import itertools
 import math

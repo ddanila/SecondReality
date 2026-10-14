@@ -1,5 +1,6 @@
 {
   "version": 1,
+  "visibility": "static",
   "models": [
     {"slot": 2, "scad": "models/tower.scad", "color": 64, "shades": 32, "rotate_z": 0},
     {"slot": 4, "scad": "models/stepped.scad", "color": 160, "shades": 32, "rotate_z": 0}
