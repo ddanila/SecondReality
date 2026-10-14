@@ -97,7 +97,7 @@ class RobotronTests(unittest.TestCase):
         for a,b in edges:
             edge=tuple(sorted((a,b)));counts[edge]=counts.get(edge,0)+1
         boundary={v for edge,count in counts.items() if count==1 for v in edge}
-        self.assertEqual(len(boundary),28)
+        self.assertEqual(len(boundary),44)
         for v in glass.vertices[list(boundary)]:
             distance=np.linalg.norm(rim.vertices-v,axis=1)
             self.assertLess(distance.min(),.35)

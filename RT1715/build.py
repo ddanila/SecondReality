@@ -14,6 +14,7 @@ import re
 import shutil
 import struct
 import subprocess
+import sys
 
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent
@@ -90,6 +91,7 @@ def main():
     parser.add_argument("--robotron", type=Path, nargs="?",
                         const=ROOT.parent/"3d-models/models/robotron-1715m",
                         help="Build Robotron fly-through from canonical model exports")
+    parser.add_argument("--review",action="store_true",help="After building, run headlessly and generate the review reel")
     args = parser.parse_args()
     if args.robotron and args.project:
         parser.error("Choose --robotron or --project")
@@ -179,6 +181,9 @@ def main():
                              "sha256":hashlib.sha256((dos/name).read_bytes()).hexdigest()})
     (build / "assets.json").write_text(json.dumps(manifest, indent=2) + "\n")
     print(f"Built {dos / 'RT1715.EXE'} ({'custom assets' if args.project else 'original assets'} + MUSIC0)")
+
+    if args.review:
+        subprocess.run([sys.executable,str(HERE/"run.py")],check=True)
 
 
 if __name__ == "__main__":

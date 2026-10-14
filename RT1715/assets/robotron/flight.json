@@ -29,7 +29,23 @@
         -365,
         35
       ],
-      "subject": "Across the keycaps"
+      "subject": "Across the keycaps",
+      "stop": true
+    },
+    {
+      "time": 7.55,
+      "eye": [
+        -100,
+        -425,
+        75
+      ],
+      "target": [
+        -20,
+        -365,
+        35
+      ],
+      "subject": "Brief detail hold",
+      "stop": true
     },
     {
       "time": 14,
@@ -71,10 +87,26 @@
         -207,
         82
       ],
-      "subject": "Track the right drive"
+      "subject": "Track the right drive",
+      "stop": true
     },
     {
-      "time": 30,
+      "time": 24.55,
+      "eye": [
+        100,
+        -275,
+        110
+      ],
+      "target": [
+        -15,
+        -207,
+        82
+      ],
+      "subject": "Brief detail hold",
+      "stop": true
+    },
+    {
+      "time": 29.5,
       "eye": [
         -115,
         -280,
@@ -88,18 +120,18 @@
       "subject": "Sweep past the left drive"
     },
     {
-      "time": 32,
+      "time": 32.5,
       "eye": [
-        -310,
-        -255,
-        180
+        -285,
+        -285,
+        190
       ],
       "target": [
-        -145,
-        -145,
-        235
+        -130,
+        -155,
+        225
       ],
-      "subject": "Quick bank around case toward monitor"
+      "subject": "Gentle bank from drives to CRT"
     },
     {
       "time": 36,
@@ -116,7 +148,7 @@
       "subject": "Climb toward the CRT"
     },
     {
-      "time": 42,
+      "time": 41,
       "eye": [
         40,
         -270,
@@ -128,6 +160,20 @@
         350
       ],
       "subject": "Cross the glass and bank away"
+    },
+    {
+      "time": 42.7,
+      "eye": [
+        250,
+        -560,
+        510
+      ],
+      "target": [
+        5,
+        -130,
+        270
+      ],
+      "subject": "Progressive reveal of the workstation"
     },
     {
       "time": 45.5,

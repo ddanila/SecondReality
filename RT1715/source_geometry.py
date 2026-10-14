@@ -3,11 +3,11 @@ import numpy as np
 import trimesh
 
 
-def chunks(source, faces_per_chunk=120):
+def chunks(source, faces_per_chunk=120, precision=(.5,.1,.5)):
     source=source.copy()
     # Collapse sub-pixel tessellation of rounded mouldings, retaining the real
     # openings and recesses. 0.5 mm in X/Z, 0.1 mm through the thin front skin.
-    source.vertices=np.round(source.vertices/[.5,.1,.5])*[.5,.1,.5]
+    source.vertices=np.round(source.vertices/precision)*precision
     source.merge_vertices()
     source.update_faces(source.nondegenerate_faces())
     source.update_faces(source.unique_faces())
@@ -34,7 +34,8 @@ def front_parts(load, records):
             source=box(*source.bounds)
         # Interior-facing backs of these opaque front mouldings are hidden.
         source=source.submesh([np.flatnonzero(source.face_normals[:,1]<.5)],append=True)
-        for index,part in enumerate(chunks(source)):
+        precision=(.2,.1,.2) if name.startswith('drive-latch') else (.5,.1,.5)
+        for index,part in enumerate(chunks(source,precision=precision)):
             yield f'src-{name}-{index}',part,color,'exterior'
     source=load(records['case-base'])
     # Original bottom skin and side/rear vents stay in the lightweight shell;

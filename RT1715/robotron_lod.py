@@ -1,4 +1,4 @@
-"""Closed, deliberately modelled exterior LODs for the 16-bit painter renderer.
+"""Closed, deliberately modelled exterior LODs for the 16-bit DOS renderer.
 
 Panel openings are built as frames, never as convex hulls of perforated shells.
 Dimensions and placement come from the canonical exported assembly (mm).
@@ -18,10 +18,8 @@ def mesh(vertices, quads):
 
 
 def slope_box(x0,x1,y0,y1,bottom,front,back,opening=None):
-    # Small top panels keep centroid sorting local to nearby raised keycaps.
-    vertices=[(x0,y0,bottom),(x1,y0,bottom),(x1,y1,bottom),(x0,y1,bottom),
-              (x0,y0,front),(x1,y0,front),(x1,y1,back),(x0,y1,back)]
-    faces=[(3,2,1,0),(0,1,5,4),(1,2,6,5),(2,3,7,6),(3,0,4,7)]
+    # Subdivide the sloping deck while retaining shared boundary vertices.
+    vertices=[];faces=[]
     regions=[(x0,x1,y0,y1)]
     if opening:
         ox0,ox1,oy0,oy1=opening
@@ -39,6 +37,18 @@ def slope_box(x0,x1,y0,y1,bottom,front,back,opening=None):
             for i in range(nx):
                 a=start+j*(nx+1)+i
                 faces.append((a,a+1,a+nx+2,a+nx+1))
+    # Match the top's boundary subdivisions on the sides: no T-junctions
+    # whose rounded screen projections could leave pinholes under depth testing.
+    ring=sorted({p for p in vertices if abs(p[0]-x0)<1e-6 or abs(p[0]-x1)<1e-6 or
+                 abs(p[1]-y0)<1e-6 or abs(p[1]-y1)<1e-6},
+                key=lambda p:np.arctan2(p[1]-(y0+y1)/2,p[0]-(x0+x1)/2))
+    offset=len(vertices);vertices+=ring+[(x,y,bottom) for x,y,z in ring]
+    center=len(vertices);vertices.append(((x0+x1)/2,(y0+y1)/2,bottom))
+    n=len(ring)
+    for i in range(n):
+        j=(i+1)%n
+        faces.append((offset+n+i,offset+n+j,offset+j,offset+i))
+        faces.append((center,offset+n+j,offset+n+i))
     return mesh(vertices,faces)
 
 
@@ -46,20 +56,20 @@ def slope_box(x0,x1,y0,y1,bottom,front,back,opening=None):
 def crt_surround():
     """Curved glass and its surround meet along the complete curved perimeter."""
     vertices=[];faces=[]
-    for j in range(7):
-        z=218.5+j*211/6
-        for i in range(9):
-            x=-129+i*258/8
+    for j in range(11):
+        z=218.5+j*211/10
+        for i in range(13):
+            x=-129+i*258/12
             y=-158+9*((x/129)**2+((z-324)/105.5)**2)
             vertices.append((x,y,z))
-    for j in range(6):
-        for i in range(8):
-            a=j*9+i;faces.append((a,a+1,a+10,a+9))
+    for j in range(10):
+        for i in range(12):
+            a=j*13+i;faces.append((a,a+1,a+14,a+13))
     # Four strips, subdivided to match the curved glass edge exactly. Extend
     # the edge by 0.25 mm under the glass to avoid fixed-point rounding cracks.
     rim_vertices=[];rim_faces=[]
-    edges=[list(range(9)),[j*9+8 for j in range(7)],
-           list(range(62,53,-1)),[j*9 for j in range(6,-1,-1)]]
+    edges=[list(range(13)),[j*13+12 for j in range(11)],
+           list(range(142,129,-1)),[j*13 for j in range(10,-1,-1)]]
     corners=[(-151.5,-154,188),(151.5,-154,188),
              (151.5,-154,452),(-151.5,-154,452)]
     for k,edge in enumerate(edges):
@@ -128,5 +138,15 @@ def keycap(source, detailed=True):
               (x1-bevel,y1-bevel-2,z1-1),(x0+bevel,y1-bevel-2,z1-1)]
     if not detailed:
         return mesh(vertices[:8],[(3,2,1,0),(0,1,5,4),(1,2,6,5),(2,3,7,6),(3,0,4,7),(4,5,6,7)])
-    return mesh(vertices,[(3,2,1,0),(0,1,5,4),(1,2,6,5),(2,3,7,6),(3,0,4,7),
-                          (4,5,9,8),(8,9,10,11),(11,10,6,7),(4,8,11,7),(5,6,10,9)])
+    def ring(xa,xb,ya,yb,z,corner):
+        return [(xa+corner,ya,z),(xb-corner,ya,z),(xb,ya+corner,z),
+                (xb,yb-corner,z),(xb-corner,yb,z),(xa+corner,yb,z),
+                (xa,yb-corner,z),(xa,ya+corner,z)]
+    vertices=ring(x0,x1,y0,y1,z0,.8)+ring(x0+bevel,x1-bevel,y0+bevel,y1-bevel,z1,.8)
+    vertices+=ring(x0+bevel+.6,x1-bevel-.6,y0+bevel+2,y1-bevel-2,z1-1,.4)
+    faces=[tuple(reversed(range(8))),tuple(range(16,24))]
+    for layer in (0,8):
+        for i in range(8):
+            j=(i+1)%8
+            faces.append((layer+i,layer+j,layer+j+8,layer+i+8))
+    return mesh(vertices,faces)

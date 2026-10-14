@@ -148,8 +148,8 @@ Output and dependencies
 -----------------------
 build/dos is the self-contained DOS directory. Run RT1715.EXE there with a
 386+ CPU, VGA, EMS, and a Sound Blaster Pro at port 220h, IRQ 7, DMA 1.
-The supplied DOSBox-X configuration uses a 486, VGA, 32 MB RAM and 120,000
-fixed CPU cycles. Setup is fixed, with no menu and no looping.
+The supplied DOSBox-X configuration uses a 486, VGA, 32 MB RAM and an adaptive
+CPU budget (cycles=max 95%). Setup is fixed, with no menu and no looping.
 
 MAIN/U2.ASM has an optional RT1715 build path. The original full-demo path
 remains available when RT1715 is not defined. SETUP.INC supplies the sound
@@ -259,28 +259,29 @@ Key legends come from browser/model.json (including shifted symbols and
 arrow keys); blank source legends stay blank. legends.py rasterizes them
 with Pillow's bundled font plus compact symbol bitmaps, merges pixel runs,
 and converts them to polygons on the dished tops. Each marked key shares one
-object with its ink, drawn after its plastic to prevent painter-order loss.
+object with its ink; a small depth bias keeps the marks on the plastic.
 Control keys use the blue-grey palette. Marks remain limited by 320-pixel VGA
 resolution, especially in the distance.
 
-The renderer is now host-linked from the original sources with Watcom's
-signed-char / cdecl ABI and JWasm. renderer.py rebuilds the player, loader,
-transforms/projection, data and DIS interface. The original checked-in AVID
-and ADRAW object modules supply the VGA rasterizer. Improvements include
-global face-depth sorting across objects, bounded offscreen projection (preventing
-16-bit coordinate wrap), shared vertex/projection/normal scratch buffers,
-and removal of the city-specific drone ordering override. Robotron meshes
-omit the obsolete eight precomputed sort lists and use numbered mesh slots
-while reserving slot 28 for the drone. The original drone stays in
-slot 28. These changes keep the extra legends inside conventional memory.
-painter.c queues up to 4000 visible faces and sorts them together, so case
-panels cannot cover nearby keyboard keys or drive fronts merely because their
-object centres sort differently. This remains a painter renderer; arbitrary
-intersecting polygons still require care. The animation uses an 8 KB streaming
-buffer with a host-enforced 4 KB maximum encoded frame, leaving conventional
-memory for the more detailed front geometry.
-DOSBox-X uses a 486 with the dynamic core, 300000 fixed cycles and 32 MB,
-headless only.
+The Robotron renderer is host-linked with Watcom's signed-char / cdecl ABI
+and JWasm. renderer.py rebuilds the player, loader, transforms/projection,
+data and DIS interface. painter.c now transforms each object once and feeds
+depth.c: a per-pixel, 16-bit reciprocal-depth rasterizer using 128 KB of EMS.
+Projected vertices and scanline gradients are cached. VGA planes are selected
+once per triangle, and pixel addresses advance incrementally.
+Faces no longer depend on centroid sorting for visibility. Near-plane and
+screen clipping use consistent edge intersections; the original letterboxed
+viewport and drone Gouraud shading are retained. Key legends use a one-unit
+depth bias. Finite depth precision still requires care with coplanar surfaces.
+Wide intermediate arithmetic prevents overflow in projection and clipping.
+
+Robotron meshes omit the obsolete eight precomputed sort lists, reserve slot
+28 for the unchanged drone, and share transform scratch buffers. The animation
+uses an 8 KB streaming buffer with a host-enforced 4 KB maximum encoded frame.
+EMS keeps the depth buffer out of the conventional/upper memory used by models.
+DOSBox-X uses a 486 dynamic core, an adaptive 95% CPU budget and 32 MB, headless only.
+The adaptive CPU budget compensates for depth testing and finer close-up meshes;
+close-ups are still more expensive than overview shots.
 
 assets/robotron/flight.json contains independent camera eye/target and drone
 position tracks in canonical millimetres. Time-aware cubic Hermite curves
@@ -385,7 +386,7 @@ closeups/pullback, the diagonal pass and the revised board-context images.
 Polish pass: each key mesh now starts with a six-face, eight-vertex coarse cap.
 At camera depths beyond 240 mm, painter.c transforms only that envelope and
 its six normals; nearer keys use the dished cap and full legends. Both levels
-retain the same silhouette and bounds. This avoids drawing unreadable distant
+retain the same overall envelope and bounds. This avoids drawing unreadable distant
 legends while preserving detailed keys in the foreground.
 
 Eight technical cards have labels and leader lines rendered at the actual
@@ -399,9 +400,8 @@ retaining the dark seams and original drone/music palette entries. The diagonal
 exit now accelerates along its existing line, with its timed position unchanged
 at flight second 47.76. The overview still precedes the pass; credits retain the
 original card count and retrace cadence.
-For consecutive face groups, the draw pass caches a full object transform;
-interleaved faces retain the smaller contiguous-range transform. This reduces
-repeated normal/vertex work in nearby legends without adding scene buffers.
+The earlier painter implementation cached transforms for consecutive face
+groups. The current depth renderer transforms each visible object only once.
 
 Polish validation: capture/20261014-174534-351043, 33 host tests pass;
 all 21 cards complete, audio 174.930 seconds, wall time 177.11 seconds.
@@ -411,3 +411,45 @@ updates versus 268 (+31%); the first 50 contain 1215 versus 1019 (+19%).
 These are RGB frame-change counts, not refresh-rate guarantees. All 96 key
 meshes satisfy the native eight-vertex/six-normal coarse-layout contract.
 The original drone mesh and protected palette ranges remain byte-identical.
+
+Depth and presentation pass
+---------------------------
+The camera briefly holds keyboard and drive details, rounds the drive-to-CRT
+turn, and pulls back gradually before the original timed overview and swoosh.
+Near keycaps have chamfered corners and dishes; distant keys retain the coarse
+six-face envelope. The CRT uses a finer 12 by 10 grid, drive latch curves retain
+more source detail, and keyboard side boundaries match the deck subdivisions.
+
+Annotated credit close-ups now include a full-board locator inset with an
+amber rectangle showing the featured component group. Both images come from
+the same source model and camera. Set view.locator=false to omit the inset.
+The music, 21-card cadence, black backgrounds and white borders are preserved.
+
+Build, play headlessly, validate music cues, and export review artifacts:
+
+    RT1715/build/host-python/bin/python RT1715/build.py --robotron --review
+
+A normal python3 RT1715/run.py also exports the review after successful Robotron
+playback. Use --no-review during quick iterations. Export an existing capture:
+
+    RT1715/build/host-python/bin/python RT1715/review.py RT1715/capture/<timestamp>
+
+ffmpeg and Pillow are required for review export. Outputs include the complete
+build/robotron-preview.mp4, a labelled build/robotron-review.mp4 excerpt reel,
+and build/robotron-review.png contact sheet. Each capture retains its own reel,
+contact sheet and review.json with shot timings and playback validation.
+The sheet samples keyboard, drives, CRT, reveal, flyby and technical cards;
+inspect the video as well, since a still cannot establish motion quality.
+
+Depth/presentation validation: capture/20261014-182143-295674; 38 host tests
+pass. All 21 cards completed headlessly, with normal exit and no confirmation.
+Wall time 175.65 seconds; captured audio 175.358 seconds (startup capture length
+varies). Overview 24:55, swoosh 25:6, credits 28:0–43:29. Source SCAD hashes and
+built asset hashes match; the drone mesh and protected palette are unchanged.
+Keyboard, drive fronts, CRT seams, reveal and diagonal flyby were inspected.
+The final 29-second review reel and contact sheet were exported successfully.
+
+Depth testing trades speed for correct per-pixel visibility: this capture has
+184 visible image updates in its first 20 seconds versus 350 for the preceding
+painter build. Camera holds and the adaptive CPU budget also affect this count;
+it is not a fixed frame-rate guarantee. Music-position timing remains intact.

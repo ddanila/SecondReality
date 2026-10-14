@@ -31,13 +31,15 @@ def build_renderer(build,compiler,assembler,linker,watcom):
     for name in ('C.H','CD.H'):
         s=(ROOT/'VISU'/name).read_text(encoding='cp437').replace('#include "cd.h"','#include "CD.H"')
         s=re.sub(r'^;', '',s,flags=re.M)
+        # ASM data lives outside Watcom DGROUP; C must use segment relocations.
+        s=re.sub(r'(extern\s+(?:int|long))\s+(vramseg|proj\w+|rows)\b',r'\1 far \2',s)
         (out/name).write_text(s)
     (out/'DIS.H').write_bytes((ROOT/'DIS/DIS.H').read_bytes())
     for name in ('U2E','VISU'):
         path=ROOT/('VISU/C/U2E.C' if name=='U2E' else 'VISU/VISU.C')
         s=path.read_text(encoding='cp437')
         s=s.replace('"..\\cd.h"','"CD.H"').replace('"..\\c.h"','"C.H"').replace('"c.h"','"C.H"')
-        s='void rt_begin(void);\nvoid rt_flush(void);\n#include <stdlib.h>\n#include <dos.h>\n#include "DIS.H"\nvoid vid_setswitch(int,int);\nvoid vid_clear255(void);\n'+s
+        s='void rt_depth_end(void);\nvoid rt_begin(void);\nvoid rt_flush(void);\n#include <stdlib.h>\n#include <dos.h>\n#include "DIS.H"\nvoid vid_setswitch(int,int);\nvoid vid_clear255(void);\n'+s
         if name=='U2E':
             # Pointer arithmetic is huge-pointer aware in Watcom; avoid the
             # original compiler-specific stack-slot manipulation.
@@ -130,6 +132,7 @@ main(int argc,char *argv[])''')
             # Preserve the overview framebuffer across loading CRED.EXE.
             s=s.replace('dis_setcopper(2,NULL);', r'''dis_setcopper(2,NULL);
     fclose(rt_anim);
+    rt_depth_end();
     if(rt_trace) {
         unsigned pos=rt_position();
         fprintf(rt_trace,"END order=%u row=%u frame=%d\n",pos>>6,pos&63,currframe);
@@ -145,6 +148,7 @@ main(int argc,char *argv[])''')
     }
     return 0;''')
             s=s.replace('ip=readfile(tmpname);','ip=(int huge *)readfile(tmpname);')
+            s=s.replace('dis>co[order[b]].dist','dis<co[order[b]].dist')
             s=s.replace('// Draw\n', '// Draw\n\t\trt_begin();\n')
             s=s.replace('// **** Drawing completed **** //','rt_flush();\n\t\t// **** Drawing completed **** //')
             s=s.replace('for(y<175;y<200;y++)','for(y=175;y<200;y++)')
@@ -160,10 +164,14 @@ main(int argc,char *argv[])''')
             s=s[:a]+"void rt_queue(object *o);\nvoid vis_drawobject(object *o) { rt_queue(o); }\n"
         (out/(name+'.C')).write_text(s)
         subprocess.run([compiler,'-zq','-bt=dos','-ml','-3','-os','-s','-j','-ecc',f'-i={watcom / "h"}',f'-fo={name}.OBJ',name+'.C'],cwd=out,check=True)
+    shutil.copyfile(ROOT/'RT1715/depth.h',out/'depth.h')
+    shutil.copyfile(ROOT/'RT1715/depth.c',out/'DEPTH.C')
+    subprocess.run([compiler,'-zq','-bt=dos','-ml','-3','-ot','-s','-j','-ecc',
+                    f'-i={watcom / "h"}','-fo=DEPTH.OBJ','DEPTH.C'],cwd=out,check=True)
     shutil.copyfile(ROOT/'RT1715/painter.c',out/'PAINTER.C')
     subprocess.run([compiler,'-zq','-bt=dos','-ml','-3','-os','-s','-j','-ecc',
                     f'-i={watcom / "h"}','-fo=PAINTER.OBJ','PAINTER.C'],cwd=out,check=True)
-    objects=['U2E','VISU','PAINTER']
+    objects=['U2E','VISU','PAINTER','DEPTH']
     for name in ('AMAIN','ADATA','ACALC','AVID','ADRAW','DISC'):
         src=ROOT/('DIS' if name=='DISC' else 'VISU')/(name+'.ASM')
         if name in ('AVID','ADRAW'):

@@ -8,6 +8,7 @@ import re
 from pathlib import Path
 import shutil
 import subprocess
+import sys
 import time
 import wave
 
@@ -41,6 +42,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--dosbox", default="dosbox-x")
     parser.add_argument("--timeout", type=int, default=300, help="wall-clock limit in seconds")
+    parser.add_argument("--no-review",action="store_true",help="Skip automatic Robotron preview/review export")
     args = parser.parse_args()
     emulator = shutil.which(args.dosbox)
     if not emulator:
@@ -129,7 +131,11 @@ exit
         summary["music_cues"] = sync_cues
     (capture / "result.json").write_text(json.dumps(summary, indent=2) + "\n")
     print(f"PASS: DOS returned successfully; video and non-silent audio captured in {capture}")
-    print("Visual correctness and transitions require reviewing the AVI captures.")
+    if sync_cues is not None and not args.no_review:
+        python=HERE/'build/host-python/bin/python'
+        subprocess.run([str(python) if python.exists() else sys.executable,
+                        str(HERE/'review.py'),str(capture)],check=True)
+    print("Review the generated reel/contact sheet for visual regressions.")
 
 
 if __name__ == "__main__":

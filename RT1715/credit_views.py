@@ -48,10 +48,13 @@ def render_cards(config, output, records, load, chips, keys, command):
             bounds=trimesh.util.concatenate(selected).bounds
             margin=np.array(view.get('margin',[10,10,8]))
             crop=[(bounds[0]-margin).tolist(),(bounds[1]+margin).tolist()]
-        script=[]; mask_script=[]
+        script=[]; mask_script=[]; full_script=[]; full_mask=[]
         for i,(label,m,color) in enumerate(solids):
             path=output/f'{name}-{i}.stl';m.export(path)
             shape=f'import({json.dumps(str(path))});'
+            mask_color='#ff00ff' if label in marked else '#101010'
+            full_script.append(f'color("{color}") {{ {shape} }}')
+            full_mask.append(f'color("{mask_color}") {{ {shape} }}')
             if crop:
                 lo,hi=np.array(crop[0]),np.array(crop[1])
                 shape='intersection() { '+shape+' translate('+json.dumps(lo.tolist())+') cube('+json.dumps((hi-lo).tolist())+'); }'
@@ -61,6 +64,8 @@ def render_cards(config, output, records, load, chips, keys, command):
         if view.get('flip'):
             script=['rotate([180,0,0]) {',*script,'}']
             mask_script=['rotate([180,0,0]) {',*mask_script,'}']
+            full_script=['rotate([180,0,0]) {',*full_script,'}']
+            full_mask=['rotate([180,0,0]) {',*full_mask,'}']
         scad=output/f'{name}.scad';scad.write_text('\n'.join(script)+'\n')
         png=output/f'{name}.png'
         angle=view.get('angle',[55,0,35])
@@ -70,6 +75,29 @@ def render_cards(config, output, records, load, chips, keys, command):
         pixels=np.array(Image.open(png).convert('RGB'))
         pixels[np.all(pixels==[29,31,33],axis=2)]=0
         rendered=Image.fromarray(pixels)
+        locator=None
+        if crop and view.get('annotation') and view.get('locator',True):
+            full_images=[]
+            for suffix,lines in [('locator',full_script),('locator-mask',full_mask)]:
+                fs=output/f'{name}-{suffix}.scad';fp=output/f'{name}-{suffix}.png'
+                fs.write_text('\n'.join(lines)+'\n')
+                openscad(command,fs,fp,['--render','--colorscheme','Tomorrow Night',
+                         '--imgsize','960,600','--camera',camera,'--viewall','--autocenter'])
+                raw=np.array(Image.open(fp).convert('RGB'));raw[np.all(raw==[29,31,33],axis=2)]=0
+                full_images.append(Image.fromarray(raw))
+            bounds=full_images[0].getbbox()
+            overview=full_images[0].crop(bounds);target_mask=np.array(full_images[1].crop(bounds)).astype(int)
+            yy0,xx0=np.where((target_mask[:,:,0]>target_mask[:,:,1]*2+30)&(target_mask[:,:,2]>target_mask[:,:,1]*2+30))
+            locator=Image.new('RGB',(48,70),'black');thumb=ImageOps.contain(overview,(44,54))
+            ox=(48-thumb.width)//2;oy=12+(54-thumb.height)//2
+            locator.paste(thumb,(ox,oy));d=ImageDraw.Draw(locator)
+            d.text((4,1),'BOARD',fill='white',font=ImageFont.load_default(size=8))
+            if len(xx0):
+                sx=thumb.width/overview.width;sy=thumb.height/overview.height
+                d.rectangle((ox+int(xx0.min()*sx),oy+int(yy0.min()*sy),
+                             ox+max(int(xx0.max()*sx),int(xx0.min()*sx)+2),
+                             oy+max(int(yy0.max()*sy),int(yy0.min()*sy)+2)),outline='#ffd58c',width=1)
+            d.rectangle((0,0,47,69),outline='#737777',width=1)
         if view.get('annotation'):
             mask_scad=output/f'{name}-annotation.scad'
             mask_png=output/f'{name}-annotation.png'
@@ -81,14 +109,21 @@ def render_cards(config, output, records, load, chips, keys, command):
             if not len(xx): raise ValueError(f'Annotation target is hidden: {name}')
             # Draw at the actual DOS picture resolution, then enlarge without
             # filtering; the converter reduces it back to 160x100.
-            small=rendered.resize((160,100),Image.Resampling.LANCZOS)
+            if locator:
+                main=ImageOps.contain(rendered,(108,94),Image.Resampling.LANCZOS)
+                small=Image.new('RGB',(160,100),'black');main_y=(100-main.height)//2
+                small.paste(main,(0,main_y));small.paste(locator,(112,27))
+                sx=main.width/960;sy=main.height/600
+            else:
+                small=rendered.resize((160,100),Image.Resampling.LANCZOS)
+                sx=sy=1/6;main_y=0
             draw=ImageDraw.Draw(small);font=ImageFont.load_default(size=8)
-            label=view['annotation'];target=(round(float(xx.mean())/6),round(float(yy.mean())/6))
+            label=view['annotation'];target=(round(float(xx.mean())*sx),round(float(yy.mean())*sy)+main_y)
             width=round(draw.textlength(label,font=font))
-            label_x=152-width if target[0]>80 else 8
+            label_x=(104 if locator else 152)-width if target[0]>(54 if locator else 80) else 8
             if 'RAM' in label:
-                x0,y0=max(3,round(float(xx.min())/6)-2),max(16,round(float(yy.min())/6)-2)
-                x1,y1=min(156,round(float(xx.max())/6)+2),min(96,round(float(yy.max())/6)+2)
+                x0,y0=max(3,round(float(xx.min())*sx)-2),max(16,round(float(yy.min())*sy)+main_y-2)
+                x1,y1=min(156,round(float(xx.max())*sx)+2),min(96,round(float(yy.max())*sy)+main_y+2)
                 for x,y,dx,dy in [(x0,y0,1,1),(x1,y0,-1,1),(x0,y1,1,-1),(x1,y1,-1,-1)]:
                     draw.line([(x+dx*4,y),(x,y),(x,y+dy*4)],fill='#ffd58c',width=1)
                 target=(x1 if label_x>80 else x0,y0)
