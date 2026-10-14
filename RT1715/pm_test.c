@@ -76,6 +76,35 @@ int main(void) {
         check(transformed.x==(short)dot(b.m,xyz) && transformed.y==(short)dot(b.m+3,xyz) && transformed.z==(short)dot(b.m+6,xyz),"normal rotation");
     }
     puts("PASS transforms, 128 matrix/normal cases and single-pass full-width projection");
+    for(i=0;i<2000;i++) {
+        vlist fused[20];pvlist fp[20];rt_vertex fs[20];object box;
+        int expected,actual,visible=0;
+        memset(&box,0,sizeof(box));box.v0=input;box.vnum=20;box.r=&matrix;
+        for(j=0;j<9;j++) matrix.m[j]=(long)random32();
+        matrix.x=(long)(random32()%100000)-50000;
+        matrix.y=(long)(random32()%100000)-50000;
+        matrix.z=(long)(random32()%100000)-50000;
+        for(j=0;j<20;j++) {
+            input[j].x=(long)(random32()%20000)-10000;
+            input[j].y=(long)(random32()%20000)-10000;
+            input[j].z=(long)(random32()%20000)-10000;input[j].normal=j;
+        }
+        calc_rotate(20,output,input,&matrix);
+        expected=rt_project(20,projected,screen,output);
+        actual=rt_transform_project(20,fused,input,&matrix,fp,fs);
+        check(expected==actual,"fused aggregate flags");
+        for(j=0;j<20;j++) {
+            check(fused[j].x==output[j].x && fused[j].y==output[j].y &&
+                  fused[j].z==output[j].z && fused[j].normal==output[j].normal,"fused transform");
+            check(fp[j].x==projected[j].x && fp[j].y==projected[j].y && fp[j].vf==projected[j].vf,"fused projection flags");
+            check(fs[j].x==screen[j].x && fs[j].y==screen[j].y,"fused screen");
+            if(!(fp[j].vf&16)) check(fs[j].z==screen[j].z,"fused reciprocal depth");
+            if(!fp[j].vf) visible=1;
+        }
+        rt_bounds_init(&box);
+        if(rt_bounds_outside(&box)) check(!visible,"bounds preserve visible vertices");
+    }
+    puts("PASS 40000 fused vertices versus separate pipeline; 2000 conservative bounds");
     for(i=0;i<263;i++) src[i]=(unsigned char)random32();
     for(n=0;n<=257;n++) {
         memset(dest,0x5a,sizeof(dest));rt_upload32(dest+3,src+1,n);

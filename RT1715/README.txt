@@ -652,3 +652,56 @@ renderer comparisons. The sibling 3d-models checkout received concurrent edits
 to the interior/PCB sources during validation; those in-progress edits were not
 imported into this renderer upgrade. A later full --robotron build will prepare
 assets from the then-current source models.
+
+Uncapped renderer benchmark and subsequent kernels
+-------------------------------------------------
+Measure actual rendering cost independently of music/retrace pacing:
+
+    python3 RT1715/benchmark.py --label candidate
+    python3 RT1715/benchmark.py --label repeat --reference PATH/result.json
+
+Each run copies the current U2E runtime into build/pose-benchmarks, decodes six
+fixed camera poses, then times 120 renders per pose, including VGA uploads.
+Asset loading, animation decoding, warm-up and color hashing are untimed.
+Counters include the warm-up (121 renders); timings include only 120 renders.
+The DOS clock advances in roughly 55 ms steps, so small differences should not
+be treated as precise. References must use identical scene assets and CPU
+settings; the tool rejects any changed pose image checksum. Run performance
+measurements sequentially. No music player is needed for this benchmark.
+
+Implemented in measured order: benchmark, whole-triangle assembly traversal,
+conservative object bounds rejection, fused assembly transform/projection.
+The triangle kernel keeps edge walks, row setup, VGA planes and pixels in one
+assembly call. Bounds include all original vertices and use wide intermediate
+arithmetic plus a pixel margin. Near-plane clipping remains in the raster path.
+The fused loop retains camera-space coordinates for clipping/backface tests,
+full-width projection, signed matrix truncation and 64-bit dot products.
+Normal rotation now happens only after an object passes projection rejection.
+The original scalar stages remain available to native verification.
+
+Fixed 300000 cycles, milliseconds per render (same six image hashes):
+
+  Pose          Baseline   Triangles    +Bounds     +Fused
+   420            41.650      29.300     28.842     27.467
+   980            27.008      19.683     19.683     18.308
+  1840            18.308      14.650     14.192     13.733
+  2660            10.075       7.325      6.408      6.408
+  3200            18.767      16.933     17.392     16.475
+  3750            18.308      16.475     16.933     16.017
+
+Final reduction: 12–36% per pose versus the starting protected renderer.
+Bounds help close passes most; their small overhead remains in the overview.
+These are emulator measurements, not promised physical-hardware speedups.
+Detailed stage hashes, counters and measurements: benchmarks/renderer-kernels.json.
+Native verification additionally compares 40000 randomized fused vertices with
+the separate transform/project pipeline and checks 2000 conservative bounds.
+Prepared model assets are unchanged by this optimization.
+
+Full playback validation: capture/20261014-204840-907867, fixed 300000 cycles.
+1902 rendered flight frames; visible RGB updates rise from 353 to 448 in the
+first 20 seconds (+26.91%) and 1355 to 1452 in the first 50 seconds (+7.16%).
+All 21 credit cards complete, with normal DOS exit and no confirmation dialog.
+Overview 24:54, swoosh 25:6, flight end 26:57, credits 28:0–43:29 are unchanged.
+Original drone, protected palette entries and complete MUSIC0 payload match.
+The preview/review artifacts were regenerated and visually checked. Both native
+kernel suites and all 38 host tests pass.

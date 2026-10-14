@@ -13,6 +13,8 @@ long projmulx=250,projmuly=220,projaddx=159,projaddy=99;
 unsigned char *rt_video=(unsigned char *)0xa0000;
 unsigned char rt_color[64000];
 int rt_ram_color=1;
+int rt_triangle_kernel=1,rt_bounds_culling=1;
+unsigned long rt_objects_tested,rt_objects_rejected;
 unsigned long rt_frames,rt_triangles,rt_spans,rt_vertices,rt_clipped;
 #pragma pack(push,1)
 typedef struct { unsigned long edi,esi,ebp,reserved,ebx,edx,ecx,eax;
@@ -127,4 +129,41 @@ int rt_project(int count,pvlist *out,rt_vertex *screen,const vlist *v) {
         if(!(flags&16)) screen[i].z=33553920L/z;
     }
     return all;
+}
+
+void rt_bounds_init(object *o) {
+    int i,k;const long *p;
+    for(k=0;k<3;k++) o->bounds_min[k]=o->bounds_max[k]=(&o->v0[0].x)[k];
+    for(i=1;i<o->vnum;i++) {
+        p=&o->v0[i].x;
+        for(k=0;k<3;k++) {
+            if(p[k]<o->bounds_min[k]) o->bounds_min[k]=p[k];
+            if(p[k]>o->bounds_max[k]) o->bounds_max[k]=p[k];
+        }
+    }
+}
+int rt_bounds_outside(const object *o) {
+    long lo[3],hi[3],m;long long center,radius;int axis,k;
+    /* Interval-transform the local AABB. Doubled centers avoid rounding away
+     * narrow parts; 64-bit sums match the vertex transform. A one-pixel margin
+     * also covers integer projection truncation at the viewport boundary. */
+    rt_objects_tested++;
+    for(axis=0;axis<3;axis++) {
+        center=radius=0;
+        for(k=0;k<3;k++) {
+            m=(short)o->r->m[axis*3+k];
+            center+=(long long)m*((long long)o->bounds_min[k]+o->bounds_max[k]);
+            radius+=(long long)(m<0?-m:m)*((long long)o->bounds_max[k]-o->bounds_min[k]);
+        }
+        lo[axis]=(long)((center-radius)>>15)+(&o->r->x)[axis];
+        hi[axis]=(long)((center+radius)>>15)+(&o->r->x)[axis];
+    }
+    if(hi[2]<512 || lo[2]>projclipz[1] ||
+       (long long)hi[0]*projmulx+(projaddx-projclipx[0]+1)*(long long)hi[2]<0 ||
+       -(long long)lo[0]*projmulx+(projclipx[1]-projaddx+1)*(long long)hi[2]<0 ||
+       (long long)hi[1]*projmuly+(projaddy-projclipy[0]+1)*(long long)hi[2]<0 ||
+       -(long long)lo[1]*projmuly+(projclipy[1]-projaddy+1)*(long long)hi[2]<0) {
+        rt_objects_rejected++;return 1;
+    }
+    return 0;
 }

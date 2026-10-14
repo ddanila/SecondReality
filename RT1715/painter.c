@@ -1,4 +1,4 @@
-/* Object transforms and material shading feeding the EMS depth rasterizer. */
+/* Object transforms and material shading feeding the depth rasterizer. */
 #include <stdlib.h>
 #include <string.h>
 #ifdef RT_PM
@@ -69,6 +69,9 @@ void rt_queue(object *o) {
     long nearest=0x7fffffffL,facing;
     if(!(o->flags&F_VISIBLE)) return;
     if(o->vnum>500 || o->nnum>500) exit(3);
+#ifdef RT_PM
+    if(rt_bounds_culling && rt_bounds_outside(o)) return;
+#endif
     o->v=vertices;o->pv=projected;o->n=normals;
     key=!strncmp(o->name,"\"key-",5);
     if(key) {
@@ -76,11 +79,17 @@ void rt_queue(object *o) {
         for(i=0;i<8;i++) if(vertices[i].z<nearest) nearest=vertices[i].z;
         coarse=nearest>240L*64L;
     }
+#ifdef RT_PM
+    if(coarse) {
+        if(rt_project(8,projected,screen,vertices)) return;
+    } else {
+        rt_vertices+=o->vnum;
+        if(rt_transform_project(o->vnum,vertices,o->v0,o->r,projected,screen)) return;
+    }
+    calc_nrotate(coarse?6:o->nnum,normals,o->n0,o->r);
+#else
     if(!coarse) calc_rotate(o->vnum,vertices,o->v0,o->r);
     calc_nrotate(coarse?6:o->nnum,normals,o->n0,o->r);
-#ifdef RT_PM
-    if(rt_project(coarse?8:o->vnum,projected,screen,vertices)) return;
-#else
     if(calc_project(coarse?8:o->vnum,projected,vertices)) return;
     for(i=0;i<(coarse?8:o->vnum);i++) if(vertices[i].z>=512) {
         screen[i].x=rt_muldiv(vertices[i].x,projmulx,vertices[i].z)+projaddx;

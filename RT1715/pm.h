@@ -17,6 +17,7 @@ typedef struct object {
     nlist *n0,*n;
     pvlist *pv;
     char *name;
+    long bounds_min[3],bounds_max[3];
 } object;
 #define F_VISIBLE 1
 #define F_2SIDE 0x200
@@ -25,12 +26,17 @@ extern long projclipx[2],projclipy[2],projclipz[2];
 extern long projmulx,projmuly,projaddx,projaddy;
 extern unsigned char *rt_video;
 extern int rt_ram_color;
+extern int rt_triangle_kernel,rt_bounds_culling;
+extern unsigned long rt_objects_tested,rt_objects_rejected;
+void rt_bounds_init(object *);
+int rt_bounds_outside(const object *);
 extern unsigned long rt_frames,rt_triangles,rt_spans,rt_vertices,rt_clipped;
 void calc_rotate(int,vlist *,const vlist *,const rmatrix *);
 void calc_nrotate(int,nlist *,const nlist *,const rmatrix *);
 void calc_applyrmatrix(rmatrix *,const rmatrix *);
 long calc_singlez(int,const vlist *,const rmatrix *);
 int rt_project(int,pvlist *,rt_vertex *,const vlist *);
+int __cdecl rt_transform_project(int,vlist *,const vlist *,const rmatrix *,pvlist *,rt_vertex *);
 void rt_camera(unsigned);
 void rt_begin(void);
 void rt_queue(object *);

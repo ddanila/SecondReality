@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <conio.h>
+#include <time.h>
 #include "pm.h"
 #include "MUSIC.H"
 #define MAXOBJ 256
@@ -59,7 +60,7 @@ static object *load_object(const char *name) {
                 fail("Invalid Gouraud normal");
         }
     }
-    return o;
+    rt_bounds_init(o);return o;
 }
 static unsigned byte(void) { if(cursor>=animation_end) fail("Truncated animation");return *cursor++; }
 static long delta(unsigned flags) {
@@ -137,8 +138,33 @@ static void render(unsigned page) {
     for(i=0;i<n;i++) rt_queue(scene[order[i]].o);
     rt_color_flush();rt_frames++;
 }
+/* No music/retrace waits here: identical decoded poses, timed render work only.
+ * Uploads remain inside render(); hashing is outside the timed interval. */
+static int benchmark(void) {
+    static const int poses[]={420,980,1840,2660,3200,3750};
+    unsigned i,j;clock_t start,elapsed;unsigned long hash;FILE *f;
+    extern unsigned char rt_color[64000];
+    f=fopen("BENCH.LOG","wt");if(!f) fail("Cannot create benchmark log");
+    rt_video_init();rt_ram_color=1;
+    for(i=0;i<sizeof(poses)/sizeof(poses[0]);i++) {
+        while(currframe<poses[i] && !finished) { next_frame();currframe+=2; }
+        if(finished) fail("Benchmark pose beyond animation");
+        render(0); /* warm-up outside measurement */
+        start=clock();
+        for(j=0;j<120;j++) render(0);
+        elapsed=clock()-start;hash=2166136261UL;
+        for(j=0;j<64000;j++) hash=(hash^rt_color[j])*16777619UL;
+        fprintf(f,"POSE %d iterations=120 ticks=%lu hz=%lu color=%08lx vertices=%lu triangles=%lu spans=%lu\n",
+                poses[i],(unsigned long)elapsed,(unsigned long)CLOCKS_PER_SEC,hash,
+                rt_vertices,rt_triangles,rt_spans);fflush(f);
+        rt_vertices=rt_triangles=rt_spans=0;
+    }
+    fprintf(f,"PASS\n");fclose(f);return 0;
+}
+
 int main(int argc,char **argv) {
     size_t size;unsigned char *materials;unsigned offset,pos,tick,page=0;
+    int bench=argc>1 && !strcmp(argv[1],"/bench");
     int i,j,index,target,cue=0;char name[32];FILE *config;
     typedef char check_vertex_size[sizeof(vlist)==16?1:-1];
     typedef char check_normal_size[sizeof(nlist)==8?1:-1];
@@ -151,7 +177,7 @@ int main(int argc,char **argv) {
         }
         fclose(config);
     }
-    rt_dis(0);rt_snapshot(&tick);
+    if(!bench) { rt_dis(0);rt_snapshot(&tick); }
     trace=fopen("FLIGHT.LOG","wt");if(!trace) fail("Cannot create FLIGHT.LOG");
     fprintf(trace,"PROTECTED DOS32A flat-memory color=%s data=%p\n",rt_ram_color?"RAM":"VGA",(void *)scene);fflush(trace);
     materials=readfile("U2E.00M",&size);
@@ -168,6 +194,7 @@ int main(int argc,char **argv) {
         } else { sprintf(name,"U2E.%03d",index);scene[i].o=load_object(name); }
     }
     animation=readfile("U2E.0AB",&size);cursor=animation;animation_end=animation+size;
+    if(bench) return benchmark();
     intro(materials+16);rt_dis(0);
     do { pos=rt_snapshot(&tick);if((pos>>6)<19) rt_wait(); } while((pos>>6)<19 && !rt_dis(2));
     next_frame();currframe=2;

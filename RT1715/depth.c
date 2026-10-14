@@ -157,6 +157,21 @@ static void triangle(rt_vertex *a,rt_vertex *b,rt_vertex *c,int decal) {
     vertices[0]=*a;vertices[1]=*b;vertices[2]=*c;
     for(i=0;i<3;i++) { if(vertices[i].y<miny) miny=(int)vertices[i].y;if(vertices[i].y>maxy) maxy=(int)vertices[i].y; }
     if(miny>=maxy) return;
+#ifdef RT_PM
+    if(rt_triangle_kernel) {
+        rt_triangle_args args;
+        args.vertices=vertices;args.depth=flat_depth;
+        args.color=rt_ram_color?rt_color:rt_video;
+        args.left=lx;args.right=rx;args.top=miny;args.bottom=maxy;
+        args.qx=qx;args.qy=qy;args.cx=cx;args.cy=cy;
+        args.qorigin=(long)((unsigned long)a->z*64-(unsigned long)qx*a->x+
+                            (unsigned long)qy*(miny-a->y)+(qx+qy)/2);
+        args.corigin=(long)((unsigned long)a->c*64-(unsigned long)cx*a->x+
+                            (unsigned long)cy*(miny-a->y)+(cx+cy)/2);
+        args.decal=decal;args.ram=rt_ram_color;
+        rt_spans+=rt_triangle32(&args);return;
+    }
+#endif
 #if !defined(RT_HOST_TEST) && !defined(RT_PM)
     rt_edges386(vertices,lx,rx,miny,maxy);
 #else
