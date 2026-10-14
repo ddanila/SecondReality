@@ -162,6 +162,11 @@ def main():
         if args.robotron:
             from robotron import install
             install(build, dos)
+            known={entry['file'] for entry in manifest}
+            for asset in sorted((build/'robotron').glob('U2E.*')):
+                if asset.name not in known:
+                    manifest.append({'file':asset.name,'source':'RT1715/robotron.py',
+                                     'sha256':hashlib.sha256((dos/asset.name).read_bytes()).hexdigest()})
         for item in manifest:
             path = dos / item["file"]
             if "sha256" in item and hashlib.sha256(path.read_bytes()).hexdigest() != item["sha256"]:

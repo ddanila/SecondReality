@@ -12,6 +12,7 @@ import struct
 import numpy as np
 import trimesh
 import scene
+import legends
 from robotron_lod import exterior, keycap
 from PIL import Image, ImageOps
 from prepare import openscad
@@ -152,6 +153,7 @@ def prepare(root, build, command):
     root=Path(root).resolve(); browser=root/'browser'
     data=json.loads((browser/'model.json').read_text())
     output=build/'robotron';output.mkdir(parents=True,exist_ok=True)
+    for old in output.glob('U2E.*'): old.unlink()
     records={p['name']:p for p in data['parts']}
     sources={}; cached={}
 
@@ -166,6 +168,7 @@ def prepare(root, build, command):
         return cached[record['file']].copy()
 
     objects=[(label,mesh,color,'exterior') for label,mesh,color in exterior()]
+    key_legends={}
     instances=[{'mesh':label,'pose':(0,0,0,*IDENTITY),'kind':kind}
                for label,mesh,color,kind in objects]
     packages={m['id']:m for m in data['pcbComponents']['models']}
@@ -184,23 +187,42 @@ def prepare(root, build, command):
     keys=[]
     a=math.radians(data['keyboard']['slope']);c,s=math.cos(a),math.sin(a)
     rot=np.array([[1,0,0],[0,c,-s],[0,s,c]])
-    for name in sorted(set(k['mesh'] for k in data['keys'])):
-        objects.append((name,keycap(load(keymesh[name])),'white','keycap'))
+    key_variants={}
     for key in data['keys']:
+        signature=(key['mesh'],tuple(key['legend']),key['style'])
+        if signature not in key_variants:
+            name='key-'+str(len(key_variants))
+            key_variants[signature]=name
+            source=load(keymesh[key['mesh']])
+            objects.append((name,keycap(source),'blue' if key['style'] else 'white','keycap'))
+            key_legends[name]=legends.polygons(key['legend'],source.bounds,SCALE)
+        name=key_variants[signature]
         position=rot @ np.array([key['x'],key['y'],0])+np.array([0,data['keyboard']['y'],data['keyboard']['z']])
         pose=tuple(np.rint(position*SCALE).astype(int))+tuple(np.rint(rot.flatten()*16384).astype(int))
-        instances.append({'mesh':key['mesh'],'pose':pose,'kind':'keys'})
+        instances.append({'mesh':name,'pose':pose,'kind':'keys'})
         m=load(keymesh[key['mesh']]);m.vertices=m.vertices @ rot.T+position
         keys.append(m)
-    if len(objects)>41: raise ValueError('Robotron exceeds 41 non-drone mesh slots')
+    if len(objects)>254: raise ValueError('Robotron exceeds available mesh slots')
     report={'source':str(root),'manifest_sha256':hashlib.sha256((browser/'model.json').read_bytes()).hexdigest(),
-            'source_meshes':sources,'objects':[]}
-    slots=[n for n in range(1,43) if n != 28]
+            'source_meshes':sources,'objects':[],'key_legends':sum(bool(k['legend']) for k in data['keys'])}
+    slots=[n for n in range(1,256) if n != 28]
     for slot,(label,mesh,color,kind) in zip(slots,objects):
         triangles=polygons(mesh)
         print(f'Robotron {slot:02}: {label}: {len(triangles)} polygons',flush=True)
         render_name=('_' if label in ('keyboard','deck') else '')+label
-        binary=scene.encode('"'+render_name[:20]+'"',triangles,COLORS[color][0],16)
+        ink=key_legends.get(label,[])
+        colors=[COLORS[color][0]]*len(triangles)+[COLORS['black'][0]]*len(ink)
+        triangles+=ink
+        sort_center=None
+        if label.startswith('drive-'):
+            # Use one X/Z sorting anchor per drive, with each layer's own Y.
+            # A corner LED must sort in front of the drive skin even when its
+            # geometric centre is farther away in an oblique camera view.
+            index=int(label.rsplit('-',1)[1])
+            sort_center=(round((-158+154*index)*SCALE),
+                         round(mesh.bounds.mean(axis=0)[1]*SCALE),81*SCALE)
+        binary=scene.encode('"'+render_name[:20]+'"',triangles,COLORS[color][0],16,
+                            face_colors=colors,precomputed_orders=False,sort_center=sort_center)
         (output/f'U2E.{slot:03}').write_bytes(binary)
         report['objects'].append({'slot':slot,'name':label,'kind':kind,'polygons':len(triangles)})
     # New scene mapping: only our generated slots plus the byte-exact drone.

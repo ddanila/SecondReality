@@ -11,7 +11,7 @@ import struct
 
 DRONE_SLOT = 28  # "s01"; also special-cased in VISU/C/U2E.C
 MAX_FACES = 500
-MAX_VERTICES = 500  # Includes center and eight sorting probes.
+MAX_VERTICES = 500  # Includes center and optional eight sorting probes.
 
 
 def blocks(data):
@@ -105,11 +105,14 @@ def chunk(tag, data):
     return tag + struct.pack("<I", len(data)) + data
 
 
-def encode(name, triangles, color=64, shades=32):
+def encode(name, triangles, color=64, shades=32, face_colors=None, precomputed_orders=True, sort_center=None):
     if shades not in (1, 8, 16, 32) or not 0 <= color <= 251 or color + shades > 252:
         raise ValueError("Material must fit palette entries 0..251, with 1/8/16/32 shades")
     if not 0 < len(triangles) <= MAX_FACES:
         raise ValueError("Too many triangles")
+    if face_colors is None: face_colors=[color]*len(triangles)
+    if len(face_colors)!=len(triangles) or any(not isinstance(c,int) or c<0 or c+shades>252 for c in face_colors):
+        raise ValueError("Face colors must match the polygon count and fit the palette")
     vertices, faces, normals, mapping = [], [], [], {}
     normal_ids, normal_mapping = [], {}
     for tri in triangles:
@@ -135,12 +138,16 @@ def encode(name, triangles, color=64, shades=32):
             normals.append(normal)
         normal_ids.append(normal_mapping[normal])
         faces.append(ids)
-    if len(vertices) + 9 > MAX_VERTICES:
-        raise ValueError(f"Mesh exceeds {MAX_VERTICES - 9} geometry vertices")
+    if len(vertices) + (9 if precomputed_orders else 1) > MAX_VERTICES:
+        raise ValueError(f"Mesh exceeds {MAX_VERTICES - (9 if precomputed_orders else 1)} geometry vertices")
     center = tuple(round(sum(p[k] for p in vertices) / len(vertices)) for k in range(3))
+    if sort_center is not None:
+        if len(sort_center)!=3 or any(not isinstance(v,int) or abs(v)>1000000 for v in sort_center):
+            raise ValueError("Invalid sorting center")
+        center=tuple(sort_center)
     center_id = len(vertices)
     vertices.append(center)
-    directions = list(itertools.product((-1, 1), repeat=3))
+    directions = list(itertools.product((-1, 1), repeat=3)) if precomputed_orders else []
     for direction in directions:
         vertices.append(tuple(center[k] + direction[k]*256 for k in range(3)))
     vertex_data = struct.pack("<HH", len(vertices), 0)
@@ -151,7 +158,7 @@ def encode(name, triangles, color=64, shades=32):
     poly, offsets = bytearray(b"\0\0"), []
     for i, face in enumerate(faces):
         offsets.append(len(poly))
-        poly.extend(struct.pack(f"<{3+len(face)}H", len(face) | flags, color, normal_ids[i], *face))
+        poly.extend(struct.pack(f"<{3+len(face)}H", len(face) | flags, face_colors[i], normal_ids[i], *face))
 
     def order(probe, ids):
         return struct.pack(f"<{len(ids)+3}H", len(ids)+3, probe, *(offsets[i] for i in ids), 0)

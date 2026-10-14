@@ -53,6 +53,19 @@ def build_renderer(build,compiler,assembler,linker,watcom):
             s=s[:s.index('#define determ')]
             s=s.replace('#define GINT *(((int *)d)++)','#define GINT (d+=2, *((int *)(d-2)))')
             s=s.replace('sizeof(vlist)*o->nnum','sizeof(nlist)*o->nnum')
+            # Objects are transformed and drawn sequentially. Their output
+            # buffers need not live for the lifetime of every unique mesh.
+            s=s.replace('o->v=getmem(sizeof(vlist)*o->vnum);','o->v=NULL;')
+            s=s.replace('o->pv=getmem(sizeof(pvlist)*o->vnum);','o->pv=NULL;')
+            s=s.replace('o->n=getmem(sizeof(nlist)*o->nnum);','o->n=NULL;')
+            s=s.replace('if(!(o->flags&F_VISIBLE)) return;',"""if(!(o->flags&F_VISIBLE)) return;
+    {
+        static vlist vertices[500];
+        static pvlist projected[500];
+        static nlist normals[500];
+        if(o->vnum>500 || o->nnum>500) exit(3);
+        o->v=vertices; o->pv=projected; o->n=normals;
+    }""")
             # Select face order from actual transformed depth each frame.
             a=s.index('\ta=0; al=0x7fffffffL;');b=s.index('\n}',a)
             s=s[:a]+'''    {
@@ -67,6 +80,9 @@ def build_renderer(build,compiler,assembler,linker,watcom):
             z=0;
             for(j=0;j<(face[0]&255);j++) z+=o->v[face[j+3]].z;
             z/=(face[0]&255);
+            /* Ink is a coplanar decal on this key, so draw it after the
+               plastic; centroid depth alone can erase half a letter. */
+            if(!strncmp(o->name,"\\\"key-",5) && face[1]==96) z=-2000000000L;
             for(j=i;j>0 && depth[j-1]<z;j--) {
                 depth[j]=depth[j-1];sorted[j+2]=sorted[j+1];
             }

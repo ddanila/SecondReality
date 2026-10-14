@@ -18,7 +18,7 @@
       "subject": "Skim the first key rows"
     },
     {
-      "time": 6,
+      "time": 7,
       "eye": [
         -100,
         -425,
@@ -32,7 +32,7 @@
       "subject": "Across the keycaps"
     },
     {
-      "time": 12,
+      "time": 14,
       "eye": [
         80,
         -410,
@@ -46,7 +46,7 @@
       "subject": "Bank over the numeric keypad"
     },
     {
-      "time": 17,
+      "time": 19,
       "eye": [
         220,
         -335,
@@ -60,7 +60,7 @@
       "subject": "Leave keyboard toward drive fronts"
     },
     {
-      "time": 22,
+      "time": 24,
       "eye": [
         100,
         -275,
@@ -74,7 +74,7 @@
       "subject": "Track the right drive"
     },
     {
-      "time": 28,
+      "time": 30,
       "eye": [
         -115,
         -280,
@@ -88,21 +88,21 @@
       "subject": "Sweep past the left drive"
     },
     {
-      "time": 33,
+      "time": 32,
       "eye": [
         -310,
         -255,
         180
       ],
       "target": [
-        -200,
-        -130,
-        115
+        -145,
+        -145,
+        235
       ],
-      "subject": "Round the case corner"
+      "subject": "Quick bank around case toward monitor"
     },
     {
-      "time": 38,
+      "time": 36,
       "eye": [
         -240,
         -235,
@@ -116,7 +116,7 @@
       "subject": "Climb toward the CRT"
     },
     {
-      "time": 43,
+      "time": 42,
       "eye": [
         40,
         -270,
@@ -182,7 +182,7 @@
       ]
     },
     {
-      "time": 6,
+      "time": 7,
       "position": [
         -30,
         -386,
@@ -190,7 +190,7 @@
       ]
     },
     {
-      "time": 12,
+      "time": 14,
       "position": [
         153,
         -369,
@@ -198,7 +198,7 @@
       ]
     },
     {
-      "time": 17,
+      "time": 19,
       "position": [
         185,
         -277,
@@ -206,7 +206,7 @@
       ]
     },
     {
-      "time": 22,
+      "time": 24,
       "position": [
         30,
         -245,
@@ -214,7 +214,7 @@
       ]
     },
     {
-      "time": 28,
+      "time": 30,
       "position": [
         -190,
         -248,
@@ -222,7 +222,7 @@
       ]
     },
     {
-      "time": 33,
+      "time": 32,
       "position": [
         -278,
         -182,
@@ -230,7 +230,7 @@
       ]
     },
     {
-      "time": 38,
+      "time": 36,
       "position": [
         -163,
         -196,
@@ -238,7 +238,7 @@
       ]
     },
     {
-      "time": 43,
+      "time": 42,
       "position": [
         103,
         -215,

@@ -246,17 +246,31 @@ and animation stream, retaining the byte-exact drone mesh. robotron_lod.py
 contains deliberate exterior panel/frame and dished-keycap LODs in the
 canonical assembly coordinates. These replace destructive convex-hull
 simplification of perforated thin shells. The curved CRT perimeter meets a
-fitted surround and front housing lip. Fine vents, lettering and internal
-electronics are not reproduced in the realtime exterior LOD; the
+fitted surround and front housing lip. Drive fronts include loading slots,
+horizontal door levers, grip ridges, moulding seams and red LED lenses.
+Fine vents and internal electronics remain simplified in the realtime LOD;
 credit photographs use the detailed canonical model exports.
+
+Key legends come from browser/model.json (including shifted symbols and
+arrow keys); blank source legends stay blank. legends.py rasterizes them
+with Pillow's bundled font plus compact symbol bitmaps, merges pixel runs,
+and converts them to polygons on the dished tops. Each marked key shares one
+object with its ink, drawn after its plastic to prevent painter-order loss.
+Control keys use the blue-grey palette. Marks remain limited by 320-pixel VGA
+resolution, especially in the distance.
 
 The renderer is now host-linked from the original sources with Watcom's
 signed-char / cdecl ABI and JWasm. renderer.py rebuilds the player, loader,
 transforms/projection, data and DIS interface. The original checked-in AVID
 and ADRAW object modules supply the VGA rasterizer. Improvements include
 per-frame face-depth sorting, bounded offscreen projection (preventing
-16-bit coordinate wrap), correctly sized normal buffers, and removal of the
-city-specific drone ordering override. This remains a painter renderer,
+16-bit coordinate wrap), shared vertex/projection/normal scratch buffers,
+and removal of the city-specific drone ordering override. Robotron meshes
+omit the obsolete eight precomputed sort lists and use numbered slots above
+42; the native loader already supports these. The original drone stays in
+slot 28. These changes keep the extra legends inside conventional memory.
+Each drive's detail layers share an X/Z sorting anchor with its face, using
+their own front-to-back Y offsets so LEDs and slots stay visible obliquely. This remains a painter renderer,
 not a Z-buffer; arbitrary intersecting geometry still requires care.
 DOSBox-X uses a 486 with 120000 fixed cycles and 32 MB, headless only.
 
@@ -265,7 +279,10 @@ position tracks in canonical millimetres. Time-aware cubic Hermite curves
 keep movement continuous through waypoints. The scene runs for 1801 samples
 at 35 Hz, starting just above the keys, sweeping past both external drive
 fronts, rounding the case corner and climbing to the CRT before pulling
-back. The complete assembled exterior stays present throughout. The drone
+back. The keyboard pass is slower; the case-corner bank now takes two
+seconds, with the camera looking upward sooner. Total duration and the
+music-to-credits transition are unchanged. The complete assembled exterior
+stays present throughout. The drone
 aligns its original +X nose with the 3D path tangent, pitches during climbs,
 and banks according to turn rate. It changes position in the camera view,
 then remains near the machine as the camera pulls away. Visibility is baked
