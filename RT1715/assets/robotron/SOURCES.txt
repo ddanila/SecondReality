@@ -5,7 +5,9 @@ OpenSCAD source and browser exports by Danila, MIT. This builder reads those
 exports and checks their SHA-256 values against browser/model.json. It does
 not modify either sibling repository. Generated meshes are reduced derivatives;
 small holes, fittings and hidden surfaces are omitted for the DOS renderer.
-The generated build/robotron/report.json records each source mesh hash.
+Critical front parts are freshly exported from model.scad. The generated
+build/robotron/report.json records source mesh and SCAD hashes.
+Latest source checked: 3d-models commit b9be369, browser model version 35.
 
 Assembly/specification evidence:
   3d-models/models/robotron-1715m/README.md
@@ -43,4 +45,4 @@ Technical credit pages (assets/robotron/credits.json):
     drive board markings 15532064-00A and 15532092-00A, crossed fan retainers.
   dac/src/inspection.js: W1715/330 specimen label.
 No PSU rail voltages/power, CRT resolution, ROM identity or unverified drive
-capacity is inferred. Repeated photographs identify related technical pages.
+capacity is inferred. Each technical page has its own component view or crop.

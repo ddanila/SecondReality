@@ -37,7 +37,7 @@ def build_renderer(build,compiler,assembler,linker,watcom):
         path=ROOT/('VISU/C/U2E.C' if name=='U2E' else 'VISU/VISU.C')
         s=path.read_text(encoding='cp437')
         s=s.replace('"..\\cd.h"','"CD.H"').replace('"..\\c.h"','"C.H"').replace('"c.h"','"C.H"')
-        s='#include <stdlib.h>\n#include <dos.h>\n#include "DIS.H"\nvoid vid_setswitch(int,int);\nvoid vid_clear255(void);\n'+s
+        s='void rt_begin(void);\nvoid rt_flush(void);\n#include <stdlib.h>\n#include <dos.h>\n#include "DIS.H"\nvoid vid_setswitch(int,int);\nvoid vid_clear255(void);\n'+s
         if name=='U2E':
             # Pointer arithmetic is huge-pointer aware in Watcom; avoid the
             # original compiler-specific stack-slot manipulation.
@@ -50,6 +50,30 @@ def build_renderer(build,compiler,assembler,linker,watcom):
         p+=count;size-=count;
     }
 '''+s[end:]
+            s=s.replace('unsigned char huge *sp;', '''unsigned char huge *sp;
+static unsigned char huge *rt_buffer;
+static unsigned rt_loaded;
+static FILE *rt_anim;
+static void rt_refill(void) {
+    unsigned used=(unsigned)(sp-rt_buffer),left=rt_loaded-used;
+    if(left<4096U && !feof(rt_anim)) {
+        memmove(rt_buffer,sp,left);
+        rt_loaded=left+fread(rt_buffer+left,1,8192U-left,rt_anim);
+        if(ferror(rt_anim)) exit(3);
+        sp=rt_buffer;
+    }
+}''')
+            a=s.index('\tsprintf(tmpname,"%s.0AA",scene);')
+            b=s.index('\n\tresetscene();',a)
+            s=s[:a]+'''
+    sprintf(tmpname,"%s.0AB",scene);
+    rt_anim=fopen(tmpname,"rb");
+    if(!rt_anim) exit(3);
+    rt_buffer=(unsigned char huge *)getmem(8192L);
+    rt_loaded=fread(rt_buffer,1,8192U,rt_anim);
+    scenelist[0].data=(char *)rt_buffer;scl=1;
+'''+s[b:]
+            s=s.replace('// parse animation stream for 1 frame','rt_refill();\n\t\t// parse animation stream for 1 frame')
             # Read tracker position atomically; the VGA counter only interpolates
             # within a row. This also catches up after a slow rendering frame.
             s=s.replace('main(int argc,char *argv[])', r'''
@@ -72,15 +96,16 @@ static int rt_music_frame(void) {
 main(int argc,char *argv[])''')
             s=s.replace('coppercnt=0;\n\tsyncframe=0;', 'coppercnt=0;\n\tcopperdelay=1;\n\trt_trace=fopen("FLIGHT.LOG","wt");\n\tsyncframe=0;')
             s=s.replace('a=(syncframe-currframe);', r'''a=(rt_music_frame()-currframe);
-        if(rt_trace && ((rt_cue==0 && currframe>=3344) ||
-                       (rt_cue==1 && currframe>=3535))) {
+        if(rt_trace && ((rt_cue==0 && currframe>=3186) ||
+                       (rt_cue==1 && currframe>=3344))) {
             unsigned pos=rt_position();
             fprintf(rt_trace,"%s frame=%d order=%u row=%u\n",
-                    rt_cue==0 ? "SWOOSH" : "OVERVIEW",currframe,pos>>6,pos&63);
+                    rt_cue==0 ? "OVERVIEW" : "SWOOSH",currframe,pos>>6,pos&63);
             fflush(rt_trace); rt_cue++;
         }''')
             # Preserve the overview framebuffer across loading CRED.EXE.
             s=s.replace('dis_setcopper(2,NULL);', r'''dis_setcopper(2,NULL);
+    fclose(rt_anim);
     if(rt_trace) {
         unsigned pos=rt_position();
         fprintf(rt_trace,"END order=%u row=%u frame=%d\n",pos>>6,pos&63,currframe);
@@ -88,53 +113,25 @@ main(int argc,char *argv[])''')
     }
     return 0;''')
             s=s.replace('ip=readfile(tmpname);','ip=(int huge *)readfile(tmpname);')
+            s=s.replace('// Draw\n', '// Draw\n\t\trt_begin();\n')
+            s=s.replace('// **** Drawing completed **** //','rt_flush();\n\t\t// **** Drawing completed **** //')
             s=s.replace('for(y<175;y<200;y++)','for(y=175;y<200;y++)')
             s=s.replace('if(currframe>900*2 && currframe<1100*2)','if(city && currframe>900*2 && currframe<1100*2)')
         else:
             s=s[:s.index('#define determ')]
             s=s.replace('#define GINT *(((int *)d)++)','#define GINT (d+=2, *((int *)(d-2)))')
             s=s.replace('sizeof(vlist)*o->nnum','sizeof(nlist)*o->nnum')
-            # Objects are transformed and drawn sequentially. Their output
-            # buffers need not live for the lifetime of every unique mesh.
             s=s.replace('o->v=getmem(sizeof(vlist)*o->vnum);','o->v=NULL;')
             s=s.replace('o->pv=getmem(sizeof(pvlist)*o->vnum);','o->pv=NULL;')
             s=s.replace('o->n=getmem(sizeof(nlist)*o->nnum);','o->n=NULL;')
-            s=s.replace('if(!(o->flags&F_VISIBLE)) return;',"""if(!(o->flags&F_VISIBLE)) return;
-    {
-        static vlist vertices[500];
-        static pvlist projected[500];
-        static nlist normals[500];
-        if(o->vnum>500 || o->nnum>500) exit(3);
-        o->v=vertices; o->pv=projected; o->n=normals;
-    }""")
-            # Select face order from actual transformed depth each frame.
-            a=s.index('\ta=0; al=0x7fffffffL;');b=s.index('\n}',a)
-            s=s[:a]+'''    {
-        static int sorted[504];
-        static long depth[500];
-        int count=o->pl[0][0]-3,i,j,offset,*face;
-        long z;
-        if(count>500) exit(3);
-        sorted[0]=count+3;sorted[1]=o->pl[0][1];
-        for(i=0;i<count;i++) {
-            offset=o->pl[0][i+2];face=(int *)(o->pd+offset);
-            z=0;
-            for(j=0;j<(face[0]&255);j++) z+=o->v[face[j+3]].z;
-            z/=(face[0]&255);
-            /* Ink is a coplanar decal on this key, so draw it after the
-               plastic; centroid depth alone can erase half a letter. */
-            if(!strncmp(o->name,"\\\"key-",5) && face[1]==96) z=-2000000000L;
-            for(j=i;j>0 && depth[j-1]<z;j--) {
-                depth[j]=depth[j-1];sorted[j+2]=sorted[j+1];
-            }
-            depth[j]=z;sorted[j+2]=offset;
-        }
-        sorted[count+2]=0;
-        draw_polylist(sorted,o->pd,o->v,o->pv,o->n,o->flags);
-    }'''+s[b:]
+            a=s.index('void\tvis_drawobject(')
+            s=s[:a]+"void rt_queue(object *o);\nvoid vis_drawobject(object *o) { rt_queue(o); }\n"
         (out/(name+'.C')).write_text(s)
         subprocess.run([compiler,'-zq','-bt=dos','-ml','-3','-os','-s','-j','-ecc',f'-i={watcom / "h"}',f'-fo={name}.OBJ',name+'.C'],cwd=out,check=True)
-    objects=['U2E','VISU']
+    shutil.copyfile(ROOT/'RT1715/painter.c',out/'PAINTER.C')
+    subprocess.run([compiler,'-zq','-bt=dos','-ml','-3','-os','-s','-j','-ecc',
+                    f'-i={watcom / "h"}','-fo=PAINTER.OBJ','PAINTER.C'],cwd=out,check=True)
+    objects=['U2E','VISU','PAINTER']
     for name in ('AMAIN','ADATA','ACALC','AVID','ADRAW','DISC'):
         src=ROOT/('DIS' if name=='DISC' else 'VISU')/(name+'.ASM')
         if name in ('AVID','ADRAW'):

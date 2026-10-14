@@ -267,15 +267,18 @@ The renderer is now host-linked from the original sources with Watcom's
 signed-char / cdecl ABI and JWasm. renderer.py rebuilds the player, loader,
 transforms/projection, data and DIS interface. The original checked-in AVID
 and ADRAW object modules supply the VGA rasterizer. Improvements include
-per-frame face-depth sorting, bounded offscreen projection (preventing
+global face-depth sorting across objects, bounded offscreen projection (preventing
 16-bit coordinate wrap), shared vertex/projection/normal scratch buffers,
 and removal of the city-specific drone ordering override. Robotron meshes
 omit the obsolete eight precomputed sort lists and use numbered slots above
 42; the native loader already supports these. The original drone stays in
 slot 28. These changes keep the extra legends inside conventional memory.
-Each drive's detail layers share an X/Z sorting anchor with its face, using
-their own front-to-back Y offsets so LEDs and slots stay visible obliquely. This remains a painter renderer,
-not a Z-buffer; arbitrary intersecting geometry still requires care.
+painter.c queues up to 4000 visible faces and sorts them together, so case
+panels cannot cover nearby keyboard keys or drive fronts merely because their
+object centres sort differently. This remains a painter renderer; arbitrary
+intersecting polygons still require care. The animation uses an 8 KB streaming
+buffer with a host-enforced 4 KB maximum encoded frame, leaving conventional
+memory for the more detailed front geometry.
 DOSBox-X uses a 486 with 120000 fixed cycles and 32 MB, headless only.
 
 assets/robotron/flight.json contains independent camera eye/target and drone
@@ -283,7 +286,7 @@ position tracks in canonical millimetres. Time-aware cubic Hermite curves
 keep movement continuous through waypoints. A camera waypoint with stop=true
 has zero incoming/outgoing velocity, allowing a stationary shot without
 spline overshoot. The 2031 samples at 35 Hz cover about 58 seconds: keyboard,
-drive fronts, case corner, CRT, drone return, then the complete-machine reveal.
+drive fronts, case corner, CRT, complete-machine reveal, then drone return.
 The original +X drone nose follows its velocity; banking follows turn rate.
 The drone passes close to the camera on the swoosh and leaves the shot.
 
@@ -292,7 +295,9 @@ reads its XOR-packed S3M patterns, including speed changes and pattern breaks.
 The flyover starts at order 19. Its clock follows the actual DIS order/row,
 interpolating with VGA retraces between rows. The swoosh is order 25 rows 6/8
 (51.60/51.84 seconds after music start, 47.76/48.00 into the flight). The full
-Robotron reveal replaces the original Future Crew logo interval. The final
+Robotron is fully visible by flight second 45.5, before the swoosh. The camera
+holds still through second 49 and the drone continues straight behind it.
+The overview occupies the original Future Crew logo interval. The final
 frame survives loading CRED.EXE; CRED.SYN gates the first card at order 28,
 row 0 (62.40 seconds after music start). Order/row numbers here are decimal.
 FLIGHT.LOG and CRED.LOG record the runtime cue positions and are copied into
@@ -301,8 +306,10 @@ larger than 64 KB cannot wrap a far-pointer segment window.
 
 The 21 cards restore the original illustrated-credit count and cadence:
 102 entry retraces, 200 hold retraces, 59 exit retraces plus upload/loading.
-Their nominal animation duration is about 108.5 seconds. Seven component
-photographs accompany different technical pages; captions and ordering live
+Their nominal animation duration is about 108.5 seconds. Twenty-one distinct
+views illustrate the technical pages, including crops of the CPU, RAM banks,
+display memories, controllers and connectors. Captions, part selection, camera
+angles and focus_chips/focus_parts/focus_component crop settings live
 in assets/robotron/credits.json. Reference configuration details are labelled
 as such, rather than asserted as verified properties of this specimen.
 Images have black backgrounds and a thin white frame. Keyboard photographs
@@ -310,7 +317,13 @@ show only the populated narrow controller board; the display-board photograph
 shows the component side. Generated SCAD wrappers and PNGs are in
 build/robotron. Source provenance and licence notices remain in assets/robotron.
 
-build/robotron/report.json records source hashes, generated object slots,
+source_geometry.py freshly exports the fascia, drive fronts and case-base
+front from the canonical model.scad. It preserves openings and recesses while
+quantizing curves to 0.5 mm in X/Z and 0.1 mm in depth; hidden rear faces and
+subpixel power-lens texture are simplified. The monitor has a physical 2 mm
+horizontal housing joint. Cached source exports are invalidated by SCAD hashes.
+
+build/robotron/report.json records source mesh and SCAD hashes, generated object slots,
 instance count and flight settings. build/assets.json records installed DOS
 file hashes. The host now propagates a failed Robotron flyover as an error;
 run.py also preserves DOS stdout in capture/<timestamp>/demo.log.
@@ -326,10 +339,16 @@ Make a shareable, aspect-correct MP4 after a completed capture:
 This requires ffmpeg and writes build/robotron-preview.mp4 by default. It
 joins display-mode segments and uses the continuous captured WAV audio.
 
-Validated 2026-10-14 with capture/20261014-161229-159743: all 21 cards complete;
-swoosh at order 25 row 6, overview at 25:28, credits start at 28:0. Captured
-WAV duration is 174.944 seconds versus 174.973 for the original illustrated
-cut (capture/20261014-110531-710934). All 26 host tests pass. Headless normal
-exit, termination, one-second timeout and Ctrl-C cancellation were checked;
-none needs a quit confirmation. The runner now checks music cue logs as well
-as successful completion and non-silent audio.
+Validation includes a complete headless playback, all 21 credit cards,
+non-silent audio and runtime music-cue checks. The runner requires the overview
+at order 24 before the order-25 swoosh, and credits at order 28 row 0.
+Headless normal exit, termination, one-second timeout and Ctrl-C cancellation
+were checked; none needs a quit confirmation. Run results and cue logs are
+saved alongside each capture. The original illustrated cut's captured WAV
+is 174.973 seconds (capture/20261014-110531-710934).
+
+Latest validation: capture/20261014-170328-690943, 29 host tests passing,
+21 cards complete, 174.944 seconds captured audio and 175.51 seconds wall time.
+Overview 24:56 precedes swoosh 25:8; credits start at 28:0 and end at 43:29.
+Reviewed captured keyboard/drive occlusion, monitor joint and wide-before-pass
+sequence. All 21 rendered image hashes are distinct; current SCAD hashes match.

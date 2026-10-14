@@ -125,6 +125,7 @@ def encode_animation(poses, visibility, fov):
     on = [False]*len(previous)
     out=bytearray()
     for frame, enabled in zip(poses,visibility):
+        frame_start=len(out)
         for obj,state in enumerate(frame):
             delta=np.asarray(state,dtype=np.int64)-previous[obj]
             if any(d < -32768 or d > 32767 for d in delta[3:]):
@@ -147,6 +148,8 @@ def encode_animation(poses, visibility, fov):
                 out.extend(mask.to_bytes(length,'little'));out.extend(payload)
             previous[obj]=state;on[obj]=enabled[obj]
         out.extend((255,round(fov*256/360)))
+        if len(out)-frame_start>4096:
+            raise ValueError("Animation frame exceeds the DOS streaming buffer contract")
     out.extend((255,255))
     return bytes(out)
 
@@ -158,6 +161,22 @@ def prepare(root, build, command):
     for old in output.glob('U2E.*'): old.unlink()
     records={p['name']:p for p in data['parts']}
     sources={}; cached={}
+    # Regenerate the close-up exterior directly from the current SCAD sources.
+    # Cache is local to this checkout; the canonical repository stays read-only.
+    fresh=output/'source-front';fresh.mkdir(exist_ok=True)
+    source_files={str(p.relative_to(root)):hashlib.sha256(p.read_bytes()).hexdigest()
+                  for p in sorted(root.rglob('*.scad'))}
+    source_key=hashlib.sha256(json.dumps(source_files,sort_keys=True).encode()).hexdigest()
+    source_stamp=fresh/'sources.sha256'
+    fresh_names=['fascia','drives','drive-insets','drive-latch-0','drive-latch-1',
+                 'drive-led-0','drive-led-1','drive-direction-0','drive-direction-1',
+                 'reset','power','power-housing','case-base']
+    for name in fresh_names:
+        path=fresh/(name+'.stl')
+        if not path.exists() or not source_stamp.exists() or source_stamp.read_text()!=source_key:
+            openscad(command,root/'model.scad',path,
+                     ['--export-format','binstl','-D','part='+json.dumps(name)])
+    source_stamp.write_text(source_key)
 
     def load(record):
         path=browser/record['file']
@@ -165,16 +184,22 @@ def prepare(root, build, command):
         digest=hashlib.sha256(path.read_bytes()).hexdigest()
         if digest != record['sha256']: raise ValueError(f'Stale model export: {path}')
         sources[record['file']]=digest
+        if record.get('name') in fresh_names:
+            path=fresh/(record['name']+'.stl')
+            sources[str(path.relative_to(output))]=hashlib.sha256(path.read_bytes()).hexdigest()
         if record['file'] not in cached:
             cached[record['file']]=trimesh.load_mesh(path,process=True)
         return cached[record['file']].copy()
 
     objects=[(label,mesh,color,'exterior') for label,mesh,color in exterior()]
+    from source_geometry import front_parts
+    objects.extend(front_parts(load,records))
     key_legends={}
     instances=[{'mesh':label,'pose':(0,0,0,*IDENTITY),'kind':kind}
                for label,mesh,color,kind in objects]
     packages={m['id']:m for m in data['pcbComponents']['models']}
     chips={'motherboard':[], 'display-controller':[]}
+    chip_parts=[]
     for inst in data['pcbComponents']['instances']:
         if inst['board'] not in chips: continue
         model=packages[inst['model']]
@@ -185,6 +210,9 @@ def prepare(root, build, command):
         m=load(model['meshes']['body'])
         m.vertices=m.vertices @ rotation.T + position
         chips[inst['board']].append(m)
+        leads=load(model['meshes']['leads'])
+        leads.vertices=leads.vertices @ rotation.T + position
+        chip_parts.append((inst,m,leads))
     keymesh={m['name']:m for m in data['keyMeshes']}
     keys=[]
     a=math.radians(data['keyboard']['slope']);c,s=math.cos(a),math.sin(a)
@@ -206,23 +234,17 @@ def prepare(root, build, command):
         keys.append(m)
     if len(objects)>254: raise ValueError('Robotron exceeds available mesh slots')
     report={'source':str(root),'manifest_sha256':hashlib.sha256((browser/'model.json').read_bytes()).hexdigest(),
-            'source_meshes':sources,'objects':[],'key_legends':sum(bool(k['legend']) for k in data['keys'])}
+            'source_meshes':sources,
+            'source_files':source_files,'objects':[],'key_legends':sum(bool(k['legend']) for k in data['keys'])}
     slots=[n for n in range(1,256) if n != 28]
     for slot,(label,mesh,color,kind) in zip(slots,objects):
         triangles=polygons(mesh)
         print(f'Robotron {slot:02}: {label}: {len(triangles)} polygons',flush=True)
-        render_name=('_' if label in ('keyboard','deck') else '')+label
+        render_name=label
         ink=key_legends.get(label,[])
         colors=[COLORS[color][0]]*len(triangles)+[COLORS['black'][0]]*len(ink)
         triangles+=ink
         sort_center=None
-        if label.startswith('drive-'):
-            # Use one X/Z sorting anchor per drive, with each layer's own Y.
-            # A corner LED must sort in front of the drive skin even when its
-            # geometric centre is farther away in an oblique camera view.
-            index=int(label.rsplit('-',1)[1])
-            sort_center=(round((-158+154*index)*SCALE),
-                         round(mesh.bounds.mean(axis=0)[1]*SCALE),81*SCALE)
         binary=scene.encode('"'+render_name[:20]+'"',triangles,COLORS[color][0],16,
                             face_colors=colors,precomputed_orders=False,sort_center=sort_center)
         (output/f'U2E.{slot:03}').write_bytes(binary)
@@ -282,52 +304,11 @@ def prepare(root, build, command):
     report['flight']=flight; report['animation_bytes']=len(stream)
     report['instances']=len(instances)
     report['drone_sha256']=hashlib.sha256((HERE.parent/'MAIN/DATA/U2E.028').read_bytes()).hexdigest()
-    # Detailed credits use canonical exported parts, not the reduced DOS meshes.
-    photographs=[
-      ('processor', ['logic-boards-motherboard'], 'motherboard'),
-      ('drives', ['drive-frames', 'drive-mechanisms', 'drive-boards', 'drives'], None),
-      ('keyboard', ['keyboard-controller-board', 'keyboard-controller-chips', 'keyboard-controller-ceramic'], None),
-      ('display', ['logic-boards-display-controller'], 'display-controller'),
-      ('monitor', ['bezel', 'crt-rim', 'crt-glass', 'monitor-shell-lower', 'monitor-shell-upper', 'pedestal'], None),
-      ('psu', ['psu-chassis', 'psu-cover', 'fan-frame', 'fan-rotor', 'fan-retainers'], None),
-      ('robotron', ['case-base', 'case-lid', 'fascia', 'drives', 'monitor-shell-lower', 'monitor-shell-upper', 'bezel', 'crt-glass', 'pedestal', 'keyboard-shell', 'keyboard-deck'], 'keys'),
-    ]
-    credits=[]
-    for name,names,extras in photographs:
-        if name=='keyboard':
-            names=[n for n in records if n.startswith('keyboard-controller-')]
-        if extras in chips:
-            names=[n for n in records if n.startswith('logic-') and n.endswith('-'+extras)]
-        script=[]
-        for n in names:
-            p=records[n];load(p)  # Validate every source used by the photograph.
-            rgb=p.get('color','#999999')
-            script.append(f'color("{rgb}") import({json.dumps(str(browser/p["file"]))});')
-        if extras in chips:
-            for i,m in enumerate(chips[extras]):
-                path=output/f'credit-{extras}-{i}.stl';m.export(path)
-                script.append(f'color("#303333") import({json.dumps(str(path))});')
-        if extras=='keys':
-            path=output/'credit-keys.stl';trimesh.util.concatenate(keys).export(path)
-            script.append(f'color("#dddccb") import({json.dumps(str(path))});')
-        if name=='display': script=['rotate([180,0,0]) {',*script,'}']
-        scad=output/f'{name}.scad';scad.write_text('\n'.join(script)+'\n')
-        png=output/f'{name}.png'
-        openscad(command,scad,png,['--render','--colorscheme','Tomorrow Night','--imgsize','960,600','--viewall','--autocenter'])
-        # Replace only the known renderer background, then letterbox the image
-        # to the DOS card aspect ratio and draw a one-pixel VGA white frame.
-        im=Image.open(png).convert('RGB')
-        pixels=np.array(im); background=np.array([29,31,33])
-        pixels[np.all(pixels==background,axis=2)]=0
-        im=Image.fromarray(pixels)
-        im=ImageOps.contain(im,(948,588))
-        canvas=Image.new('RGB',(960,600),'black')
-        canvas.paste(im,((960-im.width)//2,(600-im.height)//2))
-        ImageOps.expand(canvas,border=6,fill='white').resize((960,600)).save(png)
-        credits.append({'name':name,'image':str(png)})
-    photographs={c['name']:c['image'] for c in credits}
-    cards=json.loads((HERE/'assets/robotron/credits.json').read_text())
-    credits=[dict(image=photographs[c['image']],lines=c['lines'],hold_frames=200) for c in cards]
+    # Each technical page selects its own geometry and camera, including
+    # component-sized crops of the detailed source boards.
+    from credit_views import render_cards
+    credits=render_cards(HERE/'assets/robotron/credits.json',output,records,
+                         load,chip_parts,keys,command)
     project=output/'credits.json'
     project.write_text(json.dumps({'version':1,'credits':credits},indent=2)+'\n')
     report['exterior_lod']='RT1715/robotron_lod.py (authored panels; source-dimension keycaps)'

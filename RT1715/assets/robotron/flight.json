@@ -130,51 +130,7 @@
       "subject": "Cross the glass and bank away"
     },
     {
-      "time": 45,
-      "eye": [
-        180,
-        -350,
-        430
-      ],
-      "target": [
-        40,
-        -150,
-        340
-      ],
-      "stop": true,
-      "subject": "Frame the monitor and wait for the returning drone"
-    },
-    {
-      "time": 47.9,
-      "eye": [
-        180,
-        -350,
-        430
-      ],
-      "target": [
-        40,
-        -150,
-        340
-      ],
-      "subject": "Drone returns on the hyperspace swoosh",
-      "stop": true
-    },
-    {
-      "time": 50.5,
-      "eye": [
-        600,
-        -1050,
-        660
-      ],
-      "target": [
-        0,
-        -100,
-        190
-      ],
-      "subject": "Pull back into the original logo interval"
-    },
-    {
-      "time": 54,
+      "time": 45.5,
       "eye": [
         760,
         -1300,
@@ -185,7 +141,37 @@
         -100,
         190
       ],
-      "subject": "Full Robotron overview"
+      "stop": true,
+      "subject": "Full computer visible before the returning drone"
+    },
+    {
+      "time": 49,
+      "eye": [
+        760,
+        -1300,
+        760
+      ],
+      "target": [
+        0,
+        -100,
+        190
+      ],
+      "stop": true,
+      "subject": "Hold the wide shot through the swoosh"
+    },
+    {
+      "time": 54,
+      "eye": [
+        780,
+        -1310,
+        765
+      ],
+      "target": [
+        0,
+        -100,
+        190
+      ],
+      "subject": "Hold full overview through the logo interval"
     },
     {
       "time": 58,
@@ -199,7 +185,7 @@
         -100,
         190
       ],
-      "subject": "Hold overview until the credits theme"
+      "subject": "Hold until the credits theme"
     }
   ],
   "drone": [
@@ -278,57 +264,73 @@
     {
       "time": 45,
       "position": [
-        80,
+        160,
         -160,
-        420
+        310
+      ]
+    },
+    {
+      "time": 46.5,
+      "position": [
+        437.23447,
+        -790.37021,
+        517.92585
       ]
     },
     {
       "time": 47,
       "position": [
-        135,
-        -280,
-        400
+        690.48127,
+        -1190.23358,
+        707.86095
+      ]
+    },
+    {
+      "time": 47.5,
+      "position": [
+        735.17188,
+        -1260.79771,
+        741.37891
       ]
     },
     {
       "time": 47.76,
       "position": [
-        169,
-        -335,
-        423
+        750.06875,
+        -1284.31908,
+        752.55156
       ]
     },
     {
       "time": 48,
       "position": [
-        190,
-        -366,
-        437
+        769.93125,
+        -1315.68092,
+        767.44844
       ]
     },
     {
       "time": 49,
       "position": [
-        -100,
-        -600,
-        450
+        859.31247,
+        -1456.80916,
+        834.48435
       ]
     },
     {
       "time": 52,
       "position": [
-        -900,
-        -2200,
-        850
+        1008.28118,
+        -1692.02291,
+        946.21088
       ]
     },
     {
       "time": 58,
       "position": [
-        -1800,
-        -3500,
-        1200
+        1256.56236,
+        -2084.04582,
+        1132.42177
       ]
     }
   ]

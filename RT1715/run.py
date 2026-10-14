@@ -28,7 +28,7 @@ def verify_sync(flight_log, credit_log):
             "credits_end": position(credit_log, "END")}
     if not ((25, 5) <= cues["swoosh"] <= (25, 8)):
         raise ValueError(f"Drone missed swoosh: {cues['swoosh']}")
-    if not ((25, 26) <= cues["overview"] <= (25, 32)):
+    if not ((24, 52) <= cues["overview"] <= (24, 58)):
         raise ValueError(f"Overview missed logo interval: {cues['overview']}")
     if not ((26, 55) <= cues["flight_end"] <= (28, 0)):
         raise ValueError(f"Flyover ended early/late: {cues['flight_end']}")

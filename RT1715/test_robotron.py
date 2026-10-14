@@ -103,3 +103,13 @@ class RobotronTests(unittest.TestCase):
             self.assertLess(distance.min(),.35)
         self.assertTrue(np.all(glass.face_normals[:,1]<0))
         self.assertTrue(np.all(rim.face_normals[:,1]<0))
+
+    def test_monitor_joint_is_an_actual_gap_in_the_outer_skin(self):
+        from robotron_lod import exterior
+        import numpy as np
+        parts={name:m for name,m,color in exterior()}
+        tri=parts['monitor'].triangles
+        sides=tri[np.all(tri[:,:,1]>-140,axis=1)]
+        bridges=(sides[:,:,2].min(axis=1)<320)&(sides[:,:,2].max(axis=1)>320)
+        self.assertFalse(np.any(bridges))
+        self.assertEqual(parts['monitor-joint'].bounds[:,2].tolist(),[319,321])

@@ -62,49 +62,33 @@ def exterior():
     # Outer monitor skins omit the front surface: the bezel and CRT fill it.
     v=[(-160,-142,180),(160,-142,180),(160,192,180),(-160,192,180),
        (-160,-142,460),(160,-142,460),(160,192,460),(-160,192,460)]
-    monitor=mesh(v,[(3,2,1,0),(1,2,6,5),(2,3,7,6),(3,0,4,7),(4,5,6,7)])
+    skins=[]
+    for bottom,top in [(180,319),(321,460)]:
+        w=[(x,y,bottom if z==180 else top) for x,y,z in v]
+        quads=[(1,2,6,5),(2,3,7,6),(3,0,4,7)]
+        if bottom==180: quads.append((3,2,1,0))
+        if top==460: quads.append((4,5,6,7))
+        skins.append(mesh(w,quads))
+    monitor=trimesh.util.concatenate(skins)
+    joint=mesh([(-159,-141,319),(159,-141,319),(159,191,319),(-159,191,319),
+                (-159,-141,321),(159,-141,321),(159,191,321),(-159,191,321)],
+               [(1,2,6,5),(2,3,7,6),(3,0,4,7)])
     # Close the housing front with a chamfer down to the bezel's outer edge.
     outer=[(-160,-142,180),(160,-142,180),(160,-142,460),(-160,-142,460)]
     inner=[(-151.5,-154,188),(151.5,-154,188),(151.5,-154,452),(-151.5,-154,452)]
     lip=mesh(outer+inner,[(i,(i+1)%4,(i+1)%4+4,i+4) for i in range(4)])
     monitor=trimesh.util.concatenate([monitor,lip])
     screen,bezel=crt_surround()
-    # Exact front-panel extents from the exported assembly. Two 146 mm drive
-    # faces are separated by an 8 mm fascia strip.
-    fascia=[box([-249,-209,36],[249,-201,60]),box([-249,-209,102],[249,-201,130]),
-            box([-249,-209,60],[-231,-201,102]),box([-85,-209,60],[-77,-201,102]),
-            box([69,-209,60],[249,-201,102])]
-    drive_objects=[]
-    for index,x in enumerate([-231,-77]):
-        drives=[];slots=[];latches=[];leds=[];trim=[];grips=[]
-        drives.append(box([x,-208.5,60],[x+146,-206,102]))
-        # A recessed loading mouth, its lower lip, and the latch pivot.
-        slots.append(box([x+8,-209.1,77],[x+137,-208.6,83]))
-        trim.append(box([x+8,-209.4,76],[x+137,-209.1,77]))
-        trim.append(box([x+109,-211,87],[x+120,-208.6,97]))
-        # The original model's horizontal door levers, not vertical bars.
-        latches.append(box([x+111.5,-219,85.5],[x+148,-211,98.5]))
-        for j in range(6):
-            gx=x+126+j*3
-            grips.append(box([gx,-219.3,88],[gx+.75,-219,96]))
-        slots.append(box([x+7,-209.1,93.5],[x+19,-208.6,98.5]))
-        leds.append(box([x+8,-209.4,94.25],[x+18,-209.1,97.75]))
-        # Thin lower moulding seams provide scale without filling the front.
-        for z in [64,67,70]:
-            slots.append(box([x+8,-209, z],[x+94,-208.6,z+.6]))
-        for label,parts,color in [('face',drives,'dark'),('slots',slots,'black'),
-                                  ('latch',latches,'dark'),('grips',grips,'black'),
-                                  ('led',leds,'red'),('trim',trim,'metal')]:
-            drive_objects.append((f'drive-{label}-{index}',trimesh.util.concatenate(parts),color))
     return [
-        ('base',box([-250,-200,0],[250,200,40]),'paint'),
-        ('lid',mesh([(-250,-200,40),(250,-200,40),(250,200,40),(-250,200,40),
+        ('base',mesh([(-250,-200,0),(250,-200,0),(250,200,0),(-250,200,0),
+                    (-250,-200,36),(250,-200,36),(250,200,36),(-250,200,36)],
+                   [(3,2,1,0),(1,2,6,5),(2,3,7,6),(3,0,4,7)]),'paint'),
+        ('lid',mesh([(-250,-200,37),(250,-200,37),(250,200,37),(-250,200,37),
                     (-250,-200,130),(250,-200,130),(250,200,130),(-250,200,130)],
                    [(1,2,6,5),(2,3,7,6),(3,0,4,7),(4,5,6,7)]),'paint'),
-        ('fascia',trimesh.util.concatenate(fascia),'paint'),
-        *drive_objects,
         ('stand',box([-85,-60,135],[85,110,180]),'paint'),
         ('monitor',monitor,'paint'),
+        ('monitor-joint',joint,'black'),
         ('bezel',bezel,'dark'),
         ('screen',screen,'pcb'),
         ('keyboard',slope_box(-247,247,-455,-255,1.2,19,36),'blue'),
