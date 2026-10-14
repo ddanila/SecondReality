@@ -6,6 +6,8 @@ static long rt_muldiv(long a,long b,long d) {
         return (a*b)/d;
     return (long)(((long long)a*b)/d);
 }
+#elif defined(RT_PM)
+#include "pm_fast.h"
 #else
 #include "fast.h"
 #endif

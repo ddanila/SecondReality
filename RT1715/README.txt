@@ -3,6 +3,8 @@ Second Reality: RT1715 extraction
 
 The Robotron build is documented under "Robotron 1715M fly-through" below.
 It replaces the city and goes directly to component/spec cards.
+Robotron now defaults to the 32-bit protected-mode renderer. See "Protected-mode
+renderer" below for the additional host compiler setup and benchmark commands.
 
 Original extraction sequence: 3D city flyover -> original end-logo transition -> credit cards ->
 music fade and return to DOS. The long ENDSCRL text scroller and all earlier
@@ -544,3 +546,109 @@ checks. The review contact sheet was inspected and preview/reel regenerated.
 All 22 source SCAD hashes match current files; built asset hashes, original
 drone and protected palette remain valid. Scene assets were unchanged across
 these runs; the baseline predates automatic scene-hash capture metadata.
+
+Protected-mode renderer
+-----------------------
+The Robotron flyover now uses Open Watcom's native host wcc386 compiler and an
+embedded DOS/32A extender. It is still a DOS executable. The resident DIS/STMIK
+music player and the credits remain in their existing real-mode implementations.
+Tested configuration: DOSBox-X dynamic core, 486 CPU, 32 MB RAM, headless SDL.
+
+The 128 KB depth buffer is contiguous extended memory. Rendering performs no
+EMS mappings or DPMI calls. Four planar RAM color buffers are uploaded with
+REP MOVSD once per frame, requiring only four VGA plane selections. The direct
+VGA alternative remains available for comparison. EMS remains enabled for the
+original music subsystem; removing it from the renderer does not remove that
+separate dependency.
+
+Vertices are projected once into full-width coordinates, clipping flags and
+reciprocal depth. Scanline row origins advance by addition; horizontal offsets
+still follow each edge. Flat and Gouraud pixel kernels retain depth testing and
+the saturating key-legend decal bias. Shared-normal lighting remains cached.
+Original mesh records explicitly retain their 16-bit fields under the 32-bit
+compiler. The full animation stream is loaded into RAM before playback.
+
+The original private EXE loader copied the parent's executable path into the
+child PSP environment, which prevented a DOS extender from reopening its own
+file. The Robotron flyover now uses DOS EXEC. A new DIS service 11 snapshots
+tracker order/row and a monotonic retrace counter atomically. The protected
+renderer queries it at frame boundaries through DPMI; no real-mode interrupt
+callback points into protected code. The scheduler holds when rendering is
+faster than the original 35 Hz animation and skips poses when it is slower.
+Music continues uninterrupted, and the overview remains on screen for credits.
+
+Host toolchain setup (no compiler runs inside DOS):
+
+    python3 RT1715/setup_pm.py
+    RT1715/build/host-python/bin/python RT1715/build.py --robotron
+
+setup_pm.py extracts the official Open Watcom 2026-10-14 snapshot locally into
+build/toolchain/watcom. Verified archive SHA-256:
+f1dfab2b4ab082fc5a235fc651c1643e23250e490d620057697a9e9aaef02d44
+The upstream Current-build URL changes; the script refuses another checksum.
+Use --archive /path/to/ow-snapshot.tar.xz to supply the tested archive, or set
+WATCOM32 to an existing native distribution containing wcc386, h/, lib386/ and
+binw/dos32a.exe. No sibling checkout is modified. Toolchain hashes are written
+to build/renderer32/toolchain.json. Upstream tools and DOS/32A licensing:
+https://github.com/open-watcom/open-watcom-v2
+https://github.com/open-watcom/open-watcom-v2/tree/master/contrib/extender/dos32a
+
+Rebuild only the renderer and launcher against existing prepared assets:
+
+    python3 RT1715/pm_renderer.py
+
+A full Robotron build defaults to --renderer protected. --renderer real retains
+the previous 16-bit renderer for regression comparisons. The original city and
+example-project builds retain their existing renderer behavior.
+
+Validation and comparison:
+
+    python3 RT1715/verify_pm.py
+    RT1715/build/host-python/bin/python -m unittest discover -s RT1715 -q
+    python3 RT1715/run.py --cycles 300000 --color ram
+    python3 RT1715/run.py --cycles 300000 --color direct --no-review
+    python3 RT1715/compare_runs.py BASE_CAPTURE CANDIDATE_CAPTURE
+
+--dos-dir selects an isolated complete runtime directory for archived baselines.
+run.py normalizes DOSBox's child-process capture filenames into chronological
+segments before exporting previews. Runtime metadata records the renderer mode,
+color backend, source-scene and executable hashes, CPU setting, music cues and
+frame/vertex/triangle/span/clipping counters. Counters are not refresh FPS.
+
+The protected-mode native suite checks 2000 signed multiply/divides, 2000 wide
+dot products, 800 spans, 128 matrix/normal cases, full-width projection, 258
+uploads with guards and byte tails, and 160 complete clipped raster images
+against the scalar host backend. The 38 host tests and the legacy native kernel
+suite also pass. The native raster comparison covers flat/smooth interpolation,
+decals, viewport clipping and unchanged pixels outside the letterbox.
+
+Protected-mode validation (fixed 300000 cycles, unchanged scene assets):
+
+  Renderer                  First 20s updates   First 50s updates
+  Legacy, run 1                       188                 949
+  Legacy, repeat                      188                 949
+  Protected RAM, run 1                353                1355
+  Protected RAM, repeat               353                1355
+  Protected direct VGA                343                1345
+
+The repeated RAM result is +87.77% / +42.78% versus legacy. Direct VGA is
+slightly slower on this DOSBox-X configuration, so RAM is the default. These
+are visible RGB frame-change counts, not monitor refresh FPS or a guarantee
+of the same speedup on physical hardware. No simultaneous full-demo benchmarks
+were run. The completed protected flight renders 1806 frames; counters confirm
+zero renderer EMS mappings. Its data segment was observed above 1 MB.
+
+Final capture: capture/20261014-193700-188192. All 21 credits complete with a
+normal DOS exit and no confirmation dialog. Wall time 175.18 seconds, captured
+audio 174.930 seconds. Overview 24:54, swoosh 25:6, flight end 26:57, credits
+28:0–43:29. The first RAM and direct-VGA captures pass the same cue checks.
+The final preview, review reel and contact sheet were regenerated. Keyboard,
+drive fronts, monitor joint, full reveal, diagonal flyby and technical credit
+images were inspected. Original drone, protected palette and MUSIC0 are intact.
+
+Detailed measurements and toolchain hashes are recorded in
+benchmarks/protected-mode.json. Scene geometry was held fixed throughout these
+renderer comparisons. The sibling 3d-models checkout received concurrent edits
+to the interior/PCB sources during validation; those in-progress edits were not
+imported into this renderer upgrade. A later full --robotron build will prepare
+assets from the then-current source models.

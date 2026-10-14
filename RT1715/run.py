@@ -41,9 +41,11 @@ def verify_sync(flight_log, credit_log):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--dos-dir",type=Path,default=HERE/"build/dos",help="Isolated runtime directory for comparisons")
     parser.add_argument("--dosbox", default="dosbox-x")
     parser.add_argument("--timeout", type=int, default=300, help="wall-clock limit in seconds")
     parser.add_argument("--no-review",action="store_true",help="Skip automatic Robotron preview/review export")
+    parser.add_argument("--color", choices=("ram","direct"), default="ram", help="Protected-mode color backend")
     parser.add_argument("--cycles", type=int, help="Fixed CPU cycles for reproducible comparisons")
     args = parser.parse_args()
     if args.cycles is not None and args.cycles <= 0:
@@ -51,11 +53,12 @@ def main():
     emulator = shutil.which(args.dosbox)
     if not emulator:
         raise SystemExit("DOSBox-X not found; pass --dosbox /path/to/dosbox-x")
-    dos = HERE / "build/dos"
+    dos = args.dos_dir.resolve()
     if not (dos / "RT1715.EXE").is_file():
         raise SystemExit("Build first: python3 RT1715/build.py")
     capture = HERE / "capture" / datetime.now().strftime("%Y%m%d-%H%M%S-%f")
     capture.mkdir(parents=True)
+    (dos/"PM.CFG").write_text(args.color+"\n")
     result = dos / "RESULT.TXT"
     result.unlink(missing_ok=True)
     (dos / "CPU.TXT").unlink(missing_ok=True)
@@ -79,7 +82,7 @@ exit
     env = dict(os.environ, SDL_VIDEODRIVER="dummy", SDL_AUDIODRIVER="dummy")
     command = [emulator, "-conf", "dosbox-x.conf", "-noautoexec", "-fastlaunch",
                "-set", f"dosbox captures={capture}",
-               "-c", "mount c build/dos", "-c", "c:", "-c", "runtest.bat"]
+               "-c", f'mount c "{dos}"', "-c", "c:", "-c", "runtest.bat"]
     if args.cycles is not None:
         command[1:1] = ["-set", f"cpu cycles=fixed {args.cycles}"]
     print(f"Headless DOSBox-X playback; captures and log: {capture}", flush=True)
@@ -124,6 +127,11 @@ exit
     for asset in sorted(dos.glob("U2E.*")):
         if asset.suffix.upper() != ".EXE":
             scene_hash.update(asset.name.encode()+b"\0"+asset.read_bytes())
+    # DOS EXEC changes DOSBox's capture prefix to the child program name.
+    # Normalize completed segments chronologically for preview/review tools.
+    segments=sorted(capture.glob("*.avi"),key=lambda p:p.stat().st_mtime_ns)
+    for i,path in enumerate(segments): path.rename(capture/f"segment-{i}.tmp")
+    for i in range(len(segments)): (capture/f"segment-{i}.tmp").rename(capture/f"rt1715_{i:03}.avi")
     videos = sorted(capture.glob("*.avi"))
     waves = sorted(capture.glob("*.wav"))
     if not videos or not waves:
@@ -143,9 +151,16 @@ exit
     summary = {"dos_exit": status, "headless": True,
                "wall_seconds": round(time.monotonic() - start, 2),
                "cpu_cycles": actual_cycles,
+               "color_backend": args.color,
                "renderer_sha256": hashlib.sha256((dos / "U2E.EXE").read_bytes()).hexdigest(),
                "scene_sha256": scene_hash.hexdigest(),
                "video_files": [p.name for p in videos], "audio": audio}
+    flight_text=(capture/"flight.log").read_text() if (capture/"flight.log").exists() else ""
+    summary["renderer_mode"]="protected" if flight_text.startswith("PROTECTED ") else "real"
+    if summary["renderer_mode"]=="real": summary["color_backend"]="legacy-vga"
+    counters=re.search(r"^COUNTERS (.+)$",flight_text,re.M)
+    if counters:
+        summary["render_counters"]={key:int(value) for key,value in re.findall(r"(\w+)=(\d+)",counters[1])}
     if sync_cues is not None:
         summary["music_cues"] = sync_cues
     (capture / "result.json").write_text(json.dumps(summary, indent=2) + "\n")

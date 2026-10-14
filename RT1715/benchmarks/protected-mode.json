@@ -1,0 +1,297 @@
+{
+  "platform": "Headless DOSBox-X, dynamic core, 486, 32 MB RAM, fixed 300000 cycles",
+  "metric": "Adjacent decoded RGB frame changes in first 20 and 50 seconds of graphics capture; not refresh FPS",
+  "toolchain": {
+    "armo64/wcc386": "316e8bde0d918fc908c134aa77a8d03d72f2ef684658b243adddca1c099fd7c0",
+    "binw/dos32a.exe": "d189be603e72f79d3c2f68114eb34d0cab8bd9744ef0f327497d57bcd8e16817",
+    "lib386/dos/clib3r.lib": "548f8dad217c2bf3509cd4e336440f67b3ad30cfced8baae96e3066fbcb9d9e6"
+  },
+  "runs": {
+    "legacy_1": {
+      "capture": "20261014-190652-233308",
+      "visible_updates_20s_50s": [
+        188,
+        949
+      ],
+      "validation": {
+        "dos_exit": "PASS",
+        "headless": true,
+        "wall_seconds": 176.68,
+        "cpu_cycles": "fixed 300000",
+        "renderer_sha256": "320224bd8f54139be5886e54c94f7549e380c9dc1bc5b65c55c25b0cb9417496",
+        "scene_sha256": "666de504d040afd2612d72346437f359665b0fd2b9663eda8fb724ca56002899",
+        "video_files": [
+          "rt1715_000.avi",
+          "rt1715_001.avi",
+          "rt1715_002.avi"
+        ],
+        "audio": [
+          {
+            "file": "rt1715_000.wav",
+            "seconds": 174.93002083333334,
+            "nonzero_samples": true
+          }
+        ],
+        "music_cues": {
+          "swoosh": [
+            25,
+            6
+          ],
+          "overview": [
+            24,
+            54
+          ],
+          "flight_end": [
+            26,
+            57
+          ],
+          "credits_start": [
+            28,
+            0
+          ],
+          "credits_end": [
+            43,
+            29
+          ]
+        }
+      }
+    },
+    "legacy_2": {
+      "capture": "20261014-193357-881224",
+      "visible_updates_20s_50s": [
+        188,
+        949
+      ],
+      "validation": {
+        "dos_exit": "PASS",
+        "headless": true,
+        "wall_seconds": 177.26,
+        "cpu_cycles": "fixed 300000",
+        "color_backend": "legacy-vga",
+        "renderer_sha256": "320224bd8f54139be5886e54c94f7549e380c9dc1bc5b65c55c25b0cb9417496",
+        "scene_sha256": "666de504d040afd2612d72346437f359665b0fd2b9663eda8fb724ca56002899",
+        "video_files": [
+          "rt1715_000.avi",
+          "rt1715_001.avi",
+          "rt1715_002.avi"
+        ],
+        "audio": [
+          {
+            "file": "rt1715_000.wav",
+            "seconds": 174.93,
+            "nonzero_samples": true
+          }
+        ],
+        "renderer_mode": "real",
+        "music_cues": {
+          "swoosh": [
+            25,
+            6
+          ],
+          "overview": [
+            24,
+            54
+          ],
+          "flight_end": [
+            26,
+            57
+          ],
+          "credits_start": [
+            28,
+            0
+          ],
+          "credits_end": [
+            43,
+            29
+          ]
+        }
+      }
+    },
+    "protected_ram_1": {
+      "capture": "20261014-192749-483549",
+      "visible_updates_20s_50s": [
+        353,
+        1355
+      ],
+      "validation": {
+        "dos_exit": "PASS",
+        "headless": true,
+        "wall_seconds": 175.51,
+        "cpu_cycles": "fixed 300000",
+        "color_backend": "ram",
+        "renderer_sha256": "4de0e8eb93495a89c786f10ecdbebce2180ef9b04f6ae5a6070b841c7e71a93c",
+        "scene_sha256": "666de504d040afd2612d72346437f359665b0fd2b9663eda8fb724ca56002899",
+        "video_files": [
+          "rt1715_000.avi",
+          "rt1715_001.avi",
+          "rt1715_002.avi"
+        ],
+        "audio": [
+          {
+            "file": "rt1715_000.wav",
+            "seconds": 174.93002083333334,
+            "nonzero_samples": true
+          }
+        ],
+        "music_cues": {
+          "swoosh": [
+            25,
+            6
+          ],
+          "overview": [
+            24,
+            54
+          ],
+          "flight_end": [
+            26,
+            57
+          ],
+          "credits_start": [
+            28,
+            0
+          ],
+          "credits_end": [
+            43,
+            29
+          ]
+        }
+      }
+    },
+    "protected_ram_2": {
+      "capture": "20261014-193700-188192",
+      "visible_updates_20s_50s": [
+        353,
+        1355
+      ],
+      "validation": {
+        "dos_exit": "PASS",
+        "headless": true,
+        "wall_seconds": 175.18,
+        "cpu_cycles": "fixed 300000",
+        "color_backend": "ram",
+        "renderer_sha256": "182f6cd5d0dcba3dc4f4fc79d20c4b75222af3856a074faa35a09ca4c11ea9ac",
+        "scene_sha256": "666de504d040afd2612d72346437f359665b0fd2b9663eda8fb724ca56002899",
+        "video_files": [
+          "rt1715_000.avi",
+          "rt1715_001.avi",
+          "rt1715_002.avi"
+        ],
+        "audio": [
+          {
+            "file": "rt1715_000.wav",
+            "seconds": 174.93,
+            "nonzero_samples": true
+          }
+        ],
+        "renderer_mode": "protected",
+        "render_counters": {
+          "frames": 1806,
+          "vertices": 7547778,
+          "triangles": 2243541,
+          "spans": 36140499,
+          "clipped": 161146,
+          "ems_maps": 0
+        },
+        "music_cues": {
+          "swoosh": [
+            25,
+            6
+          ],
+          "overview": [
+            24,
+            54
+          ],
+          "flight_end": [
+            26,
+            57
+          ],
+          "credits_start": [
+            28,
+            0
+          ],
+          "credits_end": [
+            43,
+            29
+          ]
+        }
+      }
+    },
+    "protected_direct": {
+      "capture": "20261014-193050-823516",
+      "visible_updates_20s_50s": [
+        343,
+        1345
+      ],
+      "validation": {
+        "dos_exit": "PASS",
+        "headless": true,
+        "wall_seconds": 175.42,
+        "cpu_cycles": "fixed 300000",
+        "color_backend": "direct",
+        "renderer_sha256": "aeaa1f5564445870e79d1d0e5138f3fc1d7c964c7053249479fb0a3a315b3960",
+        "scene_sha256": "666de504d040afd2612d72346437f359665b0fd2b9663eda8fb724ca56002899",
+        "video_files": [
+          "rt1715_000.avi",
+          "rt1715_001.avi",
+          "rt1715_002.avi"
+        ],
+        "audio": [
+          {
+            "file": "rt1715_000.wav",
+            "seconds": 174.93002083333334,
+            "nonzero_samples": true
+          }
+        ],
+        "music_cues": {
+          "swoosh": [
+            25,
+            6
+          ],
+          "overview": [
+            24,
+            54
+          ],
+          "flight_end": [
+            26,
+            57
+          ],
+          "credits_start": [
+            28,
+            0
+          ],
+          "credits_end": [
+            43,
+            29
+          ]
+        }
+      }
+    }
+  },
+  "comparison": {
+    "baseline": "RT1715/capture/20261014-193357-881224",
+    "candidate": "RT1715/capture/20261014-193700-188192",
+    "cpu_cycles": "fixed 300000",
+    "scene_hash_match": true,
+    "note": "RGB frame-change counts, not refresh rates; null scene match means older metadata lacks hashes.",
+    "windows": {
+      "20": {
+        "before": 188,
+        "after": 353,
+        "change_percent": 87.77
+      },
+      "50": {
+        "before": 949,
+        "after": 1355,
+        "change_percent": 42.78
+      }
+    }
+  },
+  "native_tests": {
+    "passed": true,
+    "headless": true,
+    "cycles": "fixed 300000",
+    "log": "PASS 2000 signed 64-bit intermediate multiply/divides\nPASS 2000 wide dot products, negative shifts and overflow truncation\nPASS 800 spans: flat/smooth, decals, empty spans, wrap and guards\nPASS transforms, 128 matrix/normal cases and single-pass full-width projection\nPASS 258 uploads, alignment, byte tails and guards\nPASS 160 complete raster images against portable host reference\nPASS protected-mode kernels\n"
+  },
+  "host_tests": 38,
+  "asset_note": "Unchanged prepared scene snapshot. Concurrent sibling model edits were not imported."
+}

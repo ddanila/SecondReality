@@ -1,0 +1,98 @@
+/* Native 32-bit checks, run under the same extender as the flyover. */
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include "pm.h"
+#include "pm_vectors.h"
+#include "pm_raster_cases.h"
+unsigned rt_depth_at(int,int);
+unsigned rt_color_at(int,int);
+static unsigned short depths[320],expected_depth[320];
+static unsigned char colors[100],expected_color[100];
+static unsigned seed=1715;
+static unsigned random32(void) { seed=seed*1664525UL+1013904223UL;return seed; }
+static long dot(const long *m,const long *v) {
+    return (long)(((long long)m[0]*v[0]+(long long)m[1]*v[1]+(long long)m[2]*v[2])>>14);
+}
+static void check(int ok,const char *what) { if(!ok) { printf("FAIL %s\n",what);exit(1); } }
+int main(void) {
+    unsigned i,j,n,start,plane,bias,depth;long z,dz,c,dc,q,shade,m[3],v[3];
+    rmatrix matrix;vlist input[20],output[20];pvlist projected[20];rt_vertex screen[20];
+    unsigned char src[263],dest[263];
+    for(i=0;i<sizeof(vectors)/sizeof(vectors[0]);i++)
+        check(rt_muldiv(vectors[i][0],vectors[i][1],vectors[i][2])==vectors[i][3],"muldiv");
+    puts("PASS 2000 signed 64-bit intermediate multiply/divides");
+    for(i=0;i<2000;i++) {
+        for(j=0;j<3;j++) { m[j]=(short)random32();v[j]=(long)random32(); }
+        check(rt_dot14(m,v)==dot(m,v),"dot product");
+    }
+    puts("PASS 2000 wide dot products, negative shifts and overflow truncation");
+    for(i=0;i<800;i++) {
+        for(j=0;j<320;j++) depths[j]=expected_depth[j]=(unsigned short)random32();
+        memset(colors,0x5a,sizeof(colors));memcpy(expected_color,colors,sizeof(colors));
+        plane=random32()&3;start=(random32()%8)*4+plane;n=random32()%64;
+        z=(long)(random32()%65536)*64;dz=(long)(random32()%513)-256;
+        c=(long)(random32()%200+20)*64;dc=i%4?(long)(random32()%31)-15:0;bias=i&1;
+        q=z;shade=c;
+        for(j=0;j<n;j++,q+=dz,shade+=dc) {
+            depth=(unsigned short)(q>>6);if(bias && depth<65535) depth++;
+            if(depth>=expected_depth[start+j*4]) {
+                expected_depth[start+j*4]=(unsigned short)depth;expected_color[3+j]=(unsigned char)(shade>>6);
+            }
+        }
+        rt_span32(depths+start,colors+3,n,z,dz,c,dc,bias);
+        check(!memcmp(depths,expected_depth,sizeof(depths)),"span depth/guards");
+        check(!memcmp(colors,expected_color,sizeof(colors)),"span color/guards");
+    }
+    puts("PASS 800 spans: flat/smooth, decals, empty spans, wrap and guards");
+    memset(&matrix,0,sizeof(matrix));matrix.m[0]=matrix.m[4]=matrix.m[8]=16384;
+    matrix.x=123;matrix.y=-456;matrix.z=789;
+    for(i=0;i<20;i++) { input[i].x=(long)random32()/16;input[i].y=(long)random32()/16;input[i].z=(long)random32()/16;input[i].normal=i; }
+    calc_rotate(20,output,input,&matrix);
+    for(i=0;i<20;i++) check(output[i].x==input[i].x+123 && output[i].y==input[i].y-456 && output[i].z==input[i].z+789 && output[i].normal==i,"vertex transform");
+    for(i=0;i<20;i++) { input[i].x=(long)(random32()%1000000)-500000;input[i].y=(long)(random32()%1000000)-500000;input[i].z=400+i*100; }
+    rt_project(20,projected,screen,input);
+    for(i=0;i<20;i++) {
+        long zz=input[i].z<512?512:input[i].z;
+        check(screen[i].x==(long)((long long)input[i].x*projmulx/zz)+projaddx,"projection x");
+        check(screen[i].y==(long)((long long)input[i].y*projmuly/zz)+projaddy,"projection y");
+        check((projected[i].vf&16)==(input[i].z<512?16:0),"near flag");
+        if(input[i].z>=512) check(screen[i].z==33553920L/zz,"reciprocal depth");
+    }
+    for(i=0;i<128;i++) {
+        rmatrix a,b,old;int row,col;unsigned long sum;
+        nlist normal,transformed;long xyz[3];
+        for(j=0;j<9;j++) { a.m[j]=(short)random32()/2;b.m[j]=(short)random32()/2; }
+        a.x=(long)random32()/64;a.y=(long)random32()/64;a.z=(long)random32()/64;
+        b.x=321;b.y=-654;b.z=987;old=a;calc_applyrmatrix(&a,&b);
+        for(row=0;row<3;row++) for(col=0;col<3;col++) {
+            sum=(unsigned long)b.m[row*3]*old.m[col]+(unsigned long)b.m[row*3+1]*old.m[col+3]+
+                (unsigned long)b.m[row*3+2]*old.m[col+6];
+            check(a.m[row*3+col]==((long)sum>>14),"matrix composition");
+        }
+        check(a.x==dot(b.m,&old.x)+b.x && a.y==dot(b.m+3,&old.x)+b.y && a.z==dot(b.m+6,&old.x)+b.z,"matrix translation");
+        xyz[0]=normal.x=(short)random32();xyz[1]=normal.y=(short)random32();xyz[2]=normal.z=(short)random32();
+        calc_nrotate(1,&transformed,&normal,&b);
+        check(transformed.x==(short)dot(b.m,xyz) && transformed.y==(short)dot(b.m+3,xyz) && transformed.z==(short)dot(b.m+6,xyz),"normal rotation");
+    }
+    puts("PASS transforms, 128 matrix/normal cases and single-pass full-width projection");
+    for(i=0;i<263;i++) src[i]=(unsigned char)random32();
+    for(n=0;n<=257;n++) {
+        memset(dest,0x5a,sizeof(dest));rt_upload32(dest+3,src+1,n);
+        check(!memcmp(dest+3,src+1,n) && dest[2]==0x5a && dest[3+n]==0x5a,"upload tails/guards");
+    }
+    puts("PASS 258 uploads, alignment, byte tails and guards");
+    rt_depth_window(0,320,25,175);
+    for(i=0;i<sizeof(raster_cases)/sizeof(raster_cases[0]);i++) {
+        unsigned long hash=2166136261UL;int x,y;
+        rt_depth_begin();rt_color_begin();
+        rt_raster(raster_cases[i].v,3,raster_cases[i].decal);
+        for(y=0;y<200;y++) for(x=0;x<320;x++) {
+            hash=(hash^rt_depth_at(x,y))*16777619UL;
+            hash=(hash^rt_color_at(x,y))*16777619UL;
+        }
+        check(hash==raster_cases[i].hash,"complete clipped raster/row setup");
+    }
+    puts("PASS 160 complete raster images against portable host reference");
+    puts("PASS protected-mode kernels");return 0;
+}

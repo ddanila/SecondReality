@@ -1,7 +1,15 @@
 ; MUSIC0 is already playing at order 18. Keep it running across all parts.
         mov     cs:notextmode,1
         mov     si,OFFSET exe19       ; VISU/C/U2E.C: city flyover
+IFDEF RT_ROBOTRON
+        call    rt_exec32
+        jnc     @@rt_exec_ok
+        mov     cs:errorcode,8
+        jmp     @@rt_sequence_done
+@@rt_exec_ok:
+ELSE
         call    partexecute
+ENDIF
 IFDEF RT_ROBOTRON
         mov     ah,4dh
         int     21h

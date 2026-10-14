@@ -40,6 +40,32 @@ def masm_source(custom=False, robotron=False):
     """Translate the few TASM dialect differences without changing algorithms."""
     source = expand(ROOT / "MAIN/U2.ASM")
     source = re.sub(r"^\s*LOCALS\s*$", "", source, flags=re.M | re.I)
+    if robotron:
+        source=source.replace('partexecute PROC NEAR',
+            expand(HERE/'PMEXEC.INC')+'\npartexecute PROC NEAR')
+        # Service 11: an atomic music-position/retrace snapshot for a DPMI
+        # client. No real-mode callback ever points into protected-mode code.
+        source=source.replace('service9 LABEL WORD',
+            '        dw OFFSET rt_snapshot_11\nservice9 LABEL WORD')
+        source=source.replace('dis_oldint dd   ?',"""rt_pm_ticks dw 0
+rt_snapshot_11 PROC NEAR
+        pushf
+        cli
+        push es
+        mov es,cs:stmikseg
+        mov ax,es:_np_ord
+        shl ax,6
+        or ax,es:_np_row
+        mov dx,cs:rt_pm_ticks
+        mov cx,1715h
+        pop es
+        popf
+        ret
+rt_snapshot_11 ENDP
+
+dis_oldint dd   ?""")
+        source=source.replace('inc\tcs:copperframecount',
+                              'inc cs:rt_pm_ticks\n\tinc\tcs:copperframecount')
     source = source.replace("@@fjmp:\tdb", "@@fjmp LABEL BYTE\n\tdb")
     # Stray non-ASCII characters before STI in the released COPPER.ASM.
     source = source.replace("åå\tsti", "\tsti")
@@ -88,6 +114,10 @@ def main():
     parser.add_argument("--wcc", default=os.environ.get("WCC", "wcc"))
     parser.add_argument("--watcom-root", type=Path, default=os.environ.get("WATCOM"),
                         help="Watcom installation with h/ and lib286/dos/")
+    parser.add_argument("--renderer",choices=("protected","real"),default="protected",
+                        help="Robotron renderer: flat 32-bit DOS or legacy real mode")
+    parser.add_argument("--watcom32-root",type=Path,default=os.environ.get("WATCOM32"),
+                        help="Native Open Watcom distribution with wcc386 and lib386")
     parser.add_argument("--robotron", type=Path, nargs="?",
                         const=ROOT.parent/"3d-models/models/robotron-1715m",
                         help="Build Robotron fly-through from canonical model exports")
@@ -130,10 +160,14 @@ def main():
         from renderer import build_renderer
         compiler=tool(args.wcc)
         watcom=(args.watcom_root or Path(compiler).parents[2]).resolve()
-        build_renderer(build,compiler,assembler,linker,watcom)
+        if args.renderer=="protected":
+            from pm_renderer import build_renderer as build_protected
+            build_protected(build,assembler,linker,args.watcom32_root)
+        else:
+            build_renderer(build,compiler,assembler,linker,watcom)
         for entry in manifest:
             if entry['file']=='U2E.EXE':
-                entry['source']='Host-built VISU renderer (RT1715/renderer.py)'
+                entry['source']=('Host-built 32-bit renderer (RT1715/pm_renderer.py)' if args.renderer=='protected' else 'Host-built VISU renderer (RT1715/renderer.py)')
                 entry['sha256']=hashlib.sha256((dos/'U2E.EXE').read_bytes()).hexdigest()
 
     # STARTMUS loads module 0 through a little-endian offset in REALITY.FC.
