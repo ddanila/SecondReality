@@ -227,7 +227,7 @@ complete motion tracks and the new camera path are settled.
 
 Robotron 1715M fly-through
 --------------------------
-Use Python 3.11 or newer for the optional mesh simplifier. From the repo root:
+Use Python 3.11 or newer for the optional Robotron asset tools. From the repo root:
 
     python3 -m venv RT1715/build/host-python
     RT1715/build/host-python/bin/pip install -r RT1715/requirements-robotron.txt
@@ -242,28 +242,38 @@ conversion, image rendering, assembly and compilation all run on the host.
 Only playback runs in headless DOSBox-X.
 
 This mode replaces the city geometry, scene-instance mapping, palette ramps
-and animation stream. It retains the original DOS renderer and byte-exact
-drone mesh. Shared chip-package and keycap meshes keep conventional-memory
-usage down. Polygon normals are shared and adjacent coplanar triangles are
-joined when their union is a convex quad. Small holes and fittings may be
-removed by the mesh reduction; this is a DOS adaptation of the source model.
+and animation stream, retaining the byte-exact drone mesh. robotron_lod.py
+contains deliberate exterior panel/frame and dished-keycap LODs in the
+canonical assembly coordinates. These replace destructive convex-hull
+simplification of perforated thin shells. Fine vents, lettering, bevels and
+internal electronics are not reproduced in the realtime exterior LOD; the
+credit photographs use the detailed canonical model exports.
 
-assets/robotron/flight.json contains the camera time/eye/target keyframes in
-canonical millimetres. The scene runs for 1801 samples at 35 Hz. Position and
-look-at values use smoothstep interpolation between keys. The escort's new
-trajectory follows ahead of the camera. Unlike the original city stream,
-complete transforms are retained while objects are hidden. Conservative
-sphere/frustum visibility is rebuilt on the host for every camera sample.
-Covers and the display board are staged as a cutaway, then the covers close
-for the pullback. Board surfaces use the original background-object ordering
-convention so their large centres do not cause them to paint over nearby ICs.
+The renderer is now host-linked from the original sources with Watcom's
+signed-char / cdecl ABI and JWasm. renderer.py rebuilds the player, loader,
+transforms/projection, data and DIS interface. The original checked-in AVID
+and ADRAW object modules supply the VGA rasterizer. Improvements include
+per-frame face-depth sorting, bounded offscreen projection (preventing
+16-bit coordinate wrap), correctly sized normal buffers, and removal of the
+city-specific drone ordering override. This remains a painter renderer,
+not a Z-buffer; arbitrary intersecting geometry still requires care.
+DOSBox-X uses a 486 with 120000 fixed cycles and 32 MB, headless only.
 
-The authored sequence visits CPU/RAM, drives, fan/PSU, keyboard electronics,
-keys and CRT, then pulls back to the assembled machine. Robotron mode skips
-the original Future Crew end logo and proceeds directly to seven component
-cards. Credit images are rendered from the canonical exports; their source
-SCAD wrappers and PNGs are in build/robotron. ASCII captions are currently
-listed in robotron.py. Evidence and source notices are in assets/robotron.
+assets/robotron/flight.json contains independent camera eye/target and drone
+position tracks in canonical millimetres. Time-aware cubic Hermite curves
+keep movement continuous through waypoints. The scene runs for 1801 samples
+at 35 Hz, starting just above the keys, sweeping past both external drive
+fronts, rounding the case corner and climbing to the CRT before pulling
+back. The complete assembled exterior stays present throughout. The drone
+banks and changes position in the camera view, then remains near the machine
+as the camera pulls away. Visibility is baked conservatively on the host.
+
+Robotron mode skips the original Future Crew end logo and proceeds directly
+to seven component cards. Credit images have black backgrounds and a thin
+white frame. The keyboard card shows only the populated controller board;
+the display-controller card is flipped to show its component side. Generated
+SCAD wrappers and PNGs are in build/robotron. ASCII captions are listed in
+robotron.py; source provenance and license notices remain in assets/robotron.
 
 build/robotron/report.json records source hashes, generated object slots,
 instance count and flight settings. build/assets.json records installed DOS
@@ -280,5 +290,3 @@ Make a shareable, aspect-correct MP4 after a completed capture:
 
 This requires ffmpeg and writes build/robotron-preview.mp4 by default. It
 joins display-mode segments and uses the continuous captured WAV audio.
-The drone stays near the machine during the pullback. Enclosed contents
-are disabled after the lids close to avoid painter-order show-through.

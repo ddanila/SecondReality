@@ -11,8 +11,9 @@ import struct
 
 import numpy as np
 import trimesh
-import fast_simplification
 import scene
+from robotron_lod import exterior, keycap
+from PIL import Image, ImageOps
 from prepare import openscad
 
 HERE = Path(__file__).resolve().parent
@@ -20,72 +21,8 @@ SCALE = 64  # DOS near plane 512 becomes 8 mm; limits 16-bit projected-coordinat
 IDENTITY = (16384,0,0,0,16384,0,0,0,16384)
 # Keep the original drone's palette entries 0..31 and 160..251 untouched.
 COLORS = {'dark':(32,'#343b3c'), 'paint':(48,'#b6ae93'), 'pcb':(64,'#38745b'),
-          'metal':(80,'#bbc2c2'), 'brown':(96,'#9e793b'), 'red':(112,'#b64139'),
+          'metal':(80,'#bbc2c2'), 'black':(96,'#080a0a'), 'red':(112,'#b64139'),
           'blue':(128,'#91aeb6'), 'white':(144,'#dddccb')}
-# Separate objects preserve painter ordering and allow covers to close at reveal.
-PARTS = [
- ('base', 'case-base', 90, 'paint', 'solid-shell'),
- ('lid', 'case-lid', 100, 'paint', 'cover'),
- ('fascia', 'fascia', 150, 'paint', 'fixed'),
- ('drives', 'drives drive-insets drive-latch-0 drive-latch-1', 200, 'dark', 'fixed'),
- ('stand', 'pedestal ring', 80, 'paint', 'fixed'),
- ('monitor', 'monitor-shell-lower monitor-shell-upper', 180, 'paint', 'fixed'),
- ('bezel', 'bezel crt-rim', 100, 'dark', 'fixed'),
- ('screen', 'crt-glass', 80, 'pcb', 'fixed'),
- ('keyboard', 'keyboard-shell keyboard-bottom', 120, 'blue', 'keyboard-cover'),
- ('deck', 'keyboard-deck', 100, 'dark', 'keyboard-cover'),
- ('keyboard-pcb', 'keyboard-pcb', 48, 'pcb', 'fixed'),
- ('controller', 'keyboard-controller-board', 24, 'pcb', 'fixed'),
- ('controller-chips', 'keyboard-controller-chips keyboard-controller-ceramic', 120, 'dark', 'fixed'),
- ('drive-frames', 'drive-frames drive-bracket', 150, 'metal', 'solid-shell'),
- ('drive-mechanisms', 'drive-mechanisms drive-head-0 drive-head-1', 160, 'metal', 'fixed'),
- ('drive-motors', 'drive-motors drive-spindle-0 drive-spindle-1', 100, 'dark', 'fixed'),
- ('drive-boards', 'drive-boards drive-adapter-boards', 64, 'pcb', 'fixed'),
- ('psu', 'psu-cover psu-chassis', 100, 'metal', 'fixed'),
- ('fan-frame', 'fan-frame fan-retainers', 80, 'metal', 'fixed'),
- ('fan', 'fan-rotor', 80, 'dark', 'fixed'),
- ('motherboard', 'logic-boards-motherboard', 40, 'pcb', 'fixed'),
- ('display-board', 'logic-boards-display-controller', 40, 'pcb', 'display'),
- ('ribbons', 'ribbon-cables drive-cable-plugs', 90, 'white', 'fixed'),
- ('controls', 'power reset', 40, 'white', 'fixed'),
- ('rear', 'rear-panel rear-socket-bodies', 90, 'paint', 'fixed'),
- ('wiring', 'power-wires-red power-wires-yellow power-wires-black cable', 80, 'brown', 'fixed'),
-]
-
-
-def simplify(mesh, faces):
-    if len(mesh.faces) <= faces: return mesh
-    def reduce(m, count):
-        if len(m.faces)<=count: return m
-        center=m.bounds.mean(axis=0); extent=max(m.extents)
-        v,f = fast_simplification.simplify((np.asarray(m.vertices)-center)/extent, np.asarray(m.faces),
-                                          target_count=count, agg=7)
-        return trimesh.Trimesh(v*extent+center,f,process=True)
-    reduced=reduce(mesh,faces)
-    if len(reduced.faces) <= faces: return reduced
-    # Vent holes and PCB drilling impose a topological floor on decimation.
-    # Keep the largest connected solids, close their small openings with convex
-    # envelopes, then reduce those. Full detail remains in the source and cards.
-    pieces=sorted(mesh.split(only_watertight=False),key=lambda m:m.area,reverse=True)
-    pieces=pieces[:max(1,faces//12)]
-    hulls=[]
-    for piece in pieces:
-        if len(piece.vertices)<4: continue
-        hull=piece.convex_hull
-        budget=max(4,faces//len(pieces))
-        reduced=reduce(hull,budget)
-        if len(reduced.faces)>budget:
-            # Bound the convex hull face count by selecting at most F/2+2
-            # farthest-spaced source vertices (Euler's convex polyhedron bound).
-            v=np.asarray(hull.vertices);chosen=[0]
-            distances=np.full(len(v),np.inf)
-            for _ in range(min(len(v),budget//2+2)-1):
-                distances=np.minimum(distances, np.sum((v-v[chosen[-1]])**2,axis=1))
-                chosen.append(int(np.argmax(distances)))
-            reduced=trimesh.convex.convex_hull(v[chosen])
-        hulls.append(reduced)
-    return trimesh.util.concatenate(hulls)
-
 
 def polygons(mesh):
     """Join adjacent coplanar triangles only when their union is a convex quad."""
@@ -139,14 +76,22 @@ def camera(eye, target):
         np.rint(rotation.flatten()*16384).astype(int))
 
 
-def sample(flight, time):
-    keys=flight['keyframes']
-    for left,right in zip(keys,keys[1:]):
+def sample_track(keys, time, field):
+    """Time-aware cubic Hermite track: continuous speed across scenic waypoints."""
+    for i,(left,right) in enumerate(zip(keys,keys[1:])):
         if time <= right['time']:
-            u=max(0,min(1,(time-left['time'])/(right['time']-left['time'])))
-            u=u*u*(3-2*u)
-            return tuple((1-u)*np.array(left[k],float)+u*np.array(right[k],float) for k in ('eye','target'))
-    return tuple(np.array(keys[-1][k],float) for k in ('eye','target'))
+            dt=right['time']-left['time']
+            u=max(0,min(1,(time-left['time'])/dt))
+            p0=np.array(left[field],float);p1=np.array(right[field],float)
+            before=keys[max(0,i-1)];after=keys[min(len(keys)-1,i+2)]
+            m0=(p1-np.array(before[field]))/(right['time']-before['time'])
+            m1=(np.array(after[field])-p0)/(after['time']-left['time'])
+            return (2*u**3-3*u*u+1)*p0+(u**3-2*u*u+u)*dt*m0+(-2*u**3+3*u*u)*p1+(u**3-u*u)*dt*m1
+    return np.array(keys[-1][field],float)
+
+
+def sample(flight,time):
+    return tuple(sample_track(flight['keyframes'],time,k) for k in ('eye','target'))
 
 
 def encode_animation(poses, visibility, fov):
@@ -198,20 +143,11 @@ def prepare(root, build, command):
             cached[record['file']]=trimesh.load_mesh(path,process=True)
         return cached[record['file']].copy()
 
-    objects=[]; instances=[]
-    for label,names,budget,color,kind in PARTS:
-        meshes=[load(records[n]) for n in names.split()]
-        # Simplify separately so small disconnected parts are not erased by a
-        # large adjacent shell's error budget.
-        # Leave conventional-memory headroom for 242 placed instances and
-        # the animation stream; budgets count source triangles before merging.
-        pieces=[simplify(m,max(12,round(budget*.55)//len(meshes))) for m in meshes]
-        objects.append((label,trimesh.util.concatenate(pieces),color,kind))
-        instances.append({'mesh':label,'pose':(0,0,0,*IDENTITY),'kind':kind})
+    objects=[(label,mesh,color,'exterior') for label,mesh,color in exterior()]
+    instances=[{'mesh':label,'pose':(0,0,0,*IDENTITY),'kind':kind}
+               for label,mesh,color,kind in objects]
     packages={m['id']:m for m in data['pcbComponents']['models']}
     chips={'motherboard':[], 'display-controller':[]}
-    for name,model in packages.items():
-        objects.append((name,simplify(load(model['meshes']['body']),12),'dark','package'))
     for inst in data['pcbComponents']['instances']:
         if inst['board'] not in chips: continue
         model=packages[inst['model']]
@@ -219,9 +155,6 @@ def prepare(root, build, command):
         rotation=np.array([[c,-s,0],[s,c,0],[0,0,1.]])
         if inst['side']==-1: rotation=rotation @ np.diag([1,-1,-1])
         position=np.array(inst['position'])
-        pose=tuple(np.rint(position*SCALE).astype(int))+tuple(np.rint(rotation.flatten()*16384).astype(int))
-        instances.append({'mesh':inst['model'],'pose':pose,
-                          'kind':'display' if inst['board']=='display-controller' else 'fixed'})
         m=load(model['meshes']['body'])
         m.vertices=m.vertices @ rotation.T + position
         chips[inst['board']].append(m)
@@ -230,7 +163,7 @@ def prepare(root, build, command):
     a=math.radians(data['keyboard']['slope']);c,s=math.cos(a),math.sin(a)
     rot=np.array([[1,0,0],[0,c,-s],[0,s,c]])
     for name in sorted(set(k['mesh'] for k in data['keys'])):
-        objects.append((name,simplify(load(keymesh[name]),20),'white','keycap'))
+        objects.append((name,keycap(load(keymesh[name])),'white','keycap'))
     for key in data['keys']:
         position=rot @ np.array([key['x'],key['y'],0])+np.array([0,data['keyboard']['y'],data['keyboard']['z']])
         pose=tuple(np.rint(position*SCALE).astype(int))+tuple(np.rint(rot.flatten()*16384).astype(int))
@@ -244,7 +177,7 @@ def prepare(root, build, command):
     for slot,(label,mesh,color,kind) in zip(slots,objects):
         triangles=polygons(mesh)
         print(f'Robotron {slot:02}: {label}: {len(triangles)} polygons',flush=True)
-        render_name=('_' if 'board' in label or label in ('keyboard-pcb','controller','keyboard','deck','base','lid','fascia') else '')+label
+        render_name=('_' if label in ('keyboard','deck') else '')+label
         binary=scene.encode('"'+render_name[:20]+'"',triangles,COLORS[color][0],16)
         (output/f'U2E.{slot:03}').write_bytes(binary)
         report['objects'].append({'slot':slot,'name':label,'kind':kind,'polygons':len(triangles)})
@@ -274,40 +207,23 @@ def prepare(root, build, command):
     poses=[];visibility=[]
     for f in range(flight['frames']):
         t=f/flight['fps'];eye,target=sample(flight,t)
-        forward=target-eye;distance=np.linalg.norm(forward);forward/=distance
-        # A small escort just ahead/below the lens; it leads into the reveal.
-        drone_pos=eye+forward*min(40,distance*.58)+np.array([0,0,-3])
-        if t>=44:
-            e0,t0=sample(flight,44)
-            lead=t0-e0; lead/=np.linalg.norm(lead)
-            start=e0+lead*40+np.array([0,0,-3])
-            u=min(1,(t-44)/4);u=u*u*(3-2*u)
-            drone_pos=(1-u)*start+u*np.array([60,-185,160])
-        yaw=math.atan2(forward[1],forward[0])+math.pi/2
+        drone_pos=sample_track(flight['drone'],t,'position')
+        velocity=sample_track(flight['drone'],min(t+.15,51.42),'position')-sample_track(flight['drone'],max(0,t-.15),'position')
+        yaw=math.atan2(velocity[1],velocity[0])+math.pi/2
         c,s=math.cos(yaw),math.sin(yaw)
         rotation=np.array([[c,-s,0],[s,c,0],[0,0,1.]])
-        rotation*=SCALE/128  # Preserve the escort size while scaling the world.
+        bank=math.radians(18*math.sin(t*.7))
+        cb,sb=math.cos(bank),math.sin(bank)
+        rotation=rotation @ np.array([[cb,0,sb],[0,1,0],[-sb,0,cb]])
+        rotation*=SCALE/96  # Approximately 7.5 mm wide in the assembly's units.
         drone_state=tuple(np.rint(drone_pos*SCALE-rotation@center).astype(int))+tuple(
             np.rint(rotation.flatten()*16384).astype(int))
         frame=[camera(eye,target)]; enabled=[True]
         for inst in instances:
-            slot=inst['slot'];kind=inst['kind']
-            z=0
-            if kind=='cover': z=max(0,1-(t-42)/5)*180
-            if kind=='keyboard-cover': z=max(0,1-(t-33)/4)*100
+            slot=inst['slot']
             pose=list(drone_state if slot==28 else inst['pose'])
-            pose[2]+=round(z*SCALE)
             frame.append(pose)
-            enabled.append(not ((kind=='cover' and t<42) or
-                                (kind=='keyboard-cover' and t<33) or
-                                (kind=='keys' and t<34) or (kind=='display' and t<11) or (kind=='solid-shell' and t<42)))
-        exterior={'base','lid','fascia','drives','stand','monitor','bezel','screen',
-                  'keyboard','deck','controls','rear','wiring'}
-        for i,inst in enumerate(instances,1):
-            # The legacy painter sorts whole objects. Remove enclosed contents
-            # once the lids close, otherwise their centres can sort in front.
-            if t>=47 and inst['mesh'] not in exterior and inst['kind'] not in ('keys','drone'):
-                enabled[i]=False
+            enabled.append(True)
         # Conservative sphere/frustum culling, rebuilt for this camera. A wide
         # vertical margin avoids coupling this bake to VGA aspect corrections.
         cam=np.array(frame[0][3:]).reshape(3,3)/16384
@@ -326,21 +242,25 @@ def prepare(root, build, command):
     report['flight']=flight; report['animation_bytes']=len(stream)
     report['instances']=len(instances)
     report['drone_sha256']=hashlib.sha256((HERE.parent/'MAIN/DATA/U2E.028').read_bytes()).hexdigest()
-    (output/'report.json').write_text(json.dumps(report,indent=2)+'\n')
     # Detailed credits use canonical exported parts, not the reduced DOS meshes.
     cards=[
       ('processor', ['logic-boards-motherboard'], ['U880 / Z80','8-bit CPU','Robotron 1715M - 256 KB RAM'], 'motherboard'),
       ('drives', ['drive-frames','drive-mechanisms','drive-boards','drives'], ['Twin floppy drives','5.25-inch removable media','Robotron / TEAC mechanisms'], None),
-      ('keyboard', ['keyboard-pcb','keyboard-controller-board','keyboard-controller-chips','keyboard-controller-ceramic'], ['Keyboard electronics','UB880D controller','Separate controller and contact PCB'], None),
+      ('keyboard', ['keyboard-controller-board','keyboard-controller-chips','keyboard-controller-ceramic'], ['Keyboard electronics','UB880D controller','Keyboard controller board'], None),
       ('display', ['logic-boards-display-controller'], ['Display controller','SAB8275P','Three UL6516D memories'], 'display-controller'),
       ('monitor', ['bezel','crt-rim','crt-glass','monitor-shell-lower','monitor-shell-upper','pedestal'], ['CRT monitor','Monochrome display','Separate monitor and stand'], None),
       ('psu', ['psu-chassis','psu-cover','fan-frame','fan-rotor','fan-retainers'], ['Power supply','Shielded PSU assembly','Fan-cooled system unit'], None),
-      ('robotron', ['case-base','case-lid','fascia','drives','monitor-shell-lower','monitor-shell-upper','bezel','crt-glass','pedestal','keyboard-shell','keyboard-deck'], ['Robotron 1715M','A journey inside the machine','Models: Danila / 3d-models'], 'keys')]
+      ('robotron', ['case-base','case-lid','fascia','drives','monitor-shell-lower','monitor-shell-upper','bezel','crt-glass','pedestal','keyboard-shell','keyboard-deck'], ['Robotron 1715M','A journey inside the machine'], 'keys')]
     credits=[]
     for name,names,lines,extras in cards:
+        if name=='keyboard':
+            names=[n for n in records if n.startswith('keyboard-controller-')]
+        if extras in chips:
+            names=[n for n in records if n.startswith('logic-') and n.endswith('-'+extras)]
         script=[]
         for n in names:
-            p=records[n];rgb=p.get('color','#999999')
+            p=records[n];load(p)  # Validate every source used by the photograph.
+            rgb=p.get('color','#999999')
             script.append(f'color("{rgb}") import({json.dumps(str(browser/p["file"]))});')
         if extras in chips:
             for i,m in enumerate(chips[extras]):
@@ -349,12 +269,25 @@ def prepare(root, build, command):
         if extras=='keys':
             path=output/'credit-keys.stl';trimesh.util.concatenate(keys).export(path)
             script.append(f'color("#dddccb") import({json.dumps(str(path))});')
+        if name=='display': script=['rotate([180,0,0]) {',*script,'}']
         scad=output/f'{name}.scad';scad.write_text('\n'.join(script)+'\n')
         png=output/f'{name}.png'
-        openscad(command,scad,png,['--render','--imgsize','960,600','--viewall','--autocenter'])
+        openscad(command,scad,png,['--render','--colorscheme','Tomorrow Night','--imgsize','960,600','--viewall','--autocenter'])
+        # Replace only the known renderer background, then letterbox the image
+        # to the DOS card aspect ratio and draw a one-pixel VGA white frame.
+        im=Image.open(png).convert('RGB')
+        pixels=np.array(im); background=np.array([29,31,33])
+        pixels[np.all(pixels==background,axis=2)]=0
+        im=Image.fromarray(pixels)
+        im=ImageOps.contain(im,(948,588))
+        canvas=Image.new('RGB',(960,600),'black')
+        canvas.paste(im,((960-im.width)//2,(600-im.height)//2))
+        ImageOps.expand(canvas,border=6,fill='white').resize((960,600)).save(png)
         credits.append({'image':str(png),'lines':lines,'hold_frames':230})
     project=output/'credits.json'
     project.write_text(json.dumps({'version':1,'credits':credits},indent=2)+'\n')
+    report['exterior_lod']='RT1715/robotron_lod.py (authored panels; source-dimension keycaps)'
+    (output/'report.json').write_text(json.dumps(report,indent=2)+'\n')
     return project
 
 

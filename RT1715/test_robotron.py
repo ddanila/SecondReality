@@ -42,3 +42,33 @@ class RobotronTests(unittest.TestCase):
                              {'time':1,'eye':[2,2,2],'target':[3,3,3]}]}
         for t,eye in ((0,[0,0,0]),(.5,[1,1,1]),(1,[2,2,2])):
             self.assertEqual(robotron.sample(flight,t)[0].tolist(),eye)
+
+    def test_keycaps_are_closed_and_preserve_source_dimensions(self):
+        import trimesh
+        from robotron_lod import keycap
+        for size in ([17.8,17.8,11.5],[112,17.8,11.5],[36,36,11.5]):
+            original=trimesh.creation.box(extents=size)
+            result=keycap(original)
+            self.assertTrue(result.is_watertight)
+            self.assertTrue(result.is_winding_consistent)
+            self.assertEqual(result.bounds.tolist(),original.bounds.tolist())
+
+    def test_scenic_tracks_are_continuous_and_drone_moves_in_camera_view(self):
+        import json
+        import numpy as np
+        flight=json.loads((robotron.HERE/'assets/robotron/flight.json').read_text())
+        projected=[]
+        for t in np.linspace(0,43,200):
+            eye,target=robotron.sample(flight,t)
+            drone=robotron.sample_track(flight['drone'],t,'position')
+            pose=robotron.camera(eye,target)
+            v=np.array(pose[3:]).reshape(3,3)/16384 @ (drone-eye)
+            self.assertGreater(v[2],8)
+            projected.append(v[:2]/v[2])
+        self.assertGreater(np.ptp(np.array(projected)[:,0]),.3)
+        for key in flight['keyframes'][1:-1]:
+            t=key['time'];epsilon=.001
+            p0=robotron.sample(flight,t-epsilon)[0]
+            p1=robotron.sample(flight,t)[0]
+            p2=robotron.sample(flight,t+epsilon)[0]
+            self.assertLess(np.linalg.norm((p2-p1)-(p1-p0)),.001)

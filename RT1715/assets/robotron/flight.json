@@ -1,161 +1,147 @@
 {
   "frames": 1801,
   "fps": 35,
-  "fov": 52,
+  "fov": 58,
   "keyframes": [
     {
       "time": 0,
       "eye": [
-        -128,
-        42,
-        31
+        -235,
+        -440,
+        83
       ],
       "target": [
-        -112,
-        82,
-        18
+        -150,
+        -380,
+        35
       ],
-      "subject": "U880 CPU"
+      "subject": "Skim the first key rows"
     },
     {
-      "time": 5,
+      "time": 6,
       "eye": [
         -100,
-        55,
-        30
+        -425,
+        75
       ],
       "target": [
-        -112,
-        88,
-        18
+        -20,
+        -365,
+        35
       ],
-      "subject": "CPU pins"
+      "subject": "Across the keycaps"
     },
     {
-      "time": 9,
+      "time": 12,
       "eye": [
-        -230,
-        -143,
-        36
-      ],
-      "target": [
-        -185,
-        -140,
-        18
-      ],
-      "subject": "RAM bank"
-    },
-    {
-      "time": 14,
-      "eye": [
-        -175,
-        -160,
-        155
-      ],
-      "target": [
-        -155,
-        -90,
-        100
-      ],
-      "subject": "Floppy mechanism"
-    },
-    {
-      "time": 19,
-      "eye": [
-        10,
-        -130,
-        155
-      ],
-      "target": [
-        -4,
-        -45,
-        100
-      ],
-      "subject": "Second drive"
-    },
-    {
-      "time": 24,
-      "eye": [
-        28,
-        40,
-        165
-      ],
-      "target": [
         80,
-        115,
-        100
-      ],
-      "subject": "Fan and PSU"
-    },
-    {
-      "time": 29,
-      "eye": [
-        -30,
-        -322,
-        37
+        -410,
+        85
       ],
       "target": [
-        -3,
-        -273,
-        18
+        170,
+        -340,
+        40
       ],
-      "subject": "Keyboard controller"
+      "subject": "Bank over the numeric keypad"
+    },
+    {
+      "time": 17,
+      "eye": [
+        220,
+        -335,
+        115
+      ],
+      "target": [
+        115,
+        -220,
+        80
+      ],
+      "subject": "Leave keyboard toward drive fronts"
+    },
+    {
+      "time": 22,
+      "eye": [
+        100,
+        -275,
+        110
+      ],
+      "target": [
+        -15,
+        -207,
+        82
+      ],
+      "subject": "Track the right drive"
+    },
+    {
+      "time": 28,
+      "eye": [
+        -115,
+        -280,
+        115
+      ],
+      "target": [
+        -210,
+        -207,
+        82
+      ],
+      "subject": "Sweep past the left drive"
     },
     {
       "time": 33,
       "eye": [
+        -310,
+        -255,
+        180
+      ],
+      "target": [
+        -200,
         -130,
-        -410,
-        65
+        115
       ],
-      "target": [
-        -110,
-        -360,
-        22
-      ],
-      "subject": "Keyboard PCB"
+      "subject": "Round the case corner"
     },
     {
-      "time": 37,
+      "time": 38,
       "eye": [
-        -170,
-        -415,
-        100
+        -240,
+        -235,
+        310
       ],
       "target": [
-        -115,
-        -385,
-        40
+        -95,
+        -147,
+        320
       ],
-      "subject": "Keycap landscape"
+      "subject": "Climb toward the CRT"
     },
     {
-      "time": 42,
+      "time": 43,
       "eye": [
-        -65,
-        -217,
-        309
+        40,
+        -270,
+        400
+      ],
+      "target": [
+        45,
+        -150,
+        350
+      ],
+      "subject": "Cross the glass and bank away"
+    },
+    {
+      "time": 46,
+      "eye": [
+        300,
+        -500,
+        480
       ],
       "target": [
         0,
-        -140,
-        324
+        -120,
+        220
       ],
-      "subject": "CRT glass"
-    },
-    {
-      "time": 45,
-      "eye": [
-        100,
-        -330,
-        375
-      ],
-      "target": [
-        0,
-        -90,
-        250
-      ],
-      "subject": "Pullback begins"
+      "subject": "Begin the reveal"
     },
     {
       "time": 49,
@@ -169,7 +155,7 @@
         -100,
         190
       ],
-      "subject": "Robotron reveal"
+      "subject": "Reveal the whole computer"
     },
     {
       "time": 51.43,
@@ -183,7 +169,105 @@
         -100,
         190
       ],
-      "subject": "Hold full assembly"
+      "subject": "Hold the complete assembly"
+    }
+  ],
+  "drone": [
+    {
+      "time": 0,
+      "position": [
+        -173,
+        -399,
+        57
+      ]
+    },
+    {
+      "time": 6,
+      "position": [
+        -30,
+        -386,
+        57
+      ]
+    },
+    {
+      "time": 12,
+      "position": [
+        153,
+        -369,
+        66
+      ]
+    },
+    {
+      "time": 17,
+      "position": [
+        185,
+        -277,
+        106
+      ]
+    },
+    {
+      "time": 22,
+      "position": [
+        30,
+        -245,
+        100
+      ]
+    },
+    {
+      "time": 28,
+      "position": [
+        -190,
+        -248,
+        102
+      ]
+    },
+    {
+      "time": 33,
+      "position": [
+        -278,
+        -182,
+        173
+      ]
+    },
+    {
+      "time": 38,
+      "position": [
+        -163,
+        -196,
+        300
+      ]
+    },
+    {
+      "time": 43,
+      "position": [
+        103,
+        -215,
+        375
+      ]
+    },
+    {
+      "time": 46,
+      "position": [
+        194,
+        -203,
+        335
+      ]
+    },
+    {
+      "time": 49,
+      "position": [
+        225,
+        -160,
+        310
+      ]
+    },
+    {
+      "time": 51.43,
+      "position": [
+        190,
+        -100,
+        320
+      ]
     }
   ]
 }

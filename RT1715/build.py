@@ -124,6 +124,16 @@ def main():
         manifest.append({"file": name, "source": str(original.relative_to(ROOT)),
                          "sha256": hashlib.sha256(original.read_bytes()).hexdigest()})
 
+    if args.robotron:
+        from renderer import build_renderer
+        compiler=tool(args.wcc)
+        watcom=(args.watcom_root or Path(compiler).parents[2]).resolve()
+        build_renderer(build,compiler,assembler,linker,watcom)
+        for entry in manifest:
+            if entry['file']=='U2E.EXE':
+                entry['source']='Host-built VISU renderer (RT1715/renderer.py)'
+                entry['sha256']=hashlib.sha256((dos/'U2E.EXE').read_bytes()).hexdigest()
+
     # STARTMUS loads module 0 through a little-endian offset in REALITY.FC.
     # Both slots point to the same module: MUSIC1 is not needed by this cut.
     music = (ROOT / "MAIN/MUSIC0.S3M").read_bytes()
