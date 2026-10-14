@@ -71,3 +71,31 @@ def flight_header(path):
             ticks[r['order']-19][r['row']] = round((r['seconds']-origin)*100)
     return 'static unsigned rt_row_cs[8][64] = {\n' + ',\n'.join(
         '{'+','.join(map(str, row))+'}' for row in ticks) + '\n};\n'
+
+
+def write_credit_schedule(module,output,transition,count):
+    """Beat-aligned entries with an absolute end cue; loading cannot accumulate drift."""
+    rows=timeline(module,last=43)
+    begin=next(r['seconds'] for r in rows if (r['order'],r['row'])==(28,0))
+    end=next(r['seconds'] for r in rows if [r['order'],r['row']]==transition['credits_end'])-begin
+    candidates=[r for r in rows if r['order']>=28 and r['row']%8==0 and r['seconds']-begin<end-2]
+    starts=[min(candidates,key=lambda r:abs(r['seconds']-begin-end*i/count)) for i in range(count)]
+    times=[round((r['seconds']-begin)*100) for r in starts]+[round(end*100)]
+    if any(b-a<200 for a,b in zip(times,times[1:])):raise ValueError('Credit cues leave too little reading time')
+    lines=[str(count)];report=[]
+    for i,(start,finish) in enumerate(zip(times,times[1:])):
+        # Leave 120 ms for the next file read, keeping its entrance on the beat.
+        stop=finish if i==count-1 else finish-12
+        enter=start+round(transition['entry_seconds']*100)
+        leave=stop-round(transition['exit_seconds']*100)
+        if enter>=leave:raise ValueError('Credit transitions overlap')
+        lines.append(f'{start} {enter} {leave} {stop}')
+        report.append(dict(card=i+1,order=starts[i]['order'],row=starts[i]['row'],start_cs=start,enter_end_cs=enter,exit_start_cs=leave,end_cs=stop))
+    output.mkdir(parents=True,exist_ok=True)
+    (output/'CRED.CUE').write_text('\n'.join(lines)+'\n')
+    clock=[[0]*64 for _ in range(16)]
+    for r in rows:
+        if 28<=r['order']<=43:clock[r['order']-28][r['row']]=round((r['seconds']-begin)*100)
+    (output/'CRED.TIM').write_bytes(struct.pack('<1024H',*(t for row in clock for t in row)))
+    import json
+    (output/'credit-cues.json').write_text(json.dumps(report,indent=2)+'\n')

@@ -89,6 +89,17 @@ def sample_track(keys, time, field):
             m1=(np.array(after[field])-p0)/(after['time']-left['time'])
             if left.get('stop'): m0=np.zeros(3)
             if right.get('stop'): m1=np.zeros(3)
+            if keys[0].get('curve')=='quintic':
+                def acceleration(index):
+                    if index==0 or index==len(keys)-1 or keys[index].get('stop'):return np.zeros(3)
+                    a,b,c=keys[index-1:index+2]
+                    v0=(np.array(b[field])-a[field])/(b['time']-a['time'])
+                    v1=(np.array(c[field])-b[field])/(c['time']-b['time'])
+                    return 2*(v1-v0)/(c['time']-a['time'])
+                a0=acceleration(i)*dt*dt;a1=acceleration(i+1)*dt*dt
+                v0=m0*dt;v1=m1*dt
+                d=p1-p0-v0-a0/2;e=v1-v0-a0;f=a1-a0
+                return p0+v0*u+a0*u*u/2+(10*d-4*e+f/2)*u**3+(-15*d+7*e-f)*u**4+(6*d-3*e+f/2)*u**5
             return (2*u**3-3*u*u+1)*p0+(u**3-2*u*u+u)*dt*m0+(-2*u**3+3*u*u)*p1+(u**3-u*u)*dt*m1
     return np.array(keys[-1][field],float)
 
@@ -108,12 +119,17 @@ def drone_rotation(flight, time):
     forward=v/speed
     left=np.cross([0.,0.,1.],forward);left/=np.linalg.norm(left)
     up=np.cross(forward,left)
-    # Bank into the turn, instead of an unrelated periodic rocking motion.
-    lo=max(start,time-.15);hi=min(end,time+.15)
-    before=velocity(lo);after=velocity(hi)
-    turn=math.atan2(before[0]*after[1]-before[1]*after[0],
-                    before[0]*after[0]+before[1]*after[1])/(hi-lo)
-    bank=np.clip(-math.atan2(speed*turn,180.),-math.radians(20),math.radians(20))
+    # Smooth bank independently of heading: +X remains exactly tangent.
+    settings=flight.get('bank',{});window=settings.get('smoothing_seconds',.24)
+    limit=math.radians(settings.get('max_degrees',16));accel=settings.get('acceleration_scale',200)
+    def raw_bank(t):
+        lo=max(start,t-.15);hi=min(end,t+.15)
+        before=velocity(lo);after=velocity(hi)
+        turn=math.atan2(before[0]*after[1]-before[1]*after[0],
+                        before[0]*after[0]+before[1]*after[1])/(hi-lo)
+        return np.clip(-math.atan2(np.linalg.norm(velocity(t))*turn,accel),-limit,limit)
+    weights=[1,2,3,4,3,2,1]
+    bank=sum(w*raw_bank(float(np.clip(time+(i-3)*window/3,start,end))) for i,w in enumerate(weights))/sum(weights)
     c,s=math.cos(bank),math.sin(bank)
     roll=np.array([[1,0,0],[0,c,-s],[0,s,c]])
     return np.column_stack((forward,left,up)) @ roll
@@ -154,8 +170,14 @@ def encode_animation(poses, visibility, fov):
     return bytes(out)
 
 
-def prepare(root, build, command):
-    root=Path(root).resolve(); browser=root/'browser'
+def prepare(root, build, command, presentation=None):
+    from presentation import load as load_presentation, snapshot, DEFAULT
+    manifest=Path(presentation or DEFAULT).resolve()
+    config,source_root,inputs=load_presentation(manifest,root)
+    root=snapshot(source_root,build/'model-snapshot') if source_root!=(build/'model-snapshot').resolve() else source_root
+    colors_config=json.loads(inputs['materials'].read_text())
+    colors={name:(r['base'],r['rgb']) for name,r in colors_config.items()}
+    browser=root/'browser'
     data=json.loads((browser/'model.json').read_text())
     output=build/'robotron';output.mkdir(parents=True,exist_ok=True)
     for old in output.glob('U2E.*'): old.unlink()
@@ -194,6 +216,15 @@ def prepare(root, build, command):
     objects=[(label,mesh,color,'exterior') for label,mesh,color in exterior()]
     from source_geometry import front_parts
     objects.extend(front_parts(load,records))
+    for override in config.get('models',[]):
+        matches=[i for i,item in enumerate(objects) if item[0]==override['name']]
+        if len(matches)!=1:raise ValueError(f"Unknown exterior override: {override['name']}")
+        i=matches[0];label,old,color,kind=objects[i]
+        stl=output/(label+'-replacement.stl')
+        openscad(command,manifest.parent/override['scad'],stl,['--export-format','binstl'])
+        color=override.get('material',color)
+        if color not in colors:raise ValueError('Unknown replacement material')
+        objects[i]=(label,trimesh.load_mesh(stl,process=True),color,kind)
     key_legends={}
     instances=[{'mesh':label,'pose':(0,0,0,*IDENTITY),'kind':kind}
                for label,mesh,color,kind in objects]
@@ -233,7 +264,7 @@ def prepare(root, build, command):
         m=load(keymesh[key['mesh']]);m.vertices=m.vertices @ rot.T+position
         keys.append(m)
     if len(objects)>254: raise ValueError('Robotron exceeds available mesh slots')
-    report={'source':str(root),'manifest_sha256':hashlib.sha256((browser/'model.json').read_bytes()).hexdigest(),
+    report={'source':str(source_root),'snapshot':str(root),'presentation_sha256':hashlib.sha256(manifest.read_bytes()).hexdigest(),'manifest_sha256':hashlib.sha256((browser/'model.json').read_bytes()).hexdigest(),
             'source_meshes':sources,
             'source_files':source_files,'objects':[],'key_legends':sum(bool(k['legend']) for k in data['keys'])}
     slots=[n for n in range(1,256) if n != 28]
@@ -245,11 +276,11 @@ def prepare(root, build, command):
         print(f'Robotron {slot:02}: {label}: {len(triangles)} polygons',flush=True)
         render_name=label
         ink=key_legends.get(label,[])
-        colors=[COLORS[color][0]]*len(triangles)+[COLORS['black'][0]]*len(ink)
+        face_colors=[colors[color][0]]*len(triangles)+[colors['black'][0]]*len(ink)
         triangles+=ink
         sort_center=None
-        binary=scene.encode('"'+render_name[:20]+'"',triangles,COLORS[color][0],16,
-                            face_colors=colors,precomputed_orders=False,sort_center=sort_center)
+        binary=scene.encode('"'+render_name[:20]+'"',triangles,colors[color][0],16,
+                            face_colors=face_colors,precomputed_orders=False,sort_center=sort_center,smooth=(label=='screen'))
         (output/f'U2E.{slot:03}').write_bytes(binary)
         report['objects'].append({'slot':slot,'name':label,'kind':kind,'polygons':len(triangles)})
     # New scene mapping: only our generated slots plus the byte-exact drone.
@@ -262,15 +293,15 @@ def prepare(root, build, command):
     material=bytearray((HERE.parent/'MAIN/DATA/U2E.00M').read_bytes())
     offset=struct.unpack_from('<I',material,4)[0]
     material=material[:offset]+struct.pack(f'<{len(used)+1}H',len(used)+1,*used)
-    for base,rgb in COLORS.values():
-        color=tuple(int(rgb[i:i+2],16) for i in (1,3,5))
+    for ramp in colors_config.values():
+        base=ramp['base'];rgb=ramp['rgb'];color=tuple(int(rgb[i:i+2],16) for i in (1,3,5))
         for j in range(16):
             for k,v in enumerate(color):
-                material[16+(base+j)*3+k]=round(v/255*63*((0.40 if base in (32,48,128) else 0.25)+(0.60 if base in (32,48,128) else 0.75)*j/15))
+                material[16+(base+j)*3+k]=round(v/255*63*(ramp['ambient']+ramp['diffuse']*j/15))
     # Disable city-specific colouring/sorting names; normal renderer remains.
     material[15]=ord('T')
     (output/'U2E.00M').write_bytes(material)
-    flight=json.loads((HERE/'assets/robotron/flight.json').read_text())
+    flight=json.loads(inputs['flight'].read_text())
     drone=scene.decode((HERE.parent/'MAIN/DATA/U2E.028').read_bytes())
     center=np.array([(a+b)/2 for a,b in drone['bounds']])
     bounds={label:(m.bounds.mean(axis=0),float(np.linalg.norm(m.extents)/2))
@@ -310,10 +341,14 @@ def prepare(root, build, command):
     # Each technical page selects its own geometry and camera, including
     # component-sized crops of the detailed source boards.
     from credit_views import render_cards
-    credits=render_cards(HERE/'assets/robotron/credits.json',output,records,
+    credits=render_cards(inputs['credits'],output,records,
                          load,chip_parts,keys,command)
     project=output/'credits.json'
     project.write_text(json.dumps({'version':1,'credits':credits},indent=2)+'\n')
+    from music import write_credit_schedule
+    write_credit_schedule(HERE.parent/'MAIN/MUSIC0.S3M',output,config['transition'],len(credits))
+    end=(flight['frames']-1)*2
+    (output/'U2E.PRS').write_text(f"{end-round(config['transition']['flight_fade_seconds']*70)} {end}\n")
     report['exterior_lod']='RT1715/robotron_lod.py (authored panels; source-dimension keycaps)'
     (output/'report.json').write_text(json.dumps(report,indent=2)+'\n')
     return project
@@ -321,5 +356,5 @@ def prepare(root, build, command):
 
 def install(build,dos):
     import shutil
-    for path in (build/'robotron').glob('U2E.*'):
+    for path in [*(build/'robotron').glob('U2E.*'),*(build/'robotron').glob('CRED.C*'),build/'robotron/CRED.TIM']:
         shutil.copyfile(path,dos/path.name)

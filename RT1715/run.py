@@ -9,6 +9,7 @@ import re
 from pathlib import Path
 import shutil
 import subprocess
+import struct
 import sys
 import time
 import wave
@@ -37,6 +38,24 @@ def verify_sync(flight_log, credit_log):
     if not ((28, 0) <= cues["credits_start"] <= (28, 1)):
         raise ValueError(f"Credits missed theme entry: {cues['credits_start']}")
     return cues
+
+
+def verify_card_schedule(log, schedule, clock):
+    lines=schedule.splitlines();count=int(lines[0]);cues=[list(map(int,line.split())) for line in lines[1:]]
+    entries=[tuple(map(int,m)) for m in re.findall(r'^ENTRY order=(\d+) row=(\d+)',log,re.M)]
+    if len(entries)!=count or len(cues)!=count:raise ValueError('Missing scheduled credit entries')
+    times=struct.unpack('<1024H',clock);errors=[]
+    for (order,row),cue in zip(entries,cues):
+        if not 28<=order<=43 or not 0<=row<64:raise ValueError('Credit outside tracker interval')
+        error=times[(order-28)*64+row]-cue[0]
+        if abs(error)>12:raise ValueError(f'Credit missed beat by {error} centiseconds')
+        errors.append(error)
+    end=re.search(r'^END order=(\d+) row=(\d+)',log,re.M)
+    if not end:raise ValueError('Missing credit end')
+    order,row=map(int,end.groups())
+    if not 28<=order<=43 or abs(times[(order-28)*64+row]-cues[-1][3])>12:
+        raise ValueError('Credits changed the original end cue')
+    return {'cards':count,'positions':entries,'entry_error_cs':errors,'end':(order,row)}
 
 
 def main():
@@ -119,6 +138,9 @@ exit
                                     (capture / "credits.log").read_text())
         except (OSError, ValueError) as error:
             raise SystemExit(f"Music synchronization failed: {error}")
+    card_sync=None
+    if (dos/'CRED.CUE').exists():
+        card_sync=verify_card_schedule((capture/'credits.log').read_text(),(dos/'CRED.CUE').read_text(),(dos/'CRED.TIM').read_bytes())
     actual_cycles=(dos / "CPU.TXT").read_text().strip()
     if args.cycles is not None and actual_cycles != f"fixed {args.cycles}":
         raise SystemExit(f"DOSBox CPU setting mismatch: {actual_cycles!r}")
@@ -163,6 +185,7 @@ exit
         summary["render_counters"]={key:int(value) for key,value in re.findall(r"(\w+)=(\d+)",counters[1])}
     if sync_cues is not None:
         summary["music_cues"] = sync_cues
+    if card_sync is not None:summary["credit_schedule"]=card_sync
     (capture / "result.json").write_text(json.dumps(summary, indent=2) + "\n")
     print(f"PASS: DOS returned successfully; video and non-silent audio captured in {capture}")
     if sync_cues is not None and not args.no_review:

@@ -10,8 +10,9 @@ from PIL import Image,ImageDraw,ImageFont
 
 HERE=Path(__file__).resolve().parent
 SHOTS=[('KEYBOARD',8,4),('KEYPAD / TURN',17,3),('DRIVE FRONTS',30,4),
-       ('MONITOR JOINT',42,3),('FULL REVEAL',50,3),('DRONE SWOOSH',52,3),
-       ('CPU CONTEXT',67,3),('RAM LOCATOR',99,3),('DISPLAY MEMORY',114,3)]
+       ('MONITOR SEAM',43,3),('CRT GLASS',46,2),('FULL REVEAL',50,3),
+       ('DRONE SWOOSH',53,2),('CREDITS HANDOFF',62,7),('CPU LOCATOR',71,3),
+       ('RAM LOCATOR',102,3),('DISPLAY MEMORY',118,3),('CLOSING CARD',170,3)]
 
 def render(capture):
     result=json.loads((capture/'result.json').read_text())
@@ -40,10 +41,10 @@ def render(capture):
               '-c:v','libx264','-preset','fast','-crf','20','-c:a','aac','-b:a','160k',
               '-movflags','+faststart',str(video)]
     subprocess.run(command,check=True)
-    sheet=Image.new('RGB',(960,3*264),'black');draw=ImageDraw.Draw(sheet)
+    sheet=Image.new('RGB',(960,((len(SHOTS)+2)//3)*264),'black');draw=ImageDraw.Draw(sheet)
     for i,(name,start,duration) in enumerate(SHOTS):
         frame=assets/f'frame-{i}.png'
-        subprocess.run([ffmpeg,'-v','error','-y','-ss',str(54.6 if name=='DRONE SWOOSH' else start+duration/2),'-i',str(preview),
+        subprocess.run([ffmpeg,'-v','error','-y','-ss',str(54.2 if name=='DRONE SWOOSH' else 67.0 if name=='CREDITS HANDOFF' else start+duration/2),'-i',str(preview),
                         '-frames:v','1',str(frame)],check=True)
         x=(i%3)*320;y=(i//3)*264
         sheet.paste(Image.open(frame).convert('RGB').resize((320,240)),(x,y+24))

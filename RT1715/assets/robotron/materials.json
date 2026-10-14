@@ -1,0 +1,10 @@
+{
+  "dark": {"base":32,"rgb":"#4c5961","ambient":0.22,"diffuse":0.72},
+  "paint": {"base":48,"rgb":"#d9ceb3","ambient":0.40,"diffuse":0.60},
+  "pcb": {"base":64,"rgb":"#7fb58e","ambient":0.05,"diffuse":0.80},
+  "metal": {"base":80,"rgb":"#d0d9df","ambient":0.24,"diffuse":0.76},
+  "black": {"base":96,"rgb":"#141a1c","ambient":0.12,"diffuse":0.88},
+  "red": {"base":112,"rgb":"#d65340","ambient":0.28,"diffuse":0.72},
+  "blue": {"base":128,"rgb":"#9bb5bd","ambient":0.34,"diffuse":0.66},
+  "white": {"base":144,"rgb":"#e3dfc9","ambient":0.35,"diffuse":0.65}
+}

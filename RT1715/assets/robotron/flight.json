@@ -33,7 +33,7 @@
       "stop": true
     },
     {
-      "time": 7.55,
+      "time": 8.1,
       "eye": [
         -100,
         -425,
@@ -44,7 +44,7 @@
         -365,
         35
       ],
-      "subject": "Brief detail hold",
+      "subject": "Read the legends before crossing to the keypad",
       "stop": true
     },
     {
@@ -91,7 +91,7 @@
       "stop": true
     },
     {
-      "time": 24.55,
+      "time": 25.1,
       "eye": [
         100,
         -275,
@@ -102,7 +102,7 @@
         -207,
         82
       ],
-      "subject": "Brief detail hold",
+      "subject": "Read the drive mouth and latch",
       "stop": true
     },
     {
@@ -146,6 +146,36 @@
         320
       ],
       "subject": "Climb toward the CRT"
+    },
+    {
+      "time": 37,
+      "eye": [
+        -225,
+        -255,
+        330
+      ],
+      "target": [
+        -150,
+        -137,
+        320
+      ],
+      "stop": true,
+      "subject": "Find the monitor cabinet seam"
+    },
+    {
+      "time": 37.8,
+      "eye": [
+        -225,
+        -255,
+        330
+      ],
+      "target": [
+        -150,
+        -137,
+        320
+      ],
+      "stop": true,
+      "subject": "Let the horizontal joint register"
     },
     {
       "time": 41,
@@ -241,7 +271,8 @@
         -173,
         -399,
         57
-      ]
+      ],
+      "curve": "quintic"
     },
     {
       "time": 7,
@@ -379,5 +410,10 @@
         8046.45374
       ]
     }
-  ]
+  ],
+  "bank": {
+    "max_degrees": 16,
+    "smoothing_seconds": 0.24,
+    "acceleration_scale": 200
+  }
 }

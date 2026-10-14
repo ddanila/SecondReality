@@ -19,6 +19,22 @@ static FILE *trace;
 unsigned music_position(void);
 #pragma aux music_position = "mov bx,6" "int 0fch" "shl cx,6" "or bx,cx" "mov ax,bx" value [ax] modify [bx cx dx]
 
+/* Optional Robotron schedule: exact tracker cues, smooth retrace interpolation.
+ * Generic editable projects retain the original fixed-frame transitions. */
+static unsigned clock_rows[16][64];
+static unsigned cues[99][4],scheduled=0,last_pos=65535,last_tick;
+unsigned long clock_snapshot(void);
+#pragma aux clock_snapshot = "mov bx,11" "int 0fch" value [dx ax] modify [bx cx si di es]
+static unsigned credit_time(void) {
+    unsigned long snapshot=clock_snapshot();unsigned pos=(unsigned)snapshot,tick=(unsigned)(snapshot>>16),order=pos>>6;
+    if(pos!=last_pos) { last_pos=pos;last_tick=tick; }
+    if(order<28) return 0;if(order>43) return 65535;
+    return clock_rows[order-28][pos&63]+(unsigned short)(tick-last_tick)*100U/70U;
+}
+static void dim_palette(unsigned scale) {
+    unsigned i;outp(0x3c8,0);
+    for(i=0;i<768;i++) outp(0x3c9,(unsigned)palette[i]*scale/64);
+}
 static unsigned credit_cue=0;
 static void log_position(const char *event) {
     unsigned pos=music_position();
@@ -106,6 +122,36 @@ static int show_card(unsigned hold) {
     return 1;
 }
 
+static int show_scheduled(unsigned number) {
+    unsigned now,t,scale=65535,next_scale;long y;
+    unsigned *cue=cues[number];
+    /* Prepare while blank; keep file and palette work ahead of the entry cue. */
+    split(400);scroll(0);upload();dim_palette(0);
+    while(music_position()<credit_cue && !dis_call(2)) dis_call(1);
+    while(credit_time()<cue[0] && !dis_call(2)) dis_call(1);
+    if(number==0) log_position("START");
+    log_position("ENTRY");
+    while((now=credit_time())<cue[3]) {
+        if(dis_call(2)) return 0;
+        if(now<cue[1]) {
+            t=(unsigned)((long)(now-cue[0])*256/(cue[1]-cue[0]));
+            y=256-(long)t;y=y*y/256*y/256;y=25600L*y/256;
+            split((unsigned)(y/128+200));scroll(320-(int)(y/80));
+            next_scale=t<64?t:64;
+        } else if(now<cue[2]) {
+            split(200);scroll(320);next_scale=64;
+        } else {
+            t=(unsigned)((long)(now-cue[2])*256/(cue[3]-cue[2]));
+            y=25600L*t*t/65536L;
+            split((unsigned)(y/128+200));scroll(320+(int)(y/80));
+            next_scale=64-t/4;
+        }
+        if(next_scale!=scale) { dim_palette(next_scale);scale=next_scale; }
+        dis_call(1);
+    }
+    dim_palette(0);split(400);scroll(0);return 1;
+}
+
 static int fail(const char *message) {
     if (trace) { fprintf(trace,"ERROR: %s\n",message); fclose(trace); }
     mode(3);
@@ -114,7 +160,7 @@ static int fail(const char *message) {
 }
 
 int main(void) {
-    FILE *index, *card, *sync;
+    FILE *index, *card, *sync, *schedule, *clock_file;
     unsigned count, number, hold, cue_order, cue_row;
     unsigned far *vector = (unsigned far *)MK_FP(0, 0xfc*4);
     unsigned far *signature;
@@ -141,6 +187,20 @@ int main(void) {
         credit_cue=cue_order*64+cue_row;
         fclose(sync);
     }
+    schedule=fopen("CRED.CUE","rt");
+    if(schedule) {
+        unsigned declared,i;
+        if(fscanf(schedule,"%u",&declared)!=1 || declared!=count) return fail("invalid cue count");
+        for(i=0;i<count;i++) {
+            if(fscanf(schedule,"%u %u %u %u",&cues[i][0],&cues[i][1],&cues[i][2],&cues[i][3])!=4 ||
+               !(cues[i][0]<cues[i][1] && cues[i][1]<cues[i][2] && cues[i][2]<cues[i][3]) ||
+               (i && cues[i][0]<cues[i-1][3])) return fail("invalid card cues");
+        }
+        fclose(schedule);clock_file=fopen("CRED.TIM","rb");
+        if(!clock_file || fread(clock_rows,1,sizeof(clock_rows),clock_file)!=sizeof(clock_rows) || fgetc(clock_file)!=EOF)
+            return fail("invalid tracker clock");
+        fclose(clock_file);scheduled=1;
+    }
     for (number=0; number<count && !dis_call(2); ++number) {
         if (fscanf(index,"%12s %u",name,&hold)!=2 || hold<1 || hold>4200)
             return fail("invalid credit entry");
@@ -154,12 +214,14 @@ int main(void) {
         fclose(card);
         if(number==0) {
             log_position("READY");
-            while(credit_cue && music_position()<credit_cue && !dis_call(2)) dis_call(1);
-            log_position("START");
+            if(!scheduled) {
+                while(credit_cue && music_position()<credit_cue && !dis_call(2)) dis_call(1);
+                log_position("START");
+            }
             graph();
         }
         if (trace) { fprintf(trace,"CARD %u %s\n",number+1,name); fflush(trace); }
-        if (!show_card(hold)) break;
+        if (!(scheduled?show_scheduled(number):show_card(hold))) break;
     }
     log_position("END");
     fclose(index);

@@ -765,3 +765,36 @@ Overview 24:54, swoosh 25:6, flight end 26:57, credits 28:0–43:29 are unchange
 versus 448/1452 before this follow-up. Both native suites and all 38 host tests
 pass. The regenerated contact sheet and flyby strip were visually reviewed.
 Original drone, protected palette entries and MUSIC0 payload are byte-exact.
+
+Presentation pass: motion, materials, credits and asset editing
+--------------------------------------------------------------
+The presentation now has one validated entry point:
+assets/robotron/presentation.json. See assets/robotron/EDITING.txt for model,
+photo, SCAD-render, ASCII-text, material and motion replacement instructions.
+
+Camera holds let key legends, drive mouths and the monitor seam register.
+The drone retains its exact tangent-facing nose and musical flyby anchors;
+continuous-acceleration motion and smoothed, restrained banking refine its turns.
+Robotron palette ramps distinguish paint, metal and recesses. Curved CRT glass
+uses smooth normals, a glow floor and a broad view-dependent sheen. Its geometry
+and shared bezel boundary remain unchanged, and drone palette slots are protected.
+
+The 21 technical cards now introduce the workstation, then explain individual
+components with shorter, hierarchical captions and specific annotated views.
+Focused cards carry board/part locators. The controller keyboard PCB remains the
+narrow assembly. Reference configuration facts remain labelled as references.
+The latest source snapshot and per-input hashes are kept locally for provenance.
+
+The final overview fades into black before the first card. Card entrances now
+follow authored tracker beats, with eased movement and palette fades. Live cue
+scheduling preserves the 28:0 start and original 43:29 end instead of accumulating
+fixed-frame holds. Generic editable projects without CRED.CUE retain their old
+transition behavior. Playback validates all scheduled card entries automatically.
+
+Validated with 43 host tests, both native renderer suites and full headless
+DOSBox-X playback at fixed 300000 cycles (capture/20261014-220008-548049).
+All 21 entrances land on their scheduled tracker rows with zero measured cue
+error; overview 24:54, swoosh 25:6 and credits 28:0-43:29 remain intact.
+Playback exits normally without confirmation. Original drone data, protected
+palette slots and music payload remain byte-exact. The final review contact
+sheet was visually inspected. Results: benchmarks/presentation.json.

@@ -1,0 +1,94 @@
+Robotron presentation editing
+=============================
+
+One entry point: presentation.json. It selects the canonical source assembly,
+flight.json, credits.json, materials.json, optional SCAD replacements, and
+transition settings. All paths are relative to the file that contains them.
+
+Validate before rendering:
+  RT1715/build/host-python/bin/python RT1715/presentation.py
+
+Build, run headlessly, and create the preview/review:
+  RT1715/build/host-python/bin/python RT1715/build.py \
+    --presentation RT1715/assets/robotron/presentation.json --review
+
+Build tools and OpenSCAD run on the host. DOSBox-X only plays/tests the result.
+The sibling repositories remain read-only. A local source snapshot includes
+current uncommitted model edits; snapshot.json records their hashes. Generated
+exports must match browser/model.json. Concurrent source changes during copying
+are rejected. To reproduce a prepared snapshot, also pass:
+  --robotron RT1715/build/model-snapshot
+
+Models
+------
+The canonical source directory supplies the entire assembly. To override one
+DOS exterior part, add an entry to presentation.json's models list:
+  {"name":"lid", "scad":"models/my-lid.scad", "material":"paint"}
+
+Coordinates are millimetres in the assembly frame: X right, Y back, Z up.
+Keep the part's position in that frame. The geometry is not automatically
+rescaled to fill the original part. Common names include base, lid, stand,
+monitor, monitor-joint, bezel, screen, keyboard and deck. Prepared report.json
+lists every mesh name. Front assemblies may be split into several src-* parts.
+
+Use low OpenSCAD tessellation for runtime replacements. Each encoded mesh must
+fit 500 polygons, 500 vertices (including the center), 500 normals and the
+64 KiB object format. Errors identify unsupported geometry; reduce/split it.
+The original drone slot 28 is protected. Credit renders can use detailed models.
+
+Motion and materials
+--------------------
+flight.json contains camera eye/target tracks, drone positions and bank settings.
+The drone uses continuous-acceleration interpolation, tangent-aligned heading,
+and smoothed banking capped at 16 degrees. Camera stop points mark detail holds.
+Keep the wide camera at 45.5..49 seconds and the straight final crossing around
+47.76 seconds: these are the existing musical reveal/swoosh anchors.
+
+materials.json controls the eight Robotron ramps. Their palette slots are fixed;
+the original drone colors are untouched. The screen is a smooth-normal surface
+with restrained view-dependent shading and a low glow floor. It has no alpha
+transparency or additional geometry over the bezel.
+
+Pictures and ASCII text
+-----------------------
+credits.json has 21 cards. Each card has a unique image ID, printable ASCII lines,
+and exactly one source:
+  "view": {...}                  select and annotate canonical assembly parts
+  "photo": "pictures/board.png"  use your own rendered image
+  "render_model": "models/board.scad"  render a standalone SCAD model
+
+Keep image IDs when changing their contents. A custom image/model replaces the
+view field. Standalone models render with automatic framing on black; supplied
+photos are fitted on a black canvas. Both get a white border. Use a black
+background in supplied renders if the picture itself should have no backdrop.
+
+Views support parts, board, angle, flip, focus_chips, focus_parts,
+focus_component, highlight_chips, highlight_parts, margin, annotation and title.
+Focused views show a whole-board/part locator by default; locator:false disables
+it. Keyboard cards use only the narrow controller assembly. Avoid showing a
+large generic IC when the subject is a specific memory bank or connector.
+
+Text is limited to printable ASCII and 50 characters per line. The presentation
+validator additionally rejects lines that need smaller than a 16-pixel font to
+fit, so shorten a line instead of squeezing it. Three concise lines work best:
+a subject, a verified specification, and what that part does. Evidence and
+reference-vs-specimen distinctions are in SOURCES.txt; keep those qualifications.
+
+Generated build/prepared/credits-contact.png shows all final picture/text cards.
+Per-card previews are alongside it. build/robotron/credit-views.json records the
+selected parts and crops. Render hashes avoid repeating unchanged SCAD renders.
+
+Transitions and timing
+----------------------
+The last overview fades out over 0.8 seconds. The first card starts at 28:0 with
+the complete workstation; following cards move inside. Entries snap to eight-row
+tracker accents, with 0.84-second eased entrances and 0.36-second exits. Captions
+remain stationary for at least three seconds. Cue timing uses the live tracker
+and retrace interpolation, so disk reads do not accumulate schedule drift.
+The final fade ends at the original cue 43:29. Do not change card count or the
+58-second flight interval without deliberately reauthoring music synchronization.
+
+build/robotron/credit-cues.json is the readable schedule. Playback automatically
+checks every entry and the end cue. build/robotron-preview.mp4 is the full run;
+build/robotron-review.mp4 and robotron-review.png cover the detail shots, reveal,
+flyby, credit handoff and representative technical cards.

@@ -121,8 +121,12 @@ def main():
     parser.add_argument("--robotron", type=Path, nargs="?",
                         const=ROOT.parent/"3d-models/models/robotron-1715m",
                         help="Build Robotron fly-through from canonical model exports")
+    parser.add_argument("--presentation",type=Path,help="Robotron presentation manifest (sources, motion, materials and cards)")
     parser.add_argument("--review",action="store_true",help="After building, run headlessly and generate the review reel")
     args = parser.parse_args()
+    if args.presentation and not args.robotron:
+        from presentation import load
+        _,args.robotron,_=load(args.presentation)
     if args.robotron and args.project:
         parser.error("Choose --robotron or --project")
     assembler, linker = tool(args.jwasm), tool(args.wlink)
@@ -132,7 +136,7 @@ def main():
     (HERE / "capture").mkdir(exist_ok=True)
     if args.robotron:
         from robotron import prepare as prepare_robotron
-        args.project = prepare_robotron(args.robotron, build, args.openscad)
+        args.project = prepare_robotron(args.robotron, build, args.openscad,args.presentation)
     if args.project:
         from prepare import load_project
         load_project(args.project.resolve())
@@ -178,7 +182,7 @@ def main():
                      "module_sha256": hashlib.sha256(music).hexdigest(),
                      "module_offset": 16, "start_order": 18})
     # These are generated files owned by this build, not source assets.
-    for old in [dos / "CRED.IDX", dos / "CRED.LOG", dos / "CRED.SYN", dos / "FLIGHT.LOG", *dos.glob("CARD??.CRD")]:
+    for old in [dos / "CRED.IDX", dos / "CRED.LOG", dos / "CRED.SYN", dos / "CRED.CUE", dos / "CRED.TIM", dos / "FLIGHT.LOG", *dos.glob("CARD??.CRD")]:
         old.unlink(missing_ok=True)
     if args.project:
         from prepare import prepare
@@ -210,7 +214,7 @@ def main():
                 item["original_sha256"] = item.pop("sha256")
                 item["sha256"] = hashlib.sha256(path.read_bytes()).hexdigest()
                 item["source"] = "RT1715/credits.c" if path.suffix == ".EXE" else str(args.project)
-        for name in ["CRED.IDX", *[card["file"] for card in report["credits"]]]:
+        for name in ["CRED.IDX", *(["CRED.CUE","CRED.TIM"] if args.robotron else []), *[card["file"] for card in report["credits"]]]:
             manifest.append({"file":name,"source":str(args.project),
                              "sha256":hashlib.sha256((dos/name).read_bytes()).hexdigest()})
     (build / "assets.json").write_text(json.dumps(manifest, indent=2) + "\n")

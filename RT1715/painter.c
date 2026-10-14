@@ -13,6 +13,7 @@ static vlist vertices[500];
 static pvlist projected[500];
 static nlist normals[500];
 static rt_vertex screen[500];
+static int glass;
 static long mix(long a,long b,long numerator,long denominator) {
     return a+rt_muldiv(b-a,numerator,denominator);
 }
@@ -31,7 +32,7 @@ static void polygon(object *o,rt_face_word *face,int decal) {
     for(i=0;i<n;i++) {
         index=face[i+3];a[i].x=vertices[index].x;a[i].y=vertices[index].y;a[i].z=vertices[index].z;
         if(a[i].z<512) all_inside=0;
-        a[i].c=(face[0]&F_GOURAUD)?face[1]+rt_shade_cached(normals,o->v0[index].normal,face[0]):flat_color;
+        a[i].c=(face[0]&F_GOURAUD)?face[1]+(glass?rt_glass_shade_cached(normals,o->v0[index].normal):rt_shade_cached(normals,o->v0[index].normal,face[0])):flat_color;
     }
     if(all_inside) {
         for(i=0;i<n;i++) { b[i]=screen[face[i+3]];b[i].c=a[i].c; }
@@ -71,6 +72,7 @@ void rt_queue(object *o) {
     if(o->vnum>500 || o->nnum>500) exit(3);
     o->v=vertices;o->pv=projected;o->n=normals;
     key=!strncmp(o->name,"\"key-",5);
+    glass=!strcmp(o->name,"\"screen\"");
     if(key) {
         calc_rotate(8,vertices,o->v0,o->r);
         for(i=0;i<8;i++) if(vertices[i].z<nearest) nearest=vertices[i].z;

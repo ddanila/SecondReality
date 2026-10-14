@@ -105,7 +105,7 @@ def chunk(tag, data):
     return tag + struct.pack("<I", len(data)) + data
 
 
-def encode(name, triangles, color=64, shades=32, face_colors=None, precomputed_orders=True, sort_center=None):
+def encode(name, triangles, color=64, shades=32, face_colors=None, precomputed_orders=True, sort_center=None, smooth=False):
     if shades not in (1, 8, 16, 32) or not 0 <= color <= 251 or color + shades > 252:
         raise ValueError("Material must fit palette entries 0..251, with 1/8/16/32 shades")
     if not 0 < len(triangles) <= MAX_FACES:
@@ -150,11 +150,24 @@ def encode(name, triangles, color=64, shades=32, face_colors=None, precomputed_o
     directions = list(itertools.product((-1, 1), repeat=3)) if precomputed_orders else []
     for direction in directions:
         vertices.append(tuple(center[k] + direction[k]*256 for k in range(3)))
-    vertex_data = struct.pack("<HH", len(vertices), 0)
-    vertex_data += b"".join(struct.pack("<iiihH", *p, -1, 0xfc) for p in vertices)
+    vertex_normals=[-1]*len(vertices)
+    if smooth:
+        sums=[[0.,0.,0.] for _ in vertices]
+        for face,ni in zip(faces,normal_ids):
+            for index in face:
+                for axis in range(3):sums[index][axis]+=normals[ni][axis]
+        for index,total in enumerate(sums):
+            length=math.sqrt(sum(v*v for v in total))
+            if not length:continue
+            vertex_normals[index]=len(normals)
+            normals.append(tuple(round(v*16384/length) for v in total))
+        if len(normals)>500:raise ValueError('Smooth surface exceeds 500 normals')
+    vertex_data = struct.pack('<HH', len(vertices), 0)
+    vertex_data += b''.join(struct.pack('<iiihH', *p, vertex_normals[i], 0xfc) for i,p in enumerate(vertices))
     normal_data = struct.pack("<HH", len(normals), len(normals))
     normal_data += b"".join(struct.pack("<hhhH", *n, 0xfc) for n in normals)
     flags = {1: 0, 8: 0x400, 16: 0x800, 32: 0xc00}[shades]
+    if smooth:flags |= 0x1000
     poly, offsets = bytearray(b"\0\0"), []
     for i, face in enumerate(faces):
         offsets.append(len(poly))

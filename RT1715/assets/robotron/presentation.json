@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "source": "../../../../3d-models/models/robotron-1715m",
+  "flight": "flight.json",
+  "credits": "credits.json",
+  "materials": "materials.json",
+  "models": [],
+  "transition": {
+    "flight_fade_seconds": 0.8,
+    "entry_seconds": 0.84,
+    "exit_seconds": 0.36,
+    "credits_end": [43, 29]
+  }
+}

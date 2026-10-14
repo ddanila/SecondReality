@@ -100,7 +100,7 @@ def make_card(image_path, lines, output, preview):
     for n, line in enumerate(lines):
         # Pillow's bundled scalable font covers printable ASCII. Rasterize at
         # final resolution into 16 grayscale entries: no host font dependency.
-        for size in range(28,5,-1):
+        for size in range((26,22,18,16)[n],5,-1):
             font = ImageFont.load_default(size=size)
             bbox = font.getbbox(line or " ")
             if bbox[2]-bbox[0] <= 312 and bbox[3]-bbox[1] <= 32:
@@ -172,6 +172,14 @@ def prepare(project, build, dos, command="openscad"):
         index.append(f"{name} {card.get('hold_frames',200)}")
         report["credits"].append({"file":name,"lines":card["lines"],
                                    "image":str(image_path),"hold_frames":card.get("hold_frames",200)})
+    gallery=Image.new('RGB',(960,264*((len(config['credits'])+2)//3)),'black')
+    draw=ImageDraw.Draw(gallery)
+    for n,card in enumerate(config['credits']):
+        x=(n%3)*320;y=(n//3)*264
+        with Image.open(output/f'card{n+1:02}-preview.png') as image:
+            gallery.paste(image.resize((320,240),Image.Resampling.NEAREST),(x,y+24))
+        draw.text((x+6,y+4),f"{n+1:02}  {card['lines'][0]}",font=ImageFont.load_default(size=13),fill='white')
+    gallery.save(output/'credits-contact.png')
     (output/"CRED.IDX").write_bytes(("\r\n".join(index)+"\r\n").encode("ascii"))
     visibility = config.get("visibility", "original")
     report["visibility"] = {"mode": visibility}

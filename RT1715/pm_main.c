@@ -15,6 +15,7 @@ static unsigned char *animation,*cursor,*animation_end;
 static unsigned fov;
 static FILE *trace;
 static unsigned last_position=65535,last_tick;
+static int fade_start=0,fade_end=0,fade_scale=64;
 static void fail(const char *s) { if(trace) { fprintf(trace,"ERROR %s\n",s);fclose(trace); } puts(s);exit(3); }
 static void *allocate(size_t n) { void *p=calloc(1,n);if(!p) fail("Out of protected-mode memory");return p; }
 static unsigned char *readfile(const char *name,size_t *size) {
@@ -195,12 +196,26 @@ int main(int argc,char **argv) {
         } else { sprintf(name,"U2E.%03d",index);scene[i].o=load_object(name); }
     }
     animation=readfile("U2E.0AB",&size);cursor=animation;animation_end=animation+size;
+    config=fopen("U2E.PRS","rt");
+    if(config) {
+        if(fscanf(config,"%d %d",&fade_start,&fade_end)!=2 || fade_start<0 || fade_end<=fade_start)
+            fail("Invalid presentation fade");
+        fclose(config);
+    }
     if(bench) return benchmark();
     intro(materials+16);rt_dis(0);
     do { pos=rt_snapshot(&tick);if((pos>>6)<19) rt_wait(); } while((pos>>6)<19 && !rt_dis(2));
     next_frame();currframe=2;
     while(!finished && !rt_dis(2)) {
         render(page);rt_wait();rt_show_page(page);page=(page+1)&3;
+        if(fade_end && currframe>=fade_start) {
+            unsigned char dim[768];int scale=currframe>=fade_end?0:(fade_end-currframe)*64/(fade_end-fade_start);
+            if(scale!=fade_scale) {
+                if(fade_scale==64) { pos=rt_snapshot(&tick);fprintf(trace,"HANDOFF order=%u row=%u\n",pos>>6,pos&63); }
+                for(i=0;i<768;i++) dim[i]=(unsigned char)((unsigned)materials[16+i]*scale/64);
+                rt_palette(dim);fade_scale=scale;
+            }
+        }
         target=music_frame(&pos);
         while(cue<2 && currframe>=(cue?3344:3186)) {
             fprintf(trace,"%s frame=%d order=%u row=%u\n",cue?"SWOOSH":"OVERVIEW",currframe,pos>>6,pos&63);
@@ -213,6 +228,7 @@ int main(int argc,char **argv) {
         target=(target/2)*2;
         while(currframe<target && !finished) { next_frame();currframe+=2; }
     }
+    if(fade_end) { unsigned char black[768];memset(black,0,sizeof(black));rt_palette(black); }
     pos=rt_snapshot(&tick);
     fprintf(trace,"END order=%u row=%u frame=%d\n",pos>>6,pos&63,currframe);
     fprintf(trace,"COUNTERS frames=%lu vertices=%lu triangles=%lu spans=%lu clipped=%lu ems_maps=0\n",
