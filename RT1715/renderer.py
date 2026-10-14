@@ -27,6 +27,7 @@ def assembly(path):
 def build_renderer(build,compiler,assembler,linker,watcom):
     out=build/'renderer';out.mkdir(exist_ok=True)
     shutil.copyfile(ROOT/'RT1715/fast.h',out/'fast.h')
+    shutil.copyfile(ROOT/'RT1715/lighting.h',out/'lighting.h')
     from music import flight_header
     (out/'MUSIC.H').write_text(flight_header(ROOT/'MAIN/MUSIC0.S3M'))
     for name in ('C.H','CD.H'):

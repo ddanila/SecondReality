@@ -26,7 +26,7 @@ def main():
         rows.append('{'+','.join(map(literal,(a,b,d,q)))+'}')
     # 32KB vectors live outside DGROUP, leaving room for reference buffers.
     (out/'vectors.h').write_text('static const long __far vectors[][4]={\n'+',\n'.join(rows)+'\n};\n')
-    for name in ('fast.asm','fast.h','fast_test.c'):shutil.copyfile(build.HERE/name,out/name)
+    for name in ('fast.asm','fast.h','fast_test.c','lighting.h'):shutil.copyfile(build.HERE/name,out/name)
     subprocess.run([build.tool('jwasm'),'-q','-Cp','-omf','-FoFAST.OBJ','fast.asm'],cwd=out,check=True)
     subprocess.run([cc,'-zq','-bt=dos','-ml','-3','-ot','-s','-ecc',f'-i={watcom / "h"}',
                     '-fo=TEST.OBJ','fast_test.c'],cwd=out,check=True)

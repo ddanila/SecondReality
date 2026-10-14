@@ -15,6 +15,7 @@ unsigned rt_color_at(int x,int y) { return test_color[y*320+x]; }
 extern int far vramseg;
 static unsigned frame_seg,handle;
 static int active=0,mapped[4];
+static rt_span_args direct_args;
 static void ems(unsigned ax,unsigned bx,unsigned dx) {
     union REGS r;
     r.x.ax=ax;r.x.bx=bx;r.x.dx=dx;int86(0x67,&r,&r);
@@ -82,14 +83,11 @@ static void span(int y,int left,int right,long z,long dz,long c,long dc,int deca
     unsigned depth,offset,video_offset;
 #ifndef RT_HOST_TEST
     unsigned short far *buffer;
-    rt_span_args args;
+    unsigned logical;
 #endif
     while(left<right) {
         index=(unsigned long)y*320+left;
         end=left+(int)(8192-(index&8191));if(end>right) end=right;
-#ifndef RT_HOST_TEST
-        buffer=page((unsigned)(index>>13));
-#endif
         {
             long q,shade;
             first=left+((plane-left)&3);
@@ -98,12 +96,12 @@ static void span(int y,int left,int right,long z,long dz,long c,long dc,int deca
             video_offset=y*80+(first>>2);
 #ifndef RT_HOST_TEST
             if(first<end) {
-                args.depth_seg=FP_SEG(buffer);args.depth_off=offset*2;
-                args.video_seg=vramseg;args.video_off=video_offset;
-                args.count=(end-first+3)/4;args.decal=decal;
-                args.z=q;args.dz=(unsigned long)dz*4;
-                args.color=shade;args.dcolor=(unsigned long)dc*4;
-                rt_span386(&args);
+                logical=(unsigned)(index>>13);
+                buffer=page(logical);
+                direct_args.depth_seg=FP_SEG(buffer);direct_args.depth_off=offset*2;
+                direct_args.video_off=video_offset;direct_args.count=(end-first+3)/4;
+                direct_args.z=q;direct_args.color=shade;
+                rt_span386(&direct_args);
             }
 #else
             for(x=first;x<end;x+=4,q+=dz*4,shade+=dc*4,offset+=4,video_offset++) {
@@ -160,6 +158,11 @@ static void triangle(rt_vertex *a,rt_vertex *b,rt_vertex *c,int decal) {
                      (unsigned long)cy*(y-a->y)+(cx+cy)/2);
         qstart[y]=z;cstart[y]=shade;
     }
+#ifndef RT_HOST_TEST
+    /* These values are invariant across all spans and planes of a triangle. */
+    direct_args.video_seg=vramseg;direct_args.decal=decal;
+    direct_args.dz=(unsigned long)qx*4;direct_args.dcolor=(unsigned long)cx*4;
+#endif
     /* Select each VGA plane once per triangle, reusing scanline gradients. */
     for(plane=0;plane<4;plane++) {
 #ifndef RT_HOST_TEST

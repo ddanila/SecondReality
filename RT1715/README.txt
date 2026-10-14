@@ -505,3 +505,42 @@ visible RGB frame updates increased from 184 to 219 in the first 20 seconds
 include holds and depend on host load; kernel speedups do not imply the same
 whole-demo speedup. The final preview, review reel and contact sheet were
 regenerated and the keyboard, drive fronts, CRT and diagonal pass inspected.
+
+Span and lighting follow-up
+--------------------------
+Constant-color spans now use a dedicated assembly loop that skips Gouraud
+interpolation. The C setup stores triangle-invariant span parameters once and
+avoids EMS page lookups for empty spans. Gouraud lighting is cached by normal,
+shading mode and transformed object; generation wrap clears the cache safely.
+
+Two scanline batching designs were tested and discarded: buffering overhead
+removed the expected gain. The retained renderer calls the span kernel directly.
+At fixed 300000 cycles, native lighting measured 605 ms direct versus 274 ms
+cached for repeated shared normals. Constant-color spans measured 440 ms versus
+494 ms for interpolated spans. These are kernel timings, not whole-demo gains.
+The suite additionally checks 6000 lighting cases, repeated cache hits, shading
+mode changes and generation wrap; all 38 host tests also pass.
+
+For comparable full-demo captures, pin the emulated CPU budget:
+
+    python3 RT1715/run.py --cycles 300000
+    python3 RT1715/compare_runs.py BASE_CAPTURE CANDIDATE_CAPTURE --output comparison.json
+
+Playback records the actual DOSBox CPU setting, renderer hash and scene hash.
+The comparison rejects mismatched CPU settings or available scene hashes and
+counts visible RGB changes in the first 20 and 50 seconds. These include camera
+holds and are not refresh rates. Older captures lacking scene hashes report a
+null scene match; their assets must be checked separately.
+
+Follow-up validation: capture/20261014-190652-233308 passes full headless playback
+and all 21 credit cards, with no confirmation dialogs. Fixed 300000 cycles:
+188 versus 181 visible updates in the first 20 seconds (+3.87%), and 949 versus
+919 in the first 50 seconds (+3.26%), against capture/20261014-185327-420598.
+This is a single-run comparison, not a statistical performance guarantee.
+The compact batching experiment reached only 184/940 updates and was removed.
+Wall time was 176.68 seconds; captured audio 174.930 seconds. Overview 24:54,
+swoosh 25:6, flight end 26:57 and credits 28:0–43:29 satisfy the synchronization
+checks. The review contact sheet was inspected and preview/reel regenerated.
+All 22 source SCAD hashes match current files; built asset hashes, original
+drone and protected palette remain valid. Scene assets were unchanged across
+these runs; the baseline predates automatic scene-hash capture metadata.

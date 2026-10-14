@@ -177,7 +177,7 @@ _rt_edges386 endp
 ; while VGA advances one byte. q and shade use six fractional bits.
 ; Keep interpolation in 32-bit registers; only the temporary depth test
 ; borrows EAX. The decal loop saturates its one-unit bias at 65535.
-SPAN_LOOP macro label_name,bias
+SPAN_LOOP macro label_name,bias,flat
 local rejected,next_pixel
 label_name:
     push eax
@@ -191,13 +191,19 @@ next_pixel:
     cmp ax,fs:[si]
     jb rejected
     mov fs:[si],ax
-    mov eax,ecx
-    sar eax,6
-    mov es:[di],al
+    if flat
+        mov es:[di],cl
+    else
+        mov eax,ecx
+        sar eax,6
+        mov es:[di],al
+    endif
 rejected:
     pop eax
     add eax,ebx
-    add ecx,edx
+    if flat EQ 0
+        add ecx,edx
+    endif
     add si,8
     inc di
     dec bp
@@ -224,13 +230,25 @@ _rt_span386 proc far
     mov ebx,[si+16]
     mov ecx,[si+20]
     mov edx,[si+24]
+    test edx,edx
+    jnz span_smooth
+    sar ecx,6
     cmp word ptr [si+10],0
     mov si,[si+2]
-    jnz span_decal
-    SPAN_LOOP span_plain,0
+    jnz span_flat_bias
+    SPAN_LOOP span_flat,0,1
     jmp span_done
-span_decal:
-    SPAN_LOOP span_biased,1
+span_flat_bias:
+    SPAN_LOOP span_flat_biased,1,1
+    jmp span_done
+span_smooth:
+    cmp word ptr [si+10],0
+    mov si,[si+2]
+    jnz span_smooth_bias
+    SPAN_LOOP span_shaded,0,0
+    jmp span_done
+span_smooth_bias:
+    SPAN_LOOP span_shaded_biased,1,0
 span_done:
     pop fs
     pop es
@@ -239,4 +257,5 @@ span_done:
     pop bp
     retf
 _rt_span386 endp
+
 end

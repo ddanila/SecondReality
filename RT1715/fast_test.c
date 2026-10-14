@@ -7,6 +7,9 @@
 #include <time.h>
 #include "fast.h"
 #include "vectors.h"
+typedef struct { int x,y,z,reserved; } nlist;
+#include "lighting.h"
+static nlist light_normals[500];
 static unsigned short __far actual_depth[8192],expected_depth[8192];
 static unsigned char __far actual_video[1024],expected_video[1024];
 static unsigned char __far source[16384],copied[16384];
@@ -43,7 +46,8 @@ static int fail(const char *what,unsigned i) {
     printf("FAIL %s %u\n",what,i);return 1;
 }
 int main(void) {
-    unsigned i,j,n,start;
+    unsigned i,j,k,n,start;
+    unsigned long uncached_total=0,cached_total=0;
     clock_t begin,c_ticks,asm_ticks;
     if(sizeof(rt_span_args)!=28 || offsetof(rt_span_args,z)!=12)
         return fail("ABI layout",sizeof(rt_span_args));
@@ -88,6 +92,35 @@ int main(void) {
         if(memcmp(actual_video,expected_video,sizeof(actual_video))) return fail("span color",i);
     }
     printf("PASS spans 200 cases, both shade slopes, decals and page edges\n");
+    for(i=0;i<500;i++) {
+        light_normals[i].x=(int)(i*47%32768)-16384;
+        light_normals[i].y=(int)(i*71%32768)-16384;
+        light_normals[i].z=(int)(i*31%32768)-16384;
+    }
+    for(k=0;k<3;k++) {
+        if(k==2) rt_light_epoch=(unsigned)-1;
+        rt_light_begin();
+        for(j=0;j<4;j++) for(i=0;i<500;i++) {
+            if(rt_shade_cached(light_normals,i,j<<10)!=rt_shade(&light_normals[i],j<<10))
+                return fail("cached lighting",i);
+            if(rt_shade_cached(light_normals,i,j<<10)!=rt_shade(&light_normals[i],j<<10))
+                return fail("lighting cache hit",i);
+        }
+        light_normals[0].x=-light_normals[0].x/2;
+    }
+    printf("PASS lighting 6000 cases plus cache hits, mode changes and generation wrap\n");
+    begin=clock();
+    for(k=0;k<500;k++) for(j=0;j<6;j++) for(i=0;i<500;i++)
+        uncached_total+=rt_shade(&light_normals[i],0xc00);
+    c_ticks=clock()-begin;begin=clock();
+    for(k=0;k<500;k++) {
+        rt_light_begin();
+        for(j=0;j<6;j++) for(i=0;i<500;i++) cached_total+=rt_shade_cached(light_normals,i,0xc00);
+    }
+    asm_ticks=clock()-begin;
+    if(uncached_total!=cached_total) return fail("lighting checksum",0);
+    printf("BENCH lighting direct=%lu cached=%lu ticks\n",(unsigned long)c_ticks,(unsigned long)asm_ticks);
+
     for(i=0;i<400;i++) {
         top=200;bottom=0;
         for(j=0;j<3;j++) {
@@ -114,6 +147,9 @@ int main(void) {
     args.depth_off=FP_OFF(actual_depth);args.video_off=FP_OFF(actual_video);
     begin=clock();for(i=0;i<20000;i++) rt_span386(&args);asm_ticks=clock()-begin;
     printf("BENCH span C=%lu ASM=%lu ticks_per_second=%lu\n",(unsigned long)c_ticks,(unsigned long)asm_ticks,(unsigned long)CLOCKS_PER_SEC);
+    c_ticks=asm_ticks;args.dcolor=0;
+    begin=clock();for(i=0;i<20000;i++) rt_span386(&args);asm_ticks=clock()-begin;
+    printf("BENCH shading smooth=%lu flat=%lu ticks\n",(unsigned long)c_ticks,(unsigned long)asm_ticks);
     for(n=64;n<=16384;n*=16) {
         begin=clock();for(i=0;i<20000;i++) memcpy(copied,source,n);c_ticks=clock()-begin;
         begin=clock();for(i=0;i<20000;i++) rt_copy386(copied,source,n);asm_ticks=clock()-begin;

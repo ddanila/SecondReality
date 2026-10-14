@@ -4,6 +4,7 @@
 #include "CD.H"
 #include "C.H"
 #include "depth.h"
+#include "lighting.h"
 static vlist vertices[500];
 static pvlist projected[500];
 static nlist normals[500];
@@ -11,26 +12,17 @@ static rt_vertex screen[500];
 static long mix(long a,long b,long numerator,long denominator) {
     return a+rt_muldiv(b-a,numerator,denominator);
 }
-static int shade(nlist *normal,int flags) {
-    long light;
-    int mode=(flags&0x0c00)>>10,value;
-    if(!mode) return 0;
-    light=(long)normal->x*12118L+(long)normal->y*10603L+(long)normal->z*3030L;
-    value=(int)(light>>21)+128;if(value<0) value=0;if(value>255) value=255;
-    value>>=6-mode;if(value<1) value=1;if(value>30) value=30;
-    return value;
-}
 static void polygon(object *o,int *face,int decal) {
     rt_vertex a[16],b[16],v,w,t,lo,hi;
     int n=face[0]&255,i,m=0,inside,previous,index,all_inside=1,flat_color;
     long d,num;
     if(n>8) exit(3);
     flat_color=face[1];
-    if(!(face[0]&F_GOURAUD)) flat_color+=shade(&normals[face[2]],face[0]);
+    if(!(face[0]&F_GOURAUD)) flat_color+=rt_shade(&normals[face[2]],face[0]);
     for(i=0;i<n;i++) {
         index=face[i+3];a[i].x=vertices[index].x;a[i].y=vertices[index].y;a[i].z=vertices[index].z;
         if(a[i].z<512) all_inside=0;
-        a[i].c=(face[0]&F_GOURAUD)?face[1]+shade(&normals[o->v0[index].normal],face[0]):flat_color;
+        a[i].c=(face[0]&F_GOURAUD)?face[1]+rt_shade_cached(normals,o->v0[index].normal,face[0]):flat_color;
     }
     if(all_inside) {
         for(i=0;i<n;i++) { b[i]=screen[face[i+3]];b[i].c=a[i].c; }
@@ -82,6 +74,7 @@ void rt_queue(object *o) {
         screen[i].y=rt_muldiv(vertices[i].y,projmuly,vertices[i].z)+projaddy;
         screen[i].z=33553920L/vertices[i].z;
     }
+    rt_light_begin();
     n=o->pl[0][0]-3;
     for(i=key && !coarse?6:0;i<(coarse?6:n);i++) {
         offset=o->pl[0][i+2];face=(int *)(o->pd+offset);

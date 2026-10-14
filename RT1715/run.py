@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Run and capture the DOS extraction headlessly in DOSBox-X."""
 import argparse
+import hashlib
 from datetime import datetime
 import json
 import os
@@ -43,7 +44,10 @@ def main():
     parser.add_argument("--dosbox", default="dosbox-x")
     parser.add_argument("--timeout", type=int, default=300, help="wall-clock limit in seconds")
     parser.add_argument("--no-review",action="store_true",help="Skip automatic Robotron preview/review export")
+    parser.add_argument("--cycles", type=int, help="Fixed CPU cycles for reproducible comparisons")
     args = parser.parse_args()
+    if args.cycles is not None and args.cycles <= 0:
+        parser.error("--cycles must be positive")
     emulator = shutil.which(args.dosbox)
     if not emulator:
         raise SystemExit("DOSBox-X not found; pass --dosbox /path/to/dosbox-x")
@@ -54,11 +58,13 @@ def main():
     capture.mkdir(parents=True)
     result = dos / "RESULT.TXT"
     result.unlink(missing_ok=True)
+    (dos / "CPU.TXT").unlink(missing_ok=True)
     (dos / "CRED.LOG").unlink(missing_ok=True)
     (dos / "FLIGHT.LOG").unlink(missing_ok=True)
     # Branch immediately on the application's return status, before ECHO
     # or other shell commands have a chance to change ERRORLEVEL.
     batch = """@echo off
+config -get cpu cycles > CPU.TXT
 set BLASTER=A220 I7 D1 T4
 dx-capture /V /A /-D rt1715.exe > demo.log
 if errorlevel 1 goto failed
@@ -74,6 +80,8 @@ exit
     command = [emulator, "-conf", "dosbox-x.conf", "-noautoexec", "-fastlaunch",
                "-set", f"dosbox captures={capture}",
                "-c", "mount c build/dos", "-c", "c:", "-c", "runtest.bat"]
+    if args.cycles is not None:
+        command[1:1] = ["-set", f"cpu cycles=fixed {args.cycles}"]
     print(f"Headless DOSBox-X playback; captures and log: {capture}", flush=True)
     start = time.monotonic()
     with (capture / "dosbox.log").open("w") as log:
@@ -108,6 +116,14 @@ exit
                                     (capture / "credits.log").read_text())
         except (OSError, ValueError) as error:
             raise SystemExit(f"Music synchronization failed: {error}")
+    actual_cycles=(dos / "CPU.TXT").read_text().strip()
+    if args.cycles is not None and actual_cycles != f"fixed {args.cycles}":
+        raise SystemExit(f"DOSBox CPU setting mismatch: {actual_cycles!r}")
+    shutil.copyfile(dos / "CPU.TXT", capture / "cpu.txt")
+    scene_hash=hashlib.sha256()
+    for asset in sorted(dos.glob("U2E.*")):
+        if asset.suffix.upper() != ".EXE":
+            scene_hash.update(asset.name.encode()+b"\0"+asset.read_bytes())
     videos = sorted(capture.glob("*.avi"))
     waves = sorted(capture.glob("*.wav"))
     if not videos or not waves:
@@ -126,6 +142,9 @@ exit
         raise SystemExit("Missing sustained audio; inspect captures")
     summary = {"dos_exit": status, "headless": True,
                "wall_seconds": round(time.monotonic() - start, 2),
+               "cpu_cycles": actual_cycles,
+               "renderer_sha256": hashlib.sha256((dos / "U2E.EXE").read_bytes()).hexdigest(),
+               "scene_sha256": scene_hash.hexdigest(),
                "video_files": [p.name for p in videos], "audio": audio}
     if sync_cues is not None:
         summary["music_cues"] = sync_cues
@@ -135,7 +154,8 @@ exit
         python=HERE/'build/host-python/bin/python'
         subprocess.run([str(python) if python.exists() else sys.executable,
                         str(HERE/'review.py'),str(capture)],check=True)
-    print("Review the generated reel/contact sheet for visual regressions.")
+    if not args.no_review:
+        print("Review the generated reel/contact sheet for visual regressions.")
 
 
 if __name__ == "__main__":
