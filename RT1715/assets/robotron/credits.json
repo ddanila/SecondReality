@@ -18,7 +18,8 @@
       ],
       "highlight_chips": [
         "UA880"
-      ]
+      ],
+      "annotation": "CPU"
     }
   },
   {
@@ -77,7 +78,8 @@
       ],
       "highlight_chips": [
         "SAB8275P"
-      ]
+      ],
+      "annotation": "CRT CONTROL"
     }
   },
   {
@@ -143,7 +145,8 @@
       ],
       "focus_chips": [
         "M4164B"
-      ]
+      ],
+      "annotation": "RAM BANK"
     }
   },
   {
@@ -173,7 +176,8 @@
       ],
       "highlight_chips": [
         "U8272"
-      ]
+      ],
+      "annotation": "FLOPPY CTRL"
     }
   },
   {
@@ -199,7 +203,8 @@
         25,
         0,
         25
-      ]
+      ],
+      "annotation": "EPROM"
     }
   },
   {
@@ -227,7 +232,8 @@
       "focus_chips": [
         "UL6516D"
       ],
-      "flip": true
+      "flip": true,
+      "annotation": "3 x RAM"
     }
   },
   {
@@ -251,7 +257,8 @@
         "UA858",
         "UA8560",
         "CTC"
-      ]
+      ],
+      "annotation": "DMA / I-O"
     }
   },
   {
@@ -430,7 +437,8 @@
         5,
         8,
         8
-      ]
+      ],
+      "annotation": "CONNECTOR"
     }
   },
   {

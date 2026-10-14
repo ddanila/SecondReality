@@ -132,3 +132,14 @@ class RobotronTests(unittest.TestCase):
         centers=shell.triangles_center[shell.face_normals[:,2]>.9]
         inside=(np.abs(centers[:,0])<238)&(centers[:,1]>-445)&(centers[:,1]<-298)
         self.assertFalse(np.any(inside))
+
+    def test_coarse_key_lod_retains_the_cap_silhouette(self):
+        import trimesh
+        from robotron_lod import keycap
+        for size in ([17.8,17.8,11.5],[112,17.8,11.5],[36,36,11.5]):
+            detailed=keycap(trimesh.creation.box(extents=size))
+            coarse=keycap(detailed,detailed=False)
+            self.assertEqual(coarse.bounds.tolist(),detailed.bounds.tolist())
+            self.assertTrue(coarse.is_watertight)
+            self.assertTrue(coarse.is_winding_consistent)
+            self.assertEqual(len(robotron.polygons(coarse)),6)

@@ -84,3 +84,12 @@ class MusicTimingTests(unittest.TestCase):
         self.assertEqual(views['display-ram']['focus_chips'],['UL6516D'])
         self.assertEqual(views['main-ram']['focus_chips'],['M4164B'])
         self.assertIn('keyboard-controller-rom-cover',views['keyboard-rom']['focus_parts'])
+
+    def test_diagonal_approach_accelerates_into_the_swoosh(self):
+        import numpy as np
+        import robotron
+        f=json.loads((HERE/'assets/robotron/flight.json').read_text())
+        def speed(t):
+            return np.linalg.norm(robotron.sample_track(f['drone'],t+.01,'position')-
+                                  robotron.sample_track(f['drone'],t-.01,'position'))/.02
+        self.assertGreater(speed(47.9),speed(47.2)*1.4)

@@ -24,16 +24,29 @@ static void transform(object *o) {
 
 void rt_begin(void) { count=0; }
 void rt_queue(object *o) {
-    int i,j,n,offset,*face,clip;
+    int i,j,n,offset,*face,clip,key,coarse;
     vlist *v; nlist *normal;
     long facing;
     long depth,nearest=0x7fffffffL;
     if(!(o->flags&F_VISIBLE)) return;
-    transform(o);
+    key=!strncmp(o->name,"\"key-",5);
+    coarse=0;
+    if(key) {
+        /* The first six faces use exactly eight envelope vertices. Decide
+         * LOD before transforming hundreds of tiny legend vertices. */
+        o->v=vertices;o->pv=projected;o->n=normals;
+        calc_rotate(8,vertices,o->v0,o->r);
+        for(i=0;i<8;i++) if(vertices[i].z<nearest) nearest=vertices[i].z;
+        coarse=nearest>240L*64L;
+        if(coarse) {
+            calc_nrotate(6,normals,o->n0,o->r);
+            o->vf=calc_project(8,projected,vertices);
+        }
+    }
+    if(!coarse) transform(o);
     if(o->vf) return;
-    for(i=0;i<o->vnum;i++) if(o->v[i].z<nearest) nearest=o->v[i].z;
     n=o->pl[0][0]-3;
-    for(i=0;i<n;i++) {
+    for(i=key && !coarse ? 6 : 0;i<(coarse ? 6 : n);i++) {
         offset=o->pl[0][i+2]; face=(int *)(o->pd+offset);
         clip=31;
         for(j=0;j<(face[0]&255);j++) clip&=o->pv[face[j+3]].vf;
@@ -45,7 +58,7 @@ void rt_queue(object *o) {
         for(j=0;j<(face[0]&255);j++) depth+=o->v[face[j+3]].z;
         depth/=(face[0]&255);
         /* Key ink follows its own cap, while other objects still occlude it. */
-        if(!strncmp(o->name,"\"key-",5) && face[1]==96) depth=nearest-1;
+        if(key && face[1]==96) depth=nearest-1;
         if(count==MAX_FACES) exit(3);
         faces[count].owner=o;faces[count].offset=offset;faces[count].depth=depth;
         count++;
@@ -57,7 +70,7 @@ static int __watcall compare(const void *a,const void *b) {
 }
 void rt_flush(void) {
     unsigned i;
-    object *o;
+    object *o,*cached=NULL;
     int j,index,first,last,*face;
     int single[4];
     qsort(faces,count,sizeof(struct face_entry),compare);
@@ -67,8 +80,12 @@ void rt_flush(void) {
         face=(int *)(o->pd+faces[i].offset);
         /* Sorting interleaves objects. Transform only this face, not every
          * vertex in its owner again. Keep full normals for Gouraud objects. */
-        if(o->flags&F_GOURAUD) transform(o);
-        else {
+        if(o==cached) { /* Consecutive faces reuse a full transform. */ }
+        else if((o->flags&F_GOURAUD) ||
+                (i+5<count && faces[i+1].owner==o && faces[i+2].owner==o && faces[i+5].owner==o)) {
+            transform(o);cached=o;
+        } else {
+            cached=NULL;
             o->v=vertices;o->pv=projected;o->n=normals;
             first=last=face[3];
             for(j=1;j<(face[0]&255);j++) {

@@ -381,3 +381,33 @@ host tests pass and all 21 cards complete. Captured audio is 174.930 seconds;
 wall time is 176.99 seconds. Overview 24:56, swoosh 25:7, credits 28:0–43:29.
 Headless playback exits normally with no confirmation. Reviewed keyboard
 closeups/pullback, the diagonal pass and the revised board-context images.
+
+Polish pass: each key mesh now starts with a six-face, eight-vertex coarse cap.
+At camera depths beyond 240 mm, painter.c transforms only that envelope and
+its six normals; nearer keys use the dished cap and full legends. Both levels
+retain the same silhouette and bounds. This avoids drawing unreadable distant
+legends while preserving detailed keys in the foreground.
+
+Eight technical cards have labels and leader lines rendered at the actual
+160x100 DOS image resolution. Separate colour-mask renders identify the visible
+source component positions using the identical camera and geometry; RAM groups
+use corner brackets. Labels are configured by view.annotation in credits.json.
+The black background and white picture border remain.
+
+Case, drive-recess and blue-key palette ramps have brighter ambient shades,
+retaining the dark seams and original drone/music palette entries. The diagonal
+exit now accelerates along its existing line, with its timed position unchanged
+at flight second 47.76. The overview still precedes the pass; credits retain the
+original card count and retrace cadence.
+For consecutive face groups, the draw pass caches a full object transform;
+interleaved faces retain the smaller contiguous-range transform. This reduces
+repeated normal/vertex work in nearby legends without adding scene buffers.
+
+Polish validation: capture/20261014-174534-351043, 33 host tests pass;
+all 21 cards complete, audio 174.930 seconds, wall time 177.11 seconds.
+Overview 24:55, swoosh 25:7, credits 28:0–43:29. Compared with the preceding
+capture/20261014-172653-440061, the first 20 seconds contain 350 visible image
+updates versus 268 (+31%); the first 50 contain 1215 versus 1019 (+19%).
+These are RGB frame-change counts, not refresh-rate guarantees. All 96 key
+meshes satisfy the native eight-vertex/six-normal coarse-layout contract.
+The original drone mesh and protected palette ranges remain byte-identical.

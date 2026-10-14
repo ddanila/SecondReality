@@ -116,7 +116,7 @@ def exterior():
     ]
 
 
-def keycap(source):
+def keycap(source, detailed=True):
     """Tapered key with a shallow dish; no broken thin-shell decimation."""
     lo,hi=source.bounds
     x0,y0,z0=lo;x1,y1,z1=hi
@@ -126,5 +126,7 @@ def keycap(source):
               (x1-bevel,y1-bevel,z1),(x0+bevel,y1-bevel,z1),
               (x0+bevel,y0+bevel+2,z1-1),(x1-bevel,y0+bevel+2,z1-1),
               (x1-bevel,y1-bevel-2,z1-1),(x0+bevel,y1-bevel-2,z1-1)]
+    if not detailed:
+        return mesh(vertices[:8],[(3,2,1,0),(0,1,5,4),(1,2,6,5),(2,3,7,6),(3,0,4,7),(4,5,6,7)])
     return mesh(vertices,[(3,2,1,0),(0,1,5,4),(1,2,6,5),(2,3,7,6),(3,0,4,7),
                           (4,5,9,8),(8,9,10,11),(11,10,6,7),(4,8,11,7),(5,6,10,9)])

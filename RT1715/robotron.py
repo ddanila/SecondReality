@@ -21,9 +21,9 @@ HERE = Path(__file__).resolve().parent
 SCALE = 64  # DOS near plane 512 becomes 8 mm; limits 16-bit projected-coordinate overflow.
 IDENTITY = (16384,0,0,0,16384,0,0,0,16384)
 # Keep the original drone's palette entries 0..31 and 160..251 untouched.
-COLORS = {'dark':(32,'#343b3c'), 'paint':(48,'#b6ae93'), 'pcb':(64,'#38745b'),
+COLORS = {'dark':(32,'#596369'), 'paint':(48,'#c9c1a7'), 'pcb':(64,'#38745b'),
           'metal':(80,'#bbc2c2'), 'black':(96,'#080a0a'), 'red':(112,'#b64139'),
-          'blue':(128,'#91aeb6'), 'white':(144,'#dddccb')}
+          'blue':(128,'#91b5c5'), 'white':(144,'#dddccb')}
 
 def polygons(mesh):
     """Join adjacent coplanar triangles only when their union is a convex quad."""
@@ -239,6 +239,9 @@ def prepare(root, build, command):
     slots=[n for n in range(1,256) if n != 28]
     for slot,(label,mesh,color,kind) in zip(slots,objects):
         triangles=polygons(mesh)
+        if kind=='keycap':
+            # Six coarse faces come first; the native player selects one LOD.
+            triangles=polygons(keycap(mesh,detailed=False))+triangles
         print(f'Robotron {slot:02}: {label}: {len(triangles)} polygons',flush=True)
         render_name=label
         ink=key_legends.get(label,[])
@@ -263,7 +266,7 @@ def prepare(root, build, command):
         color=tuple(int(rgb[i:i+2],16) for i in (1,3,5))
         for j in range(16):
             for k,v in enumerate(color):
-                material[16+(base+j)*3+k]=round(v/255*63*(0.25+0.75*j/15))
+                material[16+(base+j)*3+k]=round(v/255*63*((0.40 if base in (32,48,128) else 0.25)+(0.60 if base in (32,48,128) else 0.75)*j/15))
     # Disable city-specific colouring/sorting names; normal renderer remains.
     material[15]=ord('T')
     (output/'U2E.00M').write_bytes(material)
