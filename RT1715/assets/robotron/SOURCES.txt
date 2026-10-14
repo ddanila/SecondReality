@@ -27,3 +27,20 @@ apply. Do not describe these imported package meshes as MIT.
 
 Original Second Reality drone geometry and its palette entries are preserved.
 Its trajectory is newly authored for the Robotron scene.
+
+Technical credit pages (assets/robotron/credits.json):
+  dac/exhibits/robotron-1715m/README.md, reference configuration table:
+    3.9936 MHz W/M CPU profile; K7658 nominal 683 kHz / 13 x 8 matrix;
+    TOS/M 1.0 reference disk geometry 80 x 2 x 5 x 1024.
+    These are explicitly labelled reference details on screen. They do not
+    identify the installed EPROM or establish the exact drive suffix/media.
+  dac/src/inspection.js, mainboard-detail / adapter-detail:
+    UA880, 32 U2164, UA858 DMA, UA8560 SIO, two CTCs, U8272 at A44;
+    05-330-0024 adapters, 34-way drive / 26-way ribbon connectors.
+  3d-models/models/robotron-1715m/README.md and board-layout.json:
+    photographed SAB8275P, three UL6516D, 39 display-board IC positions;
+    controller mounted component-side down; socketed keyboard UB880D/EPROM;
+    drive board markings 15532064-00A and 15532092-00A, crossed fan retainers.
+  dac/src/inspection.js: W1715/330 specimen label.
+No PSU rail voltages/power, CRT resolution, ROM identity or unverified drive
+capacity is inferred. Repeated photographs identify related technical pages.

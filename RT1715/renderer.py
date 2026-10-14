@@ -26,6 +26,8 @@ def assembly(path):
 
 def build_renderer(build,compiler,assembler,linker,watcom):
     out=build/'renderer';out.mkdir(exist_ok=True)
+    from music import flight_header
+    (out/'MUSIC.H').write_text(flight_header(ROOT/'MAIN/MUSIC0.S3M'))
     for name in ('C.H','CD.H'):
         s=(ROOT/'VISU'/name).read_text(encoding='cp437').replace('#include "cd.h"','#include "CD.H"')
         s=re.sub(r'^;', '',s,flags=re.M)
@@ -42,10 +44,49 @@ def build_renderer(build,compiler,assembler,linker,watcom):
             start=s.index('\tif(size>128000)');end=s.index('\tfclose(f1);',start)
             s=s[:start]+'''    while(size>0) {
         unsigned count=size>32000L ? 32000U : (unsigned)size;
+        /* fread takes a far pointer: never let a chunk cross its 64K window. */
+        p=(char huge *)MK_FP(FP_SEG(p)+(FP_OFF(p)>>4),FP_OFF(p)&15);
         if(fread(p,1,count,f1)!=count) exit(3);
         p+=count;size-=count;
     }
 '''+s[end:]
+            # Read tracker position atomically; the VGA counter only interpolates
+            # within a row. This also catches up after a slow rendering frame.
+            s=s.replace('main(int argc,char *argv[])', r'''
+#include "MUSIC.H"
+unsigned rt_position(void);
+#pragma aux rt_position = "mov bx,6" "int 0fch" "shl cx,6" "or bx,cx" "mov ax,bx" value [ax] modify [bx cx dx]
+static unsigned rt_last=65535U, rt_stamp;
+static FILE *rt_trace;
+static int rt_cue=0;
+static int rt_music_frame(void) {
+    unsigned pos=rt_position(), order=pos>>6, row=pos&63;
+    long frame;
+    if(pos!=rt_last) { rt_last=pos; rt_stamp=syncframe; }
+    if(order<19) return 0;
+    if(order>26) return 4200;
+    frame=(long)rt_row_cs[order-19][row]*70L/100L;
+    frame+=(unsigned)(syncframe-rt_stamp);
+    return (int)frame;
+}
+main(int argc,char *argv[])''')
+            s=s.replace('coppercnt=0;\n\tsyncframe=0;', 'coppercnt=0;\n\tcopperdelay=1;\n\trt_trace=fopen("FLIGHT.LOG","wt");\n\tsyncframe=0;')
+            s=s.replace('a=(syncframe-currframe);', r'''a=(rt_music_frame()-currframe);
+        if(rt_trace && ((rt_cue==0 && currframe>=3344) ||
+                       (rt_cue==1 && currframe>=3535))) {
+            unsigned pos=rt_position();
+            fprintf(rt_trace,"%s frame=%d order=%u row=%u\n",
+                    rt_cue==0 ? "SWOOSH" : "OVERVIEW",currframe,pos>>6,pos&63);
+            fflush(rt_trace); rt_cue++;
+        }''')
+            # Preserve the overview framebuffer across loading CRED.EXE.
+            s=s.replace('dis_setcopper(2,NULL);', r'''dis_setcopper(2,NULL);
+    if(rt_trace) {
+        unsigned pos=rt_position();
+        fprintf(rt_trace,"END order=%u row=%u frame=%d\n",pos>>6,pos&63,currframe);
+        fclose(rt_trace);
+    }
+    return 0;''')
             s=s.replace('ip=readfile(tmpname);','ip=(int huge *)readfile(tmpname);')
             s=s.replace('for(y<175;y<200;y++)','for(y=175;y<200;y++)')
             s=s.replace('if(currframe>900*2 && currframe<1100*2)','if(city && currframe>900*2 && currframe<1100*2)')

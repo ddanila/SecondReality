@@ -4,6 +4,7 @@ import argparse
 from datetime import datetime
 import json
 import os
+import re
 from pathlib import Path
 import shutil
 import subprocess
@@ -11,6 +12,29 @@ import time
 import wave
 
 HERE = Path(__file__).resolve().parent
+
+
+def verify_sync(flight_log, credit_log):
+    """Check actual tracker positions, including the >64 KB flight regression."""
+    def position(log, label):
+        match = re.search(r"^"+label+r"[^\n]*order=(\d+) row=(\d+)", log, re.M)
+        if not match:
+            raise ValueError(f"Missing {label} music cue")
+        return tuple(map(int, match.groups()))
+    cues = {"swoosh": position(flight_log, "SWOOSH"),
+            "overview": position(flight_log, "OVERVIEW"),
+            "flight_end": position(flight_log, "END"),
+            "credits_start": position(credit_log, "START"),
+            "credits_end": position(credit_log, "END")}
+    if not ((25, 5) <= cues["swoosh"] <= (25, 8)):
+        raise ValueError(f"Drone missed swoosh: {cues['swoosh']}")
+    if not ((25, 26) <= cues["overview"] <= (25, 32)):
+        raise ValueError(f"Overview missed logo interval: {cues['overview']}")
+    if not ((26, 55) <= cues["flight_end"] <= (28, 0)):
+        raise ValueError(f"Flyover ended early/late: {cues['flight_end']}")
+    if not ((28, 0) <= cues["credits_start"] <= (28, 1)):
+        raise ValueError(f"Credits missed theme entry: {cues['credits_start']}")
+    return cues
 
 
 def main():
@@ -29,6 +53,7 @@ def main():
     result = dos / "RESULT.TXT"
     result.unlink(missing_ok=True)
     (dos / "CRED.LOG").unlink(missing_ok=True)
+    (dos / "FLIGHT.LOG").unlink(missing_ok=True)
     # Branch immediately on the application's return status, before ECHO
     # or other shell commands have a chance to change ERRORLEVEL.
     batch = """@echo off
@@ -50,21 +75,37 @@ exit
     print(f"Headless DOSBox-X playback; captures and log: {capture}", flush=True)
     start = time.monotonic()
     with (capture / "dosbox.log").open("w") as log:
+        # A separate session keeps Ctrl-C from reaching DOSBox's GUI quit
+        # handler. On cancellation/timeout, kill only this owned child.
+        process = subprocess.Popen(command, cwd=HERE, env=env, stdout=log,
+                                   stderr=subprocess.STDOUT, start_new_session=True)
         try:
-            completed = subprocess.run(command, cwd=HERE, env=env, stdout=log,
-                                       stderr=subprocess.STDOUT, timeout=args.timeout)
-        except subprocess.TimeoutExpired:
-            raise SystemExit(f"Playback exceeded {args.timeout}s; inspect {capture / 'dosbox.log'}")
+            returncode = process.wait(timeout=args.timeout)
+        except (subprocess.TimeoutExpired, KeyboardInterrupt) as error:
+            process.kill()
+            process.wait()
+            reason = (f"Playback exceeded {args.timeout}s" if isinstance(error, subprocess.TimeoutExpired)
+                      else "Playback cancelled")
+            raise SystemExit(f"{reason}; inspect {capture / 'dosbox.log'}")
     status = result.read_text().strip() if result.exists() else "NO DOS EXIT STATUS"
     if (dos / "DEMO.LOG").exists():
         shutil.copyfile(dos / "DEMO.LOG", capture / "demo.log")
-    if completed.returncode or status != "PASS":
+    if returncode or status != "PASS":
         raise SystemExit(f"Playback failed ({status}); inspect {capture / 'dosbox.log'}")
     if (dos / "CRED.IDX").exists():
         credit_log = dos / "CRED.LOG"
         if not credit_log.exists() or not credit_log.read_text().endswith("COMPLETE\n"):
             raise SystemExit("Custom credits did not complete; inspect build/dos/CRED.LOG")
         shutil.copyfile(credit_log, capture / "credits.log")
+    if (dos / "FLIGHT.LOG").exists():
+        shutil.copyfile(dos / "FLIGHT.LOG", capture / "flight.log")
+    sync_cues = None
+    if (dos / "CRED.SYN").exists():
+        try:
+            sync_cues = verify_sync((capture / "flight.log").read_text(),
+                                    (capture / "credits.log").read_text())
+        except (OSError, ValueError) as error:
+            raise SystemExit(f"Music synchronization failed: {error}")
     videos = sorted(capture.glob("*.avi"))
     waves = sorted(capture.glob("*.wav"))
     if not videos or not waves:
@@ -84,6 +125,8 @@ exit
     summary = {"dos_exit": status, "headless": True,
                "wall_seconds": round(time.monotonic() - start, 2),
                "video_files": [p.name for p in videos], "audio": audio}
+    if sync_cues is not None:
+        summary["music_cues"] = sync_cues
     (capture / "result.json").write_text(json.dumps(summary, indent=2) + "\n")
     print(f"PASS: DOS returned successfully; video and non-silent audio captured in {capture}")
     print("Visual correctness and transitions require reviewing the AVI captures.")

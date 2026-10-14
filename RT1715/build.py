@@ -142,7 +142,7 @@ def main():
                      "module_sha256": hashlib.sha256(music).hexdigest(),
                      "module_offset": 16, "start_order": 18})
     # These are generated files owned by this build, not source assets.
-    for old in [dos / "CRED.IDX", dos / "CRED.LOG", *dos.glob("CARD??.CRD")]:
+    for old in [dos / "CRED.IDX", dos / "CRED.LOG", dos / "CRED.SYN", dos / "FLIGHT.LOG", *dos.glob("CARD??.CRD")]:
         old.unlink(missing_ok=True)
     if args.project:
         from prepare import prepare
@@ -162,6 +162,7 @@ def main():
         if args.robotron:
             from robotron import install
             install(build, dos)
+            (dos/"CRED.SYN").write_text("28 0\n")
             known={entry['file'] for entry in manifest}
             for asset in sorted((build/'robotron').glob('U2E.*')):
                 if asset.name not in known:

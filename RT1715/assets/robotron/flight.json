@@ -1,5 +1,5 @@
 {
-  "frames": 1801,
+  "frames": 2031,
   "fps": 35,
   "fov": 58,
   "keyframes": [
@@ -130,37 +130,53 @@
       "subject": "Cross the glass and bank away"
     },
     {
-      "time": 46,
+      "time": 45,
       "eye": [
-        300,
-        -500,
-        480
+        180,
+        -350,
+        430
       ],
       "target": [
-        0,
-        -120,
-        220
+        40,
+        -150,
+        340
       ],
-      "subject": "Begin the reveal"
+      "stop": true,
+      "subject": "Frame the monitor and wait for the returning drone"
     },
     {
-      "time": 49,
+      "time": 47.9,
       "eye": [
-        720,
-        -1250,
-        740
+        180,
+        -350,
+        430
+      ],
+      "target": [
+        40,
+        -150,
+        340
+      ],
+      "subject": "Drone returns on the hyperspace swoosh",
+      "stop": true
+    },
+    {
+      "time": 50.5,
+      "eye": [
+        600,
+        -1050,
+        660
       ],
       "target": [
         0,
         -100,
         190
       ],
-      "subject": "Reveal the whole computer"
+      "subject": "Pull back into the original logo interval"
     },
     {
-      "time": 51.43,
+      "time": 54,
       "eye": [
-        770,
+        760,
         -1300,
         760
       ],
@@ -169,7 +185,21 @@
         -100,
         190
       ],
-      "subject": "Hold the complete assembly"
+      "subject": "Full Robotron overview"
+    },
+    {
+      "time": 58,
+      "eye": [
+        800,
+        -1320,
+        770
+      ],
+      "target": [
+        0,
+        -100,
+        190
+      ],
+      "subject": "Hold overview until the credits theme"
     }
   ],
   "drone": [
@@ -246,27 +276,59 @@
       ]
     },
     {
-      "time": 46,
+      "time": 45,
       "position": [
-        194,
-        -203,
-        335
+        80,
+        -160,
+        420
+      ]
+    },
+    {
+      "time": 47,
+      "position": [
+        135,
+        -280,
+        400
+      ]
+    },
+    {
+      "time": 47.76,
+      "position": [
+        169,
+        -335,
+        423
+      ]
+    },
+    {
+      "time": 48,
+      "position": [
+        190,
+        -366,
+        437
       ]
     },
     {
       "time": 49,
       "position": [
-        225,
-        -160,
-        310
+        -100,
+        -600,
+        450
       ]
     },
     {
-      "time": 51.43,
+      "time": 52,
       "position": [
-        190,
-        -100,
-        320
+        -900,
+        -2200,
+        850
+      ]
+    },
+    {
+      "time": 58,
+      "position": [
+        -1800,
+        -3500,
+        1200
       ]
     }
   ]

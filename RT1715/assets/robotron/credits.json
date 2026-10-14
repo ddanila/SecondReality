@@ -1,0 +1,23 @@
+[
+  {"image":"processor","lines":["Robotron 1715M","W/M motherboard","UA880 - Z80-compatible CPU"]},
+  {"image":"drives","lines":["Twin floppy drives","Robotron K5601","5.25-inch removable media"]},
+  {"image":"keyboard","lines":["Keyboard controller","Socketed UB880D CPU","An independent 8-bit controller"]},
+  {"image":"display","lines":["Display controller","SAB8275P CRT controller","Separate board above the CPU"]},
+  {"image":"monitor","lines":["Monochrome CRT","Glass tube and shaped bezel","Separate monitor and stand"]},
+  {"image":"psu","lines":["Power supply","Shielded metal enclosure","Fan-cooled system unit"]},
+  {"image":"processor","lines":["Main memory","256 KB RAM","32 U2164 memory packages"]},
+  {"image":"drives","lines":["Floppy control","U8272 at motherboard A44","Controller integrated on main board"]},
+  {"image":"keyboard","lines":["Keyboard firmware","Socketed replacement EPROM","Controller on the narrow PCB"]},
+  {"image":"display","lines":["Display memory","Three UL6516D memories","39 ICs located in the board photo"]},
+  {"image":"processor","lines":["DMA and serial I/O","UA858 DMA controller","UA8560 SIO and two CTCs"]},
+  {"image":"drives","lines":["Drive ribbon adapters","Board 05-330-0024","34-way drive / 26-way ribbon"]},
+  {"image":"keyboard","lines":["K7658 reference keyboard","13 x 8 scanning matrix","Nominal controller clock: 683 kHz"]},
+  {"image":"processor","lines":["1715W / M reference timing","CPU clock: 3.9936 MHz","8-bit data processing"]},
+  {"image":"display","lines":["Display board installation","Components face downward","Solder side faces the open cover"]},
+  {"image":"drives","lines":["Drive electronics","TEAC board markings","15532064-00A / 15532092-00A"]},
+  {"image":"psu","lines":["Cooling assembly","Fan frame and rotor","Crossed retainers secure the fan"]},
+  {"image":"robotron","lines":["TOS/M 1.0 reference setup","80 tracks / 2 sides","5 sectors per track / 1024 bytes"]},
+  {"image":"keyboard","lines":["Two keyboard assemblies","Key contact board below the keys","Separate CPU controller board"]},
+  {"image":"monitor","lines":["The complete workstation","CRT, keyboard and twin drives","Robotron W1715/330"]},
+  {"image":"robotron","lines":["Robotron 1715M","A journey inside the machine"]}
+]

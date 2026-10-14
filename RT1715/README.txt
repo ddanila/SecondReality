@@ -132,7 +132,11 @@ is recorded. AVI, WAV, emulator log, and result.json go into a timestamped
 RT1715/capture directory. A run has a 300-second timeout. The runner checks
 the DOS exit status and sustained non-silent audio. Review AVI captures to
 check visuals. DOSBox-X splits video files when the display mode changes.
-No desktop screenshots or UI automation are required.
+No desktop screenshots or UI automation are required. The configuration sets
+"quit warning = false" and chooses the config directory without prompting.
+The runner isolates the emulator session; timeout or Ctrl-C kills and reaps
+that child without entering its native confirmation-dialog handler.
+DOSBox-X documents this switch at https://dosbox-x.com/wiki/Home .
 
 The original illustrated-card cut runs for approximately 175 seconds.
 The two-card example runs for approximately 76 seconds.
@@ -144,7 +148,7 @@ Output and dependencies
 -----------------------
 build/dos is the self-contained DOS directory. Run RT1715.EXE there with a
 386+ CPU, VGA, EMS, and a Sound Blaster Pro at port 220h, IRQ 7, DMA 1.
-The supplied DOSBox-X configuration uses a 486, VGA, 16 MB RAM and 60,000
+The supplied DOSBox-X configuration uses a 486, VGA, 32 MB RAM and 120,000
 fixed CPU cycles. Setup is fixed, with no menu and no looping.
 
 MAIN/U2.ASM has an optional RT1715 build path. The original full-demo path
@@ -276,24 +280,35 @@ DOSBox-X uses a 486 with 120000 fixed cycles and 32 MB, headless only.
 
 assets/robotron/flight.json contains independent camera eye/target and drone
 position tracks in canonical millimetres. Time-aware cubic Hermite curves
-keep movement continuous through waypoints. The scene runs for 1801 samples
-at 35 Hz, starting just above the keys, sweeping past both external drive
-fronts, rounding the case corner and climbing to the CRT before pulling
-back. The keyboard pass is slower; the case-corner bank now takes two
-seconds, with the camera looking upward sooner. Total duration and the
-music-to-credits transition are unchanged. The complete assembled exterior
-stays present throughout. The drone
-aligns its original +X nose with the 3D path tangent, pitches during climbs,
-and banks according to turn rate. It changes position in the camera view,
-then remains near the machine as the camera pulls away. Visibility is baked
-conservatively on the host.
+keep movement continuous through waypoints. A camera waypoint with stop=true
+has zero incoming/outgoing velocity, allowing a stationary shot without
+spline overshoot. The 2031 samples at 35 Hz cover about 58 seconds: keyboard,
+drive fronts, case corner, CRT, drone return, then the complete-machine reveal.
+The original +X drone nose follows its velocity; banking follows turn rate.
+The drone passes close to the camera on the swoosh and leaves the shot.
 
-Robotron mode skips the original Future Crew end logo and proceeds directly
-to seven component cards. Credit images have black backgrounds and a thin
-white frame. The keyboard card shows only the populated controller board;
-the display-controller card is flipped to show its component side. Generated
-SCAD wrappers and PNGs are in build/robotron. ASCII captions are listed in
-robotron.py; source provenance and license notices remain in assets/robotron.
+Synchronization uses MUSIC0 continuously, starting at order 18. music.py
+reads its XOR-packed S3M patterns, including speed changes and pattern breaks.
+The flyover starts at order 19. Its clock follows the actual DIS order/row,
+interpolating with VGA retraces between rows. The swoosh is order 25 rows 6/8
+(51.60/51.84 seconds after music start, 47.76/48.00 into the flight). The full
+Robotron reveal replaces the original Future Crew logo interval. The final
+frame survives loading CRED.EXE; CRED.SYN gates the first card at order 28,
+row 0 (62.40 seconds after music start). Order/row numbers here are decimal.
+FLIGHT.LOG and CRED.LOG record the runtime cue positions and are copied into
+the capture directory. The loader normalizes each fread buffer so an animation
+larger than 64 KB cannot wrap a far-pointer segment window.
+
+The 21 cards restore the original illustrated-credit count and cadence:
+102 entry retraces, 200 hold retraces, 59 exit retraces plus upload/loading.
+Their nominal animation duration is about 108.5 seconds. Seven component
+photographs accompany different technical pages; captions and ordering live
+in assets/robotron/credits.json. Reference configuration details are labelled
+as such, rather than asserted as verified properties of this specimen.
+Images have black backgrounds and a thin white frame. Keyboard photographs
+show only the populated narrow controller board; the display-board photograph
+shows the component side. Generated SCAD wrappers and PNGs are in
+build/robotron. Source provenance and licence notices remain in assets/robotron.
 
 build/robotron/report.json records source hashes, generated object slots,
 instance count and flight settings. build/assets.json records installed DOS
@@ -310,3 +325,11 @@ Make a shareable, aspect-correct MP4 after a completed capture:
 
 This requires ffmpeg and writes build/robotron-preview.mp4 by default. It
 joins display-mode segments and uses the continuous captured WAV audio.
+
+Validated 2026-10-14 with capture/20261014-161229-159743: all 21 cards complete;
+swoosh at order 25 row 6, overview at 25:28, credits start at 28:0. Captured
+WAV duration is 174.944 seconds versus 174.973 for the original illustrated
+cut (capture/20261014-110531-710934). All 26 host tests pass. Headless normal
+exit, termination, one-second timeout and Ctrl-C cancellation were checked;
+none needs a quit confirmation. The runner now checks music cue logs as well
+as successful completion and non-silent audio.

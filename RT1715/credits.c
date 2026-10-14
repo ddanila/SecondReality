@@ -16,6 +16,14 @@ static unsigned char palette[768];
 static unsigned char far *caption;
 static unsigned char far *picture;
 static FILE *trace;
+unsigned music_position(void);
+#pragma aux music_position = "mov bx,6" "int 0fch" "shl cx,6" "or bx,cx" "mov ax,bx" value [ax] modify [bx cx dx]
+
+static unsigned credit_cue=0;
+static void log_position(const char *event) {
+    unsigned pos=music_position();
+    if(trace) { fprintf(trace,"%s order=%u row=%u\n",event,pos>>6,pos&63); fflush(trace); }
+}
 
 static void mode(unsigned number) {
     union REGS r;
@@ -106,8 +114,8 @@ static int fail(const char *message) {
 }
 
 int main(void) {
-    FILE *index, *card;
-    unsigned count, number, hold;
+    FILE *index, *card, *sync;
+    unsigned count, number, hold, cue_order, cue_row;
     unsigned far *vector = (unsigned far *)MK_FP(0, 0xfc*4);
     unsigned far *signature;
     char name[13], magic[4];
@@ -126,7 +134,13 @@ int main(void) {
     caption=(unsigned char far *)malloc(64000U);
     picture=(unsigned char far *)malloc(16000U);
     if (!caption || !picture) return fail("not enough memory for credit buffers");
-    graph();
+    sync=fopen("CRED.SYN","rt");
+    if(sync) {
+        if(fscanf(sync,"%u %u",&cue_order,&cue_row)!=2 || cue_order>79 || cue_row>63)
+            return fail("invalid music cue");
+        credit_cue=cue_order*64+cue_row;
+        fclose(sync);
+    }
     for (number=0; number<count && !dis_call(2); ++number) {
         if (fscanf(index,"%12s %u",name,&hold)!=2 || hold<1 || hold>4200)
             return fail("invalid credit entry");
@@ -138,9 +152,16 @@ int main(void) {
             fread(picture,1,16000U,card)!=16000U || fgetc(card)!=EOF)
             return fail("invalid or truncated credit card");
         fclose(card);
+        if(number==0) {
+            log_position("READY");
+            while(credit_cue && music_position()<credit_cue && !dis_call(2)) dis_call(1);
+            log_position("START");
+            graph();
+        }
         if (trace) { fprintf(trace,"CARD %u %s\n",number+1,name); fflush(trace); }
         if (!show_card(hold)) break;
     }
+    log_position("END");
     fclose(index);
     free(caption);
     free(picture);

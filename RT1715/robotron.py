@@ -87,6 +87,8 @@ def sample_track(keys, time, field):
             before=keys[max(0,i-1)];after=keys[min(len(keys)-1,i+2)]
             m0=(p1-np.array(before[field]))/(right['time']-before['time'])
             m1=(np.array(after[field])-p0)/(after['time']-left['time'])
+            if left.get('stop'): m0=np.zeros(3)
+            if right.get('stop'): m1=np.zeros(3)
             return (2*u**3-3*u*u+1)*p0+(u**3-2*u*u+u)*dt*m0+(-2*u**3+3*u*u)*p1+(u**3-u*u)*dt*m1
     return np.array(keys[-1][field],float)
 
@@ -261,7 +263,7 @@ def prepare(root, build, command):
             slot=inst['slot']
             pose=list(drone_state if slot==28 else inst['pose'])
             frame.append(pose)
-            enabled.append(True)
+            enabled.append(not (slot==28 and t>48.1))
         # Conservative sphere/frustum culling, rebuilt for this camera. A wide
         # vertical margin avoids coupling this bake to VGA aspect corrections.
         cam=np.array(frame[0][3:]).reshape(3,3)/16384
@@ -281,16 +283,17 @@ def prepare(root, build, command):
     report['instances']=len(instances)
     report['drone_sha256']=hashlib.sha256((HERE.parent/'MAIN/DATA/U2E.028').read_bytes()).hexdigest()
     # Detailed credits use canonical exported parts, not the reduced DOS meshes.
-    cards=[
-      ('processor', ['logic-boards-motherboard'], ['U880 / Z80','8-bit CPU','Robotron 1715M - 256 KB RAM'], 'motherboard'),
-      ('drives', ['drive-frames','drive-mechanisms','drive-boards','drives'], ['Twin floppy drives','5.25-inch removable media','Robotron / TEAC mechanisms'], None),
-      ('keyboard', ['keyboard-controller-board','keyboard-controller-chips','keyboard-controller-ceramic'], ['Keyboard electronics','UB880D controller','Keyboard controller board'], None),
-      ('display', ['logic-boards-display-controller'], ['Display controller','SAB8275P','Three UL6516D memories'], 'display-controller'),
-      ('monitor', ['bezel','crt-rim','crt-glass','monitor-shell-lower','monitor-shell-upper','pedestal'], ['CRT monitor','Monochrome display','Separate monitor and stand'], None),
-      ('psu', ['psu-chassis','psu-cover','fan-frame','fan-rotor','fan-retainers'], ['Power supply','Shielded PSU assembly','Fan-cooled system unit'], None),
-      ('robotron', ['case-base','case-lid','fascia','drives','monitor-shell-lower','monitor-shell-upper','bezel','crt-glass','pedestal','keyboard-shell','keyboard-deck'], ['Robotron 1715M','A journey inside the machine'], 'keys')]
+    photographs=[
+      ('processor', ['logic-boards-motherboard'], 'motherboard'),
+      ('drives', ['drive-frames', 'drive-mechanisms', 'drive-boards', 'drives'], None),
+      ('keyboard', ['keyboard-controller-board', 'keyboard-controller-chips', 'keyboard-controller-ceramic'], None),
+      ('display', ['logic-boards-display-controller'], 'display-controller'),
+      ('monitor', ['bezel', 'crt-rim', 'crt-glass', 'monitor-shell-lower', 'monitor-shell-upper', 'pedestal'], None),
+      ('psu', ['psu-chassis', 'psu-cover', 'fan-frame', 'fan-rotor', 'fan-retainers'], None),
+      ('robotron', ['case-base', 'case-lid', 'fascia', 'drives', 'monitor-shell-lower', 'monitor-shell-upper', 'bezel', 'crt-glass', 'pedestal', 'keyboard-shell', 'keyboard-deck'], 'keys'),
+    ]
     credits=[]
-    for name,names,lines,extras in cards:
+    for name,names,extras in photographs:
         if name=='keyboard':
             names=[n for n in records if n.startswith('keyboard-controller-')]
         if extras in chips:
@@ -321,7 +324,10 @@ def prepare(root, build, command):
         canvas=Image.new('RGB',(960,600),'black')
         canvas.paste(im,((960-im.width)//2,(600-im.height)//2))
         ImageOps.expand(canvas,border=6,fill='white').resize((960,600)).save(png)
-        credits.append({'image':str(png),'lines':lines,'hold_frames':230})
+        credits.append({'name':name,'image':str(png)})
+    photographs={c['name']:c['image'] for c in credits}
+    cards=json.loads((HERE/'assets/robotron/credits.json').read_text())
+    credits=[dict(image=photographs[c['image']],lines=c['lines'],hold_frames=200) for c in cards]
     project=output/'credits.json'
     project.write_text(json.dumps({'version':1,'credits':credits},indent=2)+'\n')
     report['exterior_lod']='RT1715/robotron_lod.py (authored panels; source-dimension keycaps)'
