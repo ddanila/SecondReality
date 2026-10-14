@@ -1,0 +1,866 @@
+{
+  "platform": "Headless DOSBox-X, fixed 300000 cycles, RAM color backend",
+  "metric": "120 uncapped renders per pose per sample, including uploads; counters also include one warm-up per sample.",
+  "timing_limit": "DOS clock has approximately 55 ms granularity. Repeated deterministic samples establish repeatability but do not remove timer quantization.",
+  "scene_policy": "Prepared assets held fixed; no sibling source regeneration.",
+  "runs": {
+    "viewport": {
+      "label": "viewport",
+      "cpu_cycles": "fixed 300000",
+      "scene_sha256": "666de504d040afd2612d72346437f359665b0fd2b9663eda8fb724ca56002899",
+      "renderer_sha256": "e3483264b7aaaa7b2e82f6f38568bf6191c8d73cfec5433575fd36940d8be101",
+      "poses": [
+        {
+          "frame": 420,
+          "iterations": 120,
+          "ticks": 3296,
+          "hz": 1000,
+          "color": "c9caf264",
+          "vertices": 657272,
+          "triangles": 247929,
+          "spans": 6389768,
+          "milliseconds_per_render": 27.467,
+          "time_change_percent": 0.0
+        },
+        {
+          "frame": 980,
+          "iterations": 120,
+          "ticks": 2252,
+          "hz": 1000,
+          "color": "acffe983",
+          "vertices": 465003,
+          "triangles": 174361,
+          "spans": 3940607,
+          "milliseconds_per_render": 18.767,
+          "time_change_percent": 2.5
+        },
+        {
+          "frame": 1840,
+          "iterations": 120,
+          "ticks": 1648,
+          "hz": 1000,
+          "color": "c0f876b6",
+          "vertices": 313511,
+          "triangles": 99704,
+          "spans": 2280124,
+          "milliseconds_per_render": 13.733,
+          "time_change_percent": 0.0
+        },
+        {
+          "frame": 2660,
+          "iterations": 120,
+          "ticks": 714,
+          "hz": 1000,
+          "color": "647ccea8",
+          "vertices": 51062,
+          "triangles": 34485,
+          "spans": 1660846,
+          "milliseconds_per_render": 5.95,
+          "time_change_percent": -7.15
+        },
+        {
+          "frame": 3200,
+          "iterations": 120,
+          "ticks": 1922,
+          "hz": 1000,
+          "color": "60c99389",
+          "vertices": 656546,
+          "triangles": 241516,
+          "spans": 1185437,
+          "milliseconds_per_render": 16.017,
+          "time_change_percent": -2.78
+        },
+        {
+          "frame": 3750,
+          "iterations": 120,
+          "ticks": 1922,
+          "hz": 1000,
+          "color": "aff00bbe",
+          "vertices": 637307,
+          "triangles": 240790,
+          "spans": 1166440,
+          "milliseconds_per_render": 16.017,
+          "time_change_percent": 0.0
+        }
+      ]
+    },
+    "early-cull": {
+      "label": "early-cull",
+      "cpu_cycles": "fixed 300000",
+      "scene_sha256": "666de504d040afd2612d72346437f359665b0fd2b9663eda8fb724ca56002899",
+      "renderer_sha256": "fd224804981dee5c7b3b8b917de53f3e4e2163ca68ce166ee3c42d4fbb4abc1b",
+      "poses": [
+        {
+          "frame": 420,
+          "iterations": 120,
+          "ticks": 3296,
+          "hz": 1000,
+          "color": "c9caf264",
+          "vertices": 657272,
+          "triangles": 247929,
+          "spans": 6389768,
+          "milliseconds_per_render": 27.467,
+          "time_change_percent": 0.0
+        },
+        {
+          "frame": 980,
+          "iterations": 120,
+          "ticks": 2252,
+          "hz": 1000,
+          "color": "acffe983",
+          "vertices": 465003,
+          "triangles": 174361,
+          "spans": 3940607,
+          "milliseconds_per_render": 18.767,
+          "time_change_percent": 2.5
+        },
+        {
+          "frame": 1840,
+          "iterations": 120,
+          "ticks": 1648,
+          "hz": 1000,
+          "color": "c0f876b6",
+          "vertices": 313511,
+          "triangles": 99704,
+          "spans": 2280124,
+          "milliseconds_per_render": 13.733,
+          "time_change_percent": 0.0
+        },
+        {
+          "frame": 2660,
+          "iterations": 120,
+          "ticks": 714,
+          "hz": 1000,
+          "color": "647ccea8",
+          "vertices": 51062,
+          "triangles": 34485,
+          "spans": 1660846,
+          "milliseconds_per_render": 5.95,
+          "time_change_percent": -7.15
+        },
+        {
+          "frame": 3200,
+          "iterations": 120,
+          "ticks": 1977,
+          "hz": 1000,
+          "color": "60c99389",
+          "vertices": 656546,
+          "triangles": 241516,
+          "spans": 1185437,
+          "milliseconds_per_render": 16.475,
+          "time_change_percent": 0.0
+        },
+        {
+          "frame": 3750,
+          "iterations": 120,
+          "ticks": 1868,
+          "hz": 1000,
+          "color": "aff00bbe",
+          "vertices": 637307,
+          "triangles": 240790,
+          "spans": 1166440,
+          "milliseconds_per_render": 15.567,
+          "time_change_percent": -2.81
+        }
+      ]
+    },
+    "key-groups": {
+      "label": "key-groups",
+      "cpu_cycles": "fixed 300000",
+      "scene_sha256": "666de504d040afd2612d72346437f359665b0fd2b9663eda8fb724ca56002899",
+      "renderer_sha256": "dba4fd2bd10b06f147140d169e6f87468b3ccca6cef755d5ecacf69ffbd93651",
+      "poses": [
+        {
+          "frame": 420,
+          "iterations": 120,
+          "ticks": 3296,
+          "hz": 1000,
+          "color": "c9caf264",
+          "vertices": 657272,
+          "triangles": 247929,
+          "spans": 6389768,
+          "milliseconds_per_render": 27.467,
+          "time_change_percent": 0.0
+        },
+        {
+          "frame": 980,
+          "iterations": 120,
+          "ticks": 2197,
+          "hz": 1000,
+          "color": "acffe983",
+          "vertices": 465003,
+          "triangles": 174361,
+          "spans": 3940607,
+          "milliseconds_per_render": 18.308,
+          "time_change_percent": 0.0
+        },
+        {
+          "frame": 1840,
+          "iterations": 120,
+          "ticks": 1648,
+          "hz": 1000,
+          "color": "c0f876b6",
+          "vertices": 313511,
+          "triangles": 99704,
+          "spans": 2280124,
+          "milliseconds_per_render": 13.733,
+          "time_change_percent": 0.0
+        },
+        {
+          "frame": 2660,
+          "iterations": 120,
+          "ticks": 714,
+          "hz": 1000,
+          "color": "647ccea8",
+          "vertices": 51062,
+          "triangles": 34485,
+          "spans": 1660846,
+          "milliseconds_per_render": 5.95,
+          "time_change_percent": -7.15
+        },
+        {
+          "frame": 3200,
+          "iterations": 120,
+          "ticks": 1922,
+          "hz": 1000,
+          "color": "60c99389",
+          "vertices": 656546,
+          "triangles": 241516,
+          "spans": 1185437,
+          "milliseconds_per_render": 16.017,
+          "time_change_percent": -2.78
+        },
+        {
+          "frame": 3750,
+          "iterations": 120,
+          "ticks": 1867,
+          "hz": 1000,
+          "color": "aff00bbe",
+          "vertices": 637307,
+          "triangles": 240790,
+          "spans": 1166440,
+          "milliseconds_per_render": 15.558,
+          "time_change_percent": -2.86
+        }
+      ]
+    },
+    "gradients": {
+      "label": "gradients",
+      "cpu_cycles": "fixed 300000",
+      "scene_sha256": "666de504d040afd2612d72346437f359665b0fd2b9663eda8fb724ca56002899",
+      "renderer_sha256": "94bb75c3806fb46ed85de43253ea0ffd0de9a185f0d65f8c617eb3e7acacd5d2",
+      "poses": [
+        {
+          "frame": 420,
+          "iterations": 120,
+          "ticks": 3295,
+          "hz": 1000,
+          "color": "c9caf264",
+          "vertices": 657272,
+          "triangles": 247929,
+          "spans": 6389768,
+          "milliseconds_per_render": 27.458,
+          "time_change_percent": -0.03
+        },
+        {
+          "frame": 980,
+          "iterations": 120,
+          "ticks": 2197,
+          "hz": 1000,
+          "color": "acffe983",
+          "vertices": 465003,
+          "triangles": 174361,
+          "spans": 3940607,
+          "milliseconds_per_render": 18.308,
+          "time_change_percent": 0.0
+        },
+        {
+          "frame": 1840,
+          "iterations": 120,
+          "ticks": 1593,
+          "hz": 1000,
+          "color": "c0f876b6",
+          "vertices": 313511,
+          "triangles": 99704,
+          "spans": 2280124,
+          "milliseconds_per_render": 13.275,
+          "time_change_percent": -3.34
+        },
+        {
+          "frame": 2660,
+          "iterations": 120,
+          "ticks": 714,
+          "hz": 1000,
+          "color": "647ccea8",
+          "vertices": 51062,
+          "triangles": 34485,
+          "spans": 1660846,
+          "milliseconds_per_render": 5.95,
+          "time_change_percent": -7.15
+        },
+        {
+          "frame": 3200,
+          "iterations": 120,
+          "ticks": 1922,
+          "hz": 1000,
+          "color": "60c99389",
+          "vertices": 656546,
+          "triangles": 241516,
+          "spans": 1185437,
+          "milliseconds_per_render": 16.017,
+          "time_change_percent": -2.78
+        },
+        {
+          "frame": 3750,
+          "iterations": 120,
+          "ticks": 1923,
+          "hz": 1000,
+          "color": "aff00bbe",
+          "vertices": 637307,
+          "triangles": 240790,
+          "spans": 1166440,
+          "milliseconds_per_render": 16.025,
+          "time_change_percent": 0.05
+        }
+      ]
+    },
+    "planar-depth": {
+      "label": "planar-depth",
+      "cpu_cycles": "fixed 300000",
+      "scene_sha256": "666de504d040afd2612d72346437f359665b0fd2b9663eda8fb724ca56002899",
+      "renderer_sha256": "ceef5941dbad21953b74be077f6d8d446e6eace6deaeeaa11e73efff9c9910b2",
+      "poses": [
+        {
+          "frame": 420,
+          "iterations": 120,
+          "ticks": 3296,
+          "hz": 1000,
+          "color": "c9caf264",
+          "vertices": 657272,
+          "triangles": 247929,
+          "spans": 6389768,
+          "milliseconds_per_render": 27.467,
+          "time_change_percent": 0.0
+        },
+        {
+          "frame": 980,
+          "iterations": 120,
+          "ticks": 2252,
+          "hz": 1000,
+          "color": "acffe983",
+          "vertices": 465003,
+          "triangles": 174361,
+          "spans": 3940607,
+          "milliseconds_per_render": 18.767,
+          "time_change_percent": 2.5
+        },
+        {
+          "frame": 1840,
+          "iterations": 120,
+          "ticks": 1592,
+          "hz": 1000,
+          "color": "c0f876b6",
+          "vertices": 313511,
+          "triangles": 99704,
+          "spans": 2280124,
+          "milliseconds_per_render": 13.267,
+          "time_change_percent": -3.4
+        },
+        {
+          "frame": 2660,
+          "iterations": 120,
+          "ticks": 714,
+          "hz": 1000,
+          "color": "647ccea8",
+          "vertices": 51062,
+          "triangles": 34485,
+          "spans": 1660846,
+          "milliseconds_per_render": 5.95,
+          "time_change_percent": -7.15
+        },
+        {
+          "frame": 3200,
+          "iterations": 120,
+          "ticks": 1978,
+          "hz": 1000,
+          "color": "60c99389",
+          "vertices": 656546,
+          "triangles": 241516,
+          "spans": 1185437,
+          "milliseconds_per_render": 16.483,
+          "time_change_percent": 0.05
+        },
+        {
+          "frame": 3750,
+          "iterations": 120,
+          "ticks": 1867,
+          "hz": 1000,
+          "color": "aff00bbe",
+          "vertices": 637307,
+          "triangles": 240790,
+          "spans": 1166440,
+          "milliseconds_per_render": 15.558,
+          "time_change_percent": -2.86
+        }
+      ]
+    },
+    "repeat-baseline": {
+      "label": "repeat-baseline",
+      "samples": 5,
+      "cpu_cycles": "fixed 300000",
+      "scene_sha256": "666de504d040afd2612d72346437f359665b0fd2b9663eda8fb724ca56002899",
+      "renderer_sha256": "fd096a324764be675d107790d69daeb1a48d2f93ad162d7fb7d8d05c2e111165",
+      "poses": [
+        {
+          "frame": 420,
+          "iterations": 600,
+          "ticks": 16478,
+          "hz": 1000,
+          "color": "c9caf264",
+          "vertices": 3286360,
+          "triangles": 1239645,
+          "spans": 31948840,
+          "sample_ticks": [
+            3296,
+            3296,
+            3295,
+            3295,
+            3296
+          ],
+          "milliseconds_per_render": 27.463
+        },
+        {
+          "frame": 980,
+          "iterations": 600,
+          "ticks": 10985,
+          "hz": 1000,
+          "color": "acffe983",
+          "vertices": 2325015,
+          "triangles": 871805,
+          "spans": 19703035,
+          "sample_ticks": [
+            2197,
+            2197,
+            2197,
+            2197,
+            2197
+          ],
+          "milliseconds_per_render": 18.308
+        },
+        {
+          "frame": 1840,
+          "iterations": 600,
+          "ticks": 8239,
+          "hz": 1000,
+          "color": "c0f876b6",
+          "vertices": 1567555,
+          "triangles": 498520,
+          "spans": 11400620,
+          "sample_ticks": [
+            1648,
+            1647,
+            1648,
+            1648,
+            1648
+          ],
+          "milliseconds_per_render": 13.732
+        },
+        {
+          "frame": 2660,
+          "iterations": 600,
+          "ticks": 3845,
+          "hz": 1000,
+          "color": "647ccea8",
+          "vertices": 255310,
+          "triangles": 172425,
+          "spans": 8304230,
+          "sample_ticks": [
+            769,
+            769,
+            769,
+            769,
+            769
+          ],
+          "milliseconds_per_render": 6.408
+        },
+        {
+          "frame": 3200,
+          "iterations": 600,
+          "ticks": 9886,
+          "hz": 1000,
+          "color": "60c99389",
+          "vertices": 3282730,
+          "triangles": 1207580,
+          "spans": 5927185,
+          "sample_ticks": [
+            1977,
+            1978,
+            1977,
+            1977,
+            1977
+          ],
+          "milliseconds_per_render": 16.477
+        },
+        {
+          "frame": 3750,
+          "iterations": 600,
+          "ticks": 9611,
+          "hz": 1000,
+          "color": "aff00bbe",
+          "vertices": 3186535,
+          "triangles": 1203950,
+          "spans": 5832200,
+          "sample_ticks": [
+            1922,
+            1922,
+            1923,
+            1922,
+            1922
+          ],
+          "milliseconds_per_render": 16.018
+        }
+      ]
+    },
+    "repeat-planar": {
+      "label": "repeat-planar",
+      "samples": 5,
+      "cpu_cycles": "fixed 300000",
+      "scene_sha256": "666de504d040afd2612d72346437f359665b0fd2b9663eda8fb724ca56002899",
+      "renderer_sha256": "ceef5941dbad21953b74be077f6d8d446e6eace6deaeeaa11e73efff9c9910b2",
+      "poses": [
+        {
+          "frame": 420,
+          "iterations": 600,
+          "ticks": 16478,
+          "hz": 1000,
+          "color": "c9caf264",
+          "vertices": 3286360,
+          "triangles": 1239645,
+          "spans": 31948840,
+          "sample_ticks": [
+            3296,
+            3296,
+            3296,
+            3295,
+            3295
+          ],
+          "milliseconds_per_render": 27.463,
+          "time_change_percent": 0.0
+        },
+        {
+          "frame": 980,
+          "iterations": 600,
+          "ticks": 11260,
+          "hz": 1000,
+          "color": "acffe983",
+          "vertices": 2325015,
+          "triangles": 871805,
+          "spans": 19703035,
+          "sample_ticks": [
+            2252,
+            2252,
+            2252,
+            2252,
+            2252
+          ],
+          "milliseconds_per_render": 18.767,
+          "time_change_percent": 2.5
+        },
+        {
+          "frame": 1840,
+          "iterations": 600,
+          "ticks": 7964,
+          "hz": 1000,
+          "color": "c0f876b6",
+          "vertices": 1567555,
+          "triangles": 498520,
+          "spans": 11400620,
+          "sample_ticks": [
+            1593,
+            1593,
+            1592,
+            1593,
+            1593
+          ],
+          "milliseconds_per_render": 13.273,
+          "time_change_percent": -3.34
+        },
+        {
+          "frame": 2660,
+          "iterations": 600,
+          "ticks": 3570,
+          "hz": 1000,
+          "color": "647ccea8",
+          "vertices": 255310,
+          "triangles": 172425,
+          "spans": 8304230,
+          "sample_ticks": [
+            714,
+            714,
+            714,
+            714,
+            714
+          ],
+          "milliseconds_per_render": 5.95,
+          "time_change_percent": -7.15
+        },
+        {
+          "frame": 3200,
+          "iterations": 600,
+          "ticks": 9887,
+          "hz": 1000,
+          "color": "60c99389",
+          "vertices": 3282730,
+          "triangles": 1207580,
+          "spans": 5927185,
+          "sample_ticks": [
+            1977,
+            1978,
+            1978,
+            1977,
+            1977
+          ],
+          "milliseconds_per_render": 16.478,
+          "time_change_percent": 0.01
+        },
+        {
+          "frame": 3750,
+          "iterations": 600,
+          "ticks": 9337,
+          "hz": 1000,
+          "color": "aff00bbe",
+          "vertices": 3186535,
+          "triangles": 1203950,
+          "spans": 5832200,
+          "sample_ticks": [
+            1867,
+            1867,
+            1867,
+            1868,
+            1868
+          ],
+          "milliseconds_per_render": 15.562,
+          "time_change_percent": -2.85
+        }
+      ]
+    },
+    "repeat-final": {
+      "label": "repeat-final",
+      "samples": 5,
+      "cpu_cycles": "fixed 300000",
+      "scene_sha256": "666de504d040afd2612d72346437f359665b0fd2b9663eda8fb724ca56002899",
+      "renderer_sha256": "74407249a0e74fc093a1a81e9502d68b123ae4dbeec12b658266dc02d29cb80a",
+      "poses": [
+        {
+          "frame": 420,
+          "iterations": 600,
+          "ticks": 16480,
+          "hz": 1000,
+          "color": "c9caf264",
+          "vertices": 3286360,
+          "triangles": 1239645,
+          "spans": 31948840,
+          "sample_ticks": [
+            3296,
+            3296,
+            3296,
+            3296,
+            3296
+          ],
+          "milliseconds_per_render": 27.467,
+          "time_change_percent": 0.01
+        },
+        {
+          "frame": 980,
+          "iterations": 600,
+          "ticks": 10985,
+          "hz": 1000,
+          "color": "acffe983",
+          "vertices": 2325015,
+          "triangles": 871805,
+          "spans": 19703035,
+          "sample_ticks": [
+            2197,
+            2197,
+            2197,
+            2197,
+            2197
+          ],
+          "milliseconds_per_render": 18.308,
+          "time_change_percent": 0.0
+        },
+        {
+          "frame": 1840,
+          "iterations": 600,
+          "ticks": 7963,
+          "hz": 1000,
+          "color": "c0f876b6",
+          "vertices": 1567555,
+          "triangles": 498520,
+          "spans": 11400620,
+          "sample_ticks": [
+            1593,
+            1593,
+            1593,
+            1592,
+            1592
+          ],
+          "milliseconds_per_render": 13.272,
+          "time_change_percent": -3.35
+        },
+        {
+          "frame": 2660,
+          "iterations": 600,
+          "ticks": 3571,
+          "hz": 1000,
+          "color": "647ccea8",
+          "vertices": 255310,
+          "triangles": 172425,
+          "spans": 8304230,
+          "sample_ticks": [
+            714,
+            714,
+            714,
+            715,
+            714
+          ],
+          "milliseconds_per_render": 5.952,
+          "time_change_percent": -7.13
+        },
+        {
+          "frame": 3200,
+          "iterations": 600,
+          "ticks": 9612,
+          "hz": 1000,
+          "color": "60c99389",
+          "vertices": 3282730,
+          "triangles": 1207580,
+          "spans": 5927185,
+          "sample_ticks": [
+            1922,
+            1922,
+            1922,
+            1923,
+            1923
+          ],
+          "milliseconds_per_render": 16.02,
+          "time_change_percent": -2.77
+        },
+        {
+          "frame": 3750,
+          "iterations": 600,
+          "ticks": 9611,
+          "hz": 1000,
+          "color": "aff00bbe",
+          "vertices": 3186535,
+          "triangles": 1203950,
+          "spans": 5832200,
+          "sample_ticks": [
+            1923,
+            1922,
+            1922,
+            1922,
+            1922
+          ],
+          "milliseconds_per_render": 16.018,
+          "time_change_percent": 0.0
+        }
+      ]
+    }
+  },
+  "aggregate_time_change_percent": -1.39,
+  "retained": [
+    "Viewport-only clears/uploads with per-page border initialization",
+    "Object bounds culling before distance calculation and sorting",
+    "Exact triangle gradients and row origins inside the assembly kernel"
+  ],
+  "not_retained": {
+    "key-groups": "No clear gain at timer resolution; avoid additional per-frame grouping machinery.",
+    "planar-depth": "Same pictures, but mixed per-pose changes and slightly worse aggregate timing than final strided depth."
+  },
+  "baseline_commit": "4197fba",
+  "toolchain": {
+    "armo64/wcc386": "316e8bde0d918fc908c134aa77a8d03d72f2ef684658b243adddca1c099fd7c0",
+    "binw/dos32a.exe": "d189be603e72f79d3c2f68114eb34d0cab8bd9744ef0f327497d57bcd8e16817",
+    "lib386/dos/clib3r.lib": "548f8dad217c2bf3509cd4e336440f67b3ad30cfced8baae96e3066fbcb9d9e6"
+  },
+  "full_playback_capture": "20261014-213333-188258",
+  "full_playback": {
+    "dos_exit": "PASS",
+    "headless": true,
+    "wall_seconds": 175.16,
+    "cpu_cycles": "fixed 300000",
+    "color_backend": "ram",
+    "renderer_sha256": "74407249a0e74fc093a1a81e9502d68b123ae4dbeec12b658266dc02d29cb80a",
+    "scene_sha256": "666de504d040afd2612d72346437f359665b0fd2b9663eda8fb724ca56002899",
+    "video_files": [
+      "rt1715_000.avi",
+      "rt1715_001.avi",
+      "rt1715_002.avi"
+    ],
+    "audio": [
+      {
+        "file": "rt1715_000.wav",
+        "seconds": 174.93,
+        "nonzero_samples": true
+      }
+    ],
+    "renderer_mode": "protected",
+    "render_counters": {
+      "frames": 1904,
+      "vertices": 6596870,
+      "triangles": 2441290,
+      "spans": 40936939,
+      "clipped": 180540,
+      "ems_maps": 0
+    },
+    "music_cues": {
+      "swoosh": [
+        25,
+        6
+      ],
+      "overview": [
+        24,
+        54
+      ],
+      "flight_end": [
+        26,
+        57
+      ],
+      "credits_start": [
+        28,
+        0
+      ],
+      "credits_end": [
+        43,
+        29
+      ]
+    }
+  },
+  "visible_updates": {
+    "baseline": "RT1715/capture/20261014-204840-907867",
+    "candidate": "RT1715/capture/20261014-213333-188258",
+    "cpu_cycles": "fixed 300000",
+    "scene_hash_match": true,
+    "note": "RGB frame-change counts, not refresh rates; null scene match means older metadata lacks hashes.",
+    "windows": {
+      "20": {
+        "before": 448,
+        "after": 451,
+        "change_percent": 0.67
+      },
+      "50": {
+        "before": 1452,
+        "after": 1454,
+        "change_percent": 0.14
+      }
+    }
+  },
+  "validation": {
+    "host_tests": 38,
+    "protected_native": "PASS",
+    "legacy_native": "PASS",
+    "full_playback": "PASS",
+    "original_drone_palette_music": "PASS"
+  }
+}

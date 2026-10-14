@@ -69,9 +69,6 @@ void rt_queue(object *o) {
     long nearest=0x7fffffffL,facing;
     if(!(o->flags&F_VISIBLE)) return;
     if(o->vnum>500 || o->nnum>500) exit(3);
-#ifdef RT_PM
-    if(rt_bounds_culling && rt_bounds_outside(o)) return;
-#endif
     o->v=vertices;o->pv=projected;o->n=normals;
     key=!strncmp(o->name,"\"key-",5);
     if(key) {

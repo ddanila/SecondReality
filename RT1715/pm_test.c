@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <conio.h>
 #include "pm.h"
 #include "pm_vectors.h"
 #include "pm_raster_cases.h"
@@ -15,6 +16,42 @@ static long dot(const long *m,const long *v) {
     return (long)(((long long)m[0]*v[0]+(long long)m[1]*v[1]+(long long)m[2]*v[2])>>14);
 }
 static void check(int ok,const char *what) { if(!ok) { printf("FAIL %s\n",what);exit(1); } }
+static void check_video_pages(void) {
+    extern unsigned char rt_color[64000];
+    static unsigned char expected[64000];
+    unsigned backend,pass,page,plane,i,top,bottom;
+    rt_video_init();
+    for(backend=0;backend<2;backend++) for(pass=0;pass<4;pass++) {
+        rt_ram_color=!backend;top=pass==2?0:25;bottom=pass==2?200:175;
+        projclipy[0]=top;projclipy[1]=bottom-1;
+        for(page=0;page<4;page++) {
+            rt_draw_page(page);rt_color_begin();
+            for(plane=0;plane<4;plane++) {
+                if(rt_ram_color) memset(rt_color+plane*16000+top*80,10+plane,(bottom-top)*80);
+                else { outpw(0x3c4,2|(0x100<<plane));memset(rt_video+top*80,10+plane,(bottom-top)*80); }
+            }
+            rt_color_flush();
+            for(plane=0;plane<4;plane++) {
+                outpw(0x3ce,4|(plane<<8));
+                for(i=0;i<16000;i++) check(rt_video[i]==(i>=top*80 && i<bottom*80?10+plane:255),"VGA page/viewport borders");
+            }
+        }
+    }
+    /* Compare actual direct-VGA assembly writes against the RAM backend. */
+    for(i=0;i<8;i++) {
+        unsigned x;
+        rt_ram_color=1;rt_depth_begin();rt_color_begin();
+        rt_raster(raster_cases[i].v,3,raster_cases[i].decal);memcpy(expected,rt_color,sizeof(expected));
+        rt_ram_color=0;rt_depth_begin();rt_color_begin();
+        rt_raster(raster_cases[i].v,3,raster_cases[i].decal);
+        for(plane=0;plane<4;plane++) {
+            outpw(0x3ce,4|(plane<<8));
+            for(x=0;x<16000;x++) check(rt_video[x]==expected[plane*16000+x],"direct VGA raster matches RAM");
+        }
+    }
+    rt_ram_color=1;
+    puts("PASS four VGA pages, repeated clears, viewport changes, RAM/direct and 8 direct raster images");
+}
 int main(void) {
     unsigned i,j,n,start,plane,bias,depth;long z,dz,c,dc,q,shade,m[3],v[3];
     rmatrix matrix;vlist input[20],output[20];pvlist projected[20];rt_vertex screen[20];
@@ -112,6 +149,8 @@ int main(void) {
     }
     puts("PASS 258 uploads, alignment, byte tails and guards");
     rt_depth_window(0,320,25,175);
+    for(n=0;n<2;n++) {
+    rt_triangle_kernel=n;
     for(i=0;i<sizeof(raster_cases)/sizeof(raster_cases[0]);i++) {
         unsigned long hash=2166136261UL;int x,y;
         rt_depth_begin();rt_color_begin();
@@ -122,6 +161,18 @@ int main(void) {
         }
         check(hash==raster_cases[i].hash,"complete clipped raster/row setup");
     }
-    puts("PASS 160 complete raster images against portable host reference");
+    }
+    rt_triangle_kernel=1;
+    puts("PASS 160 complete raster images in C and assembly against portable host reference");
+    {
+        rt_vertex triangle[3]={{0,0,1000,32},{100,0,1000,32},{0,20,1000,32}};
+        projclipy[0]=0;projclipy[1]=199;rt_depth_window(0,320,0,200);
+        rt_depth_begin();rt_color_begin();rt_raster(triangle,3,0);
+        check(rt_depth_at(1,1)!=0,"viewport expansion draws depth");
+        projclipy[0]=25;projclipy[1]=174;rt_depth_window(0,320,25,175);
+        rt_depth_begin();rt_color_begin();
+        check(rt_depth_at(1,1)==0 && rt_color_at(1,1)==255,"viewport shrink clears old borders");
+    }
+    check_video_pages();
     puts("PASS protected-mode kernels");return 0;
 }

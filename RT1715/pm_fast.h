@@ -1,5 +1,6 @@
 #ifndef RT_PM_FAST_H
 #define RT_PM_FAST_H
+#include <stddef.h>
 /* 32-bit near cdecl. No segment windows or bank mapping in these kernels. */
 long __cdecl rt_muldiv(long,long,long);
 long __cdecl rt_dot14(const long *matrix,const long *xyz);
@@ -12,8 +13,10 @@ typedef struct {
     unsigned char *color;
     long *left,*right;
     int top,bottom;
-    long qx,qy,cx,cy,qorigin,corigin;
+    long qx,qy,cx,cy,qorigin,corigin; /* Assembly setup scratch. */
     unsigned decal,ram;
+    long area;
 } rt_triangle_args;
-unsigned __cdecl rt_triangle32(const rt_triangle_args *args);
+typedef char rt_triangle_layout[(offsetof(rt_triangle_args,area)==60 && sizeof(rt_triangle_args)==64)?1:-1];
+unsigned __cdecl rt_triangle32(rt_triangle_args *args);
 #endif

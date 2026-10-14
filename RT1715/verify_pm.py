@@ -33,7 +33,7 @@ unsigned host_hash(void) {
     rng=random.Random(1716);rows=[]
     for i in range(160):
         color=rng.randrange(256)
-        vertices=[(rng.randrange(-200,521),rng.randrange(-120,321),rng.randrange(500,6000),
+        vertices=[(rng.randrange(-200,521),rng.randrange(-120,321),rng.randrange(1,65536) if i%3==0 else rng.randrange(500,6000),
                    rng.randrange(256) if i%2 else color) for _ in range(3)]
         lib.rt_depth_begin();lib.rt_raster((Vertex*3)(*(Vertex(*v) for v in vertices)),3,i&1)
         rows.append('{ {'+','.join('{'+','.join(map(str,v))+'}' for v in vertices)+'},'+str(i&1)+','+str(lib.host_hash())+'UL}')

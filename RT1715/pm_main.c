@@ -127,6 +127,7 @@ static void render(unsigned page) {
     rt_draw_page(page);rt_color_begin();rt_camera(fov);rt_begin();
     for(i=1;i<object_count;i++) if(scene[i].on) {
         o=scene[i].o;*o->r=*o->r0;calc_applyrmatrix(o->r,&camera);
+        if(rt_bounds_culling && rt_bounds_outside(o)) continue;
         distance=o->name[1]=='_'?1000000000L:calc_singlez(o->pl[0][1],o->v0,o->r);
         scene[i].dist=distance;order[n++]=i;
     }

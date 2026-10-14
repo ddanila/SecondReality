@@ -705,3 +705,63 @@ Overview 24:54, swoosh 25:6, flight end 26:57, credits 28:0–43:29 are unchange
 Original drone, protected palette entries and complete MUSIC0 payload match.
 The preview/review artifacts were regenerated and visually checked. Both native
 kernel suites and all 38 host tests pass.
+
+Viewport traffic and triangle setup follow-up
+--------------------------------------------
+The flyover clears and uploads only rows 25..174 after page initialization.
+That cuts routine depth clearing, color clearing and VGA upload bytes by 25%.
+RAM borders and all four VGA pages are initialized explicitly; changing the
+viewport invalidates their cached borders. Direct VGA retains the same rules.
+Objects rejected by bounds now leave the pipeline before distance calculation
+and sorting. Gradient divisions and row origins run inside the triangle
+assembly call, with exact signed rounding and 64-bit scaled numerators.
+
+Two additional experiments were implemented and measured: spatial keyboard
+batches and depth storage in VGA-plane order. Keyboard grouping showed no
+clear gain at the timer's resolution, so the additional grouping code was not
+retained. Planar depth passed the raster checks but was not retained: its
+mixed timing changes did not establish an overall improvement in DOSBox-X.
+These experiments do not establish performance on a physical CPU/cache.
+
+For repeatable comparisons, benchmark.py now accepts --samples and --dos-dir:
+
+    python3 RT1715/benchmark.py --label repeat --samples 5
+    python3 RT1715/benchmark.py --label old --samples 5 --dos-dir ARCHIVED_RUNTIME
+
+Each sample launches the same isolated runtime; timings/counters are summed
+and raw per-sample tick measurements are preserved. Reference comparisons
+normalize for sample count. Five samples give 600 timed renders per pose,
+plus five untimed warm-ups. Repetition checks repeatability, but the roughly
+55 ms clock quantization still limits small per-pose speed claims.
+
+The native suite now exercises all four VGA pages, repeated clears, changing
+viewports, RAM/direct rendering and eight complete direct-VGA raster images.
+It compares both the C and assembly triangle paths on 160 complete images,
+including full-range reciprocal depth. The original scene image checksums
+remain unchanged. Stage measurements: benchmarks/renderer-followup.json.
+
+Five-sample comparison at fixed 300000 cycles (milliseconds per render):
+
+  Pose          Starting renderer     Retained final
+   420                     27.463             27.467
+   980                     18.308             18.308
+  1840                     13.732             13.272
+  2660                      6.408              5.952
+  3200                     16.477             16.020
+  3750                     16.018             16.018
+
+Three views improve by about 3–7%; the other three are effectively unchanged.
+Total measured time over these equally repeated poses decreases about 1.4%.
+This is a modest follow-up gain, separate from the earlier renderer upgrade.
+Both baseline and final runs use identical assets and produce the same six
+image checksums, triangle counts and span counts. The planar-depth experiment
+was about 0.5% slower in aggregate than the retained version; neither that
+small difference nor timer-quantized ties justify keeping the layout change.
+
+Completed playback: capture/20261014-213333-188258, fixed 300000 cycles.
+All 21 cards and music cues pass, with normal exit and no confirmation dialog.
+Overview 24:54, swoosh 25:6, flight end 26:57, credits 28:0–43:29 are unchanged.
+1904 flight frames render; visible updates are 451/1454 in the first 20/50s,
+versus 448/1452 before this follow-up. Both native suites and all 38 host tests
+pass. The regenerated contact sheet and flyby strip were visually reviewed.
+Original drone, protected palette entries and MUSIC0 payload are byte-exact.

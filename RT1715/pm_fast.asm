@@ -117,19 +117,92 @@ _rt_upload32 proc near
 _rt_upload32 endp
 ; One entry per triangle: edge walking, scanline setup and inline pixel loops.
 ; Args offsets: vertices 0, depth 4, color 8, left 12, right 16,
-; top 20, bottom 24, qx/qy/cx/cy 28..40, origins 44/48, decal 52, RAM 56.
+; top 20, bottom 24, qx/qy/cx/cy 28..40, origins 44/48, decal 52, RAM 56, nonzero area 60.
 ; EBP locals: args -4, edge -8, plane -12, y -16, q -20, c -24,
 ; depth row -28, color row -32, dz -36, dc -40, spans -44, kernel -48.
+; Setup deltas: dx1 -52, dy1 -56, dx2 -60, dy2 -64.
 public _rt_triangle32
+; Exact signed gradients: retain 64-bit numerator scaling and IDIV truncation.
+TR_GRADIENT macro component,gradient
+    mov eax,[edi+16+component]
+    sub eax,[edi+component]
+    imul eax,[ebp-64]
+    mov ecx,[edi+32+component]
+    sub ecx,[edi+component]
+    imul ecx,[ebp-56]
+    sub eax,ecx
+    cdq
+    shld edx,eax,6
+    shl eax,6
+    idiv dword ptr [esi+60]
+    mov [esi+gradient],eax
+    mov eax,[edi+32+component]
+    sub eax,[edi+component]
+    imul eax,[ebp-52]
+    mov ecx,[edi+16+component]
+    sub ecx,[edi+component]
+    imul ecx,[ebp-60]
+    sub eax,ecx
+    cdq
+    shld edx,eax,6
+    shl eax,6
+    idiv dword ptr [esi+60]
+    mov [esi+gradient+4],eax
+endm
+TR_ORIGIN macro component,gradient,origin
+    mov eax,[edi+component]
+    shl eax,6
+    mov ecx,[esi+gradient]
+    imul ecx,[edi]
+    sub eax,ecx
+    mov ecx,[esi+20]
+    sub ecx,[edi+4]
+    imul ecx,[esi+gradient+4]
+    add eax,ecx
+    mov ecx,[esi+gradient]
+    add ecx,[esi+gradient+4]
+    mov edx,ecx
+    shr edx,31
+    add ecx,edx
+    sar ecx,1
+    add eax,ecx
+    mov [esi+origin],eax
+endm
 _rt_triangle32 proc near
     push ebp
     mov ebp,esp
-    sub esp,48
+    sub esp,64
     push ebx
     push esi
     push edi
     mov esi,[ebp+8]
     mov [ebp-4],esi
+    mov edi,[esi]
+    mov eax,[edi+16]
+    sub eax,[edi]
+    mov [ebp-52],eax
+    mov eax,[edi+20]
+    sub eax,[edi+4]
+    mov [ebp-56],eax
+    mov eax,[edi+32]
+    sub eax,[edi]
+    mov [ebp-60],eax
+    mov eax,[edi+36]
+    sub eax,[edi+4]
+    mov [ebp-64],eax
+    TR_GRADIENT 8,28
+    mov dword ptr [esi+36],0
+    mov dword ptr [esi+40],0
+    mov eax,[edi+12]
+    cmp eax,[edi+28]
+    jne tr_color_gradients
+    cmp eax,[edi+44]
+    je tr_origins
+tr_color_gradients:
+    TR_GRADIENT 12,36
+tr_origins:
+    TR_ORIGIN 8,28,44
+    TR_ORIGIN 12,36,48
     mov dword ptr [ebp-44],0
     mov ebx,[esi+20]
     mov ecx,[esi+24]

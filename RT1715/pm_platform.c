@@ -13,6 +13,8 @@ long projmulx=250,projmuly=220,projaddx=159,projaddy=99;
 unsigned char *rt_video=(unsigned char *)0xa0000;
 unsigned char rt_color[64000];
 int rt_ram_color=1;
+static int color_top=-1,color_bottom=-1;
+static int page_top[4]={-1,-1,-1,-1},page_bottom[4]={-1,-1,-1,-1};
 int rt_triangle_kernel=1,rt_bounds_culling=1;
 unsigned long rt_objects_tested,rt_objects_rejected;
 unsigned long rt_frames,rt_triangles,rt_spans,rt_vertices,rt_clipped;
@@ -50,7 +52,10 @@ void rt_palette(const unsigned char *p) {
     unsigned i;outp(0x3c8,0);for(i=0;i<768;i++) outp(0x3c9,p[i]);
 }
 void rt_video_init(void) {
-    rm_regs r;memset(&r,0,sizeof(r));r.eax=0x13;real_interrupt(0x10,&r);
+    rm_regs r;
+    color_top=color_bottom=-1;
+    memset(page_top,255,sizeof(page_top));memset(page_bottom,255,sizeof(page_bottom));
+    memset(&r,0,sizeof(r));r.eax=0x13;real_interrupt(0x10,&r);
     outpw(0x3c4,0x0604);outpw(0x3c4,0x0f02);
     outp(0x3ce,5);outp(0x3cf,inp(0x3cf)&~0x10);
     outp(0x3ce,6);outp(0x3cf,inp(0x3cf)&~2);
@@ -60,15 +65,34 @@ void rt_video_init(void) {
 }
 void rt_draw_page(unsigned page) { rt_video=(unsigned char *)(0xa0000+page*16384); }
 void rt_show_page(unsigned page) { outpw(0x3d4,0x0c|(page*0x4000)); }
+/* The viewport is full-width but letterboxed. Invalidate all borders on
+ * viewport changes and initialize each VGA page before using partial uploads. */
 void rt_color_begin(void) {
-    if(rt_ram_color) memset(rt_color,255,sizeof(rt_color));
-    else { outpw(0x3c4,0x0f02);memset(rt_video,255,16000); }
+    int top=(int)projclipy[0],bottom=(int)projclipy[1]+1,plane;
+    unsigned page=((unsigned)rt_video-0xa0000)/16384;
+    if(rt_ram_color) {
+        if(top!=color_top || bottom!=color_bottom) {
+            memset(rt_color,255,sizeof(rt_color));color_top=top;color_bottom=bottom;
+        } else for(plane=0;plane<4;plane++)
+            memset(rt_color+plane*16000+top*80,255,(bottom-top)*80);
+    } else {
+        outpw(0x3c4,0x0f02);
+        if(page_top[page]!=top || page_bottom[page]!=bottom) {
+            memset(rt_video,255,16000);page_top[page]=top;page_bottom[page]=bottom;
+        } else memset(rt_video+top*80,255,(bottom-top)*80);
+    }
 }
 void rt_color_flush(void) {
-    unsigned plane;
-    if(rt_ram_color) for(plane=0;plane<4;plane++) {
-        outpw(0x3c4,2|(0x100<<plane));
-        rt_upload32(rt_video,rt_color+plane*16000,16000);
+    unsigned plane,page=((unsigned)rt_video-0xa0000)/16384;
+    int top=(int)projclipy[0],bottom=(int)projclipy[1]+1;
+    unsigned offset=top*80,bytes=(bottom-top)*80;
+    if(rt_ram_color) {
+        if(page_top[page]!=top || page_bottom[page]!=bottom) { offset=0;bytes=16000; }
+        for(plane=0;plane<4;plane++) {
+            outpw(0x3c4,2|(0x100<<plane));
+            rt_upload32(rt_video+offset,rt_color+plane*16000+offset,bytes);
+        }
+        page_top[page]=top;page_bottom[page]=bottom;
     }
 }
 void rt_camera(unsigned angle) {

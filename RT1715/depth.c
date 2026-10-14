@@ -1,4 +1,4 @@
-/* 16-bit reciprocal depth in 128 KB of EMS, independent of VGA page flipping.
+/* 16-bit reciprocal depth: flat protected-mode RAM or legacy EMS.
  * Convex polygons are clipped before fixed-point scan conversion. */
 #include <stdlib.h>
 #include <string.h>
@@ -49,7 +49,10 @@ void rt_depth_begin(void) {
 #ifdef RT_HOST_TEST
     memset(test_depth,0,sizeof(test_depth));memset(test_color,255,sizeof(test_color));
 #elif defined(RT_PM)
-    memset(flat_depth,0,sizeof(flat_depth));
+    static int old_top=-1,old_bottom=-1;
+    if(old_top!=clip_top || old_bottom!=clip_bottom) {
+        memset(flat_depth,0,sizeof(flat_depth));old_top=clip_top;old_bottom=clip_bottom;
+    } else memset(flat_depth+clip_top*320,0,(clip_bottom-clip_top)*640);
 #else
     unsigned i;
     if(!active) {
@@ -148,12 +151,6 @@ static void triangle(rt_vertex *a,rt_vertex *b,rt_vertex *c,int decal) {
 #ifdef RT_PM
     rt_triangles++;
 #endif
-    qx=rt_muldiv((b->z-a->z)*(c->y-a->y)-(c->z-a->z)*(b->y-a->y),64,area);
-    qy=rt_muldiv((b->x-a->x)*(c->z-a->z)-(c->x-a->x)*(b->z-a->z),64,area);
-    if(a->c!=b->c || a->c!=c->c) {
-        cx=rt_muldiv((b->c-a->c)*(c->y-a->y)-(c->c-a->c)*(b->y-a->y),64,area);
-        cy=rt_muldiv((b->x-a->x)*(c->c-a->c)-(c->x-a->x)*(b->c-a->c),64,area);
-    }
     vertices[0]=*a;vertices[1]=*b;vertices[2]=*c;
     for(i=0;i<3;i++) { if(vertices[i].y<miny) miny=(int)vertices[i].y;if(vertices[i].y>maxy) maxy=(int)vertices[i].y; }
     if(miny>=maxy) return;
@@ -163,15 +160,17 @@ static void triangle(rt_vertex *a,rt_vertex *b,rt_vertex *c,int decal) {
         args.vertices=vertices;args.depth=flat_depth;
         args.color=rt_ram_color?rt_color:rt_video;
         args.left=lx;args.right=rx;args.top=miny;args.bottom=maxy;
-        args.qx=qx;args.qy=qy;args.cx=cx;args.cy=cy;
-        args.qorigin=(long)((unsigned long)a->z*64-(unsigned long)qx*a->x+
-                            (unsigned long)qy*(miny-a->y)+(qx+qy)/2);
-        args.corigin=(long)((unsigned long)a->c*64-(unsigned long)cx*a->x+
-                            (unsigned long)cy*(miny-a->y)+(cx+cy)/2);
+        args.area=area;
         args.decal=decal;args.ram=rt_ram_color;
         rt_spans+=rt_triangle32(&args);return;
     }
 #endif
+    qx=rt_muldiv((b->z-a->z)*(c->y-a->y)-(c->z-a->z)*(b->y-a->y),64,area);
+    qy=rt_muldiv((b->x-a->x)*(c->z-a->z)-(c->x-a->x)*(b->z-a->z),64,area);
+    if(a->c!=b->c || a->c!=c->c) {
+        cx=rt_muldiv((b->c-a->c)*(c->y-a->y)-(c->c-a->c)*(b->y-a->y),64,area);
+        cy=rt_muldiv((b->x-a->x)*(c->c-a->c)-(c->x-a->x)*(b->c-a->c),64,area);
+    }
 #if !defined(RT_HOST_TEST) && !defined(RT_PM)
     rt_edges386(vertices,lx,rx,miny,maxy);
 #else
