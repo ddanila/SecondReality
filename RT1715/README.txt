@@ -245,8 +245,9 @@ This mode replaces the city geometry, scene-instance mapping, palette ramps
 and animation stream, retaining the byte-exact drone mesh. robotron_lod.py
 contains deliberate exterior panel/frame and dished-keycap LODs in the
 canonical assembly coordinates. These replace destructive convex-hull
-simplification of perforated thin shells. Fine vents, lettering, bevels and
-internal electronics are not reproduced in the realtime exterior LOD; the
+simplification of perforated thin shells. The curved CRT perimeter meets a
+fitted surround and front housing lip. Fine vents, lettering and internal
+electronics are not reproduced in the realtime exterior LOD; the
 credit photographs use the detailed canonical model exports.
 
 The renderer is now host-linked from the original sources with Watcom's
@@ -265,8 +266,10 @@ keep movement continuous through waypoints. The scene runs for 1801 samples
 at 35 Hz, starting just above the keys, sweeping past both external drive
 fronts, rounding the case corner and climbing to the CRT before pulling
 back. The complete assembled exterior stays present throughout. The drone
-banks and changes position in the camera view, then remains near the machine
-as the camera pulls away. Visibility is baked conservatively on the host.
+aligns its original +X nose with the 3D path tangent, pitches during climbs,
+and banks according to turn rate. It changes position in the camera view,
+then remains near the machine as the camera pulls away. Visibility is baked
+conservatively on the host.
 
 Robotron mode skips the original Future Crew end logo and proceeds directly
 to seven component cards. Credit images have black backgrounds and a thin

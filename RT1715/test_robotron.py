@@ -72,3 +72,34 @@ class RobotronTests(unittest.TestCase):
             p1=robotron.sample(flight,t)[0]
             p2=robotron.sample(flight,t+epsilon)[0]
             self.assertLess(np.linalg.norm((p2-p1)-(p1-p0)),.001)
+
+    def test_drone_nose_tracks_full_3d_velocity_through_entire_flight(self):
+        import json
+        import numpy as np
+        flight=json.loads((robotron.HERE/'assets/robotron/flight.json').read_text())
+        end=flight['drone'][-1]['time']
+        for t in np.linspace(0,end,500):
+            lo=max(0,t-.05);hi=min(end,t+.05)
+            tangent=robotron.sample_track(flight['drone'],hi,'position')-robotron.sample_track(flight['drone'],lo,'position')
+            tangent/=np.linalg.norm(tangent)
+            rotation=robotron.drone_rotation(flight,t)
+            # +X is the nose of U2E.028. Banking must not change its heading.
+            np.testing.assert_allclose(rotation @ [1.,0.,0.],tangent,atol=1e-10)
+            np.testing.assert_allclose(rotation.T @ rotation,np.eye(3),atol=1e-10)
+            self.assertAlmostEqual(np.linalg.det(rotation),1.)
+
+    def test_crt_rim_covers_every_glass_boundary_vertex(self):
+        import numpy as np
+        from robotron_lod import crt_surround
+        glass,rim=crt_surround()
+        edges=glass.edges
+        counts={}
+        for a,b in edges:
+            edge=tuple(sorted((a,b)));counts[edge]=counts.get(edge,0)+1
+        boundary={v for edge,count in counts.items() if count==1 for v in edge}
+        self.assertEqual(len(boundary),28)
+        for v in glass.vertices[list(boundary)]:
+            distance=np.linalg.norm(rim.vertices-v,axis=1)
+            self.assertLess(distance.min(),.35)
+        self.assertTrue(np.all(glass.face_normals[:,1]<0))
+        self.assertTrue(np.all(rim.face_normals[:,1]<0))

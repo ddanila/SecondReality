@@ -23,19 +23,8 @@ def slope_box(x0,x1,y0,y1,bottom,front,back):
                 [(3,2,1,0),(0,1,5,4),(1,2,6,5),(2,3,7,6),(3,0,4,7),(4,5,6,7)])
 
 
-def frame(x0,x1,z0,z1,y0,y1,width):
-    return trimesh.util.concatenate([box([x0,y0,z0],[x0+width,y1,z1]),
-        box([x1-width,y0,z0],[x1,y1,z1]),
-        box([x0+width,y0,z0],[x1-width,y1,z0+width]),
-        box([x0+width,y0,z1-width],[x1-width,y1,z1])])
-
-
-def exterior():
-    # Outer monitor skins omit the front surface: the bezel and CRT fill it.
-    v=[(-160,-142,180),(160,-142,180),(160,192,180),(-160,192,180),
-       (-160,-142,460),(160,-142,460),(160,192,460),(-160,192,460)]
-    monitor=mesh(v,[(3,2,1,0),(1,2,6,5),(2,3,7,6),(3,0,4,7),(4,5,6,7)])
-    # A gently curved, continuous CRT surface, wound toward the viewer.
+def crt_surround():
+    """Curved glass and its surround meet along the complete curved perimeter."""
     vertices=[];faces=[]
     for j in range(7):
         z=218.5+j*211/6
@@ -46,6 +35,40 @@ def exterior():
     for j in range(6):
         for i in range(8):
             a=j*9+i;faces.append((a,a+1,a+10,a+9))
+    # Four strips, subdivided to match the curved glass edge exactly. Extend
+    # the edge by 0.25 mm under the glass to avoid fixed-point rounding cracks.
+    rim_vertices=[];rim_faces=[]
+    edges=[list(range(9)),[j*9+8 for j in range(7)],
+           list(range(62,53,-1)),[j*9 for j in range(6,-1,-1)]]
+    corners=[(-151.5,-154,188),(151.5,-154,188),
+             (151.5,-154,452),(-151.5,-154,452)]
+    for k,edge in enumerate(edges):
+        begin=len(rim_vertices)
+        for j,index in enumerate(edge):
+            u=j/(len(edge)-1)
+            outer=(1-u)*np.array(corners[k])+u*np.array(corners[(k+1)%4])
+            point=np.array(vertices[index],float)
+            # Inset along the screen plane, leaving the lip behind the glass.
+            point[0]*=.998
+            point[2]=324+(point[2]-324)*.998
+            point[1]+=.05
+            rim_vertices.extend([outer,point])
+        for j in range(len(edge)-1):
+            a=begin+j*2;rim_faces.append((a,a+2,a+3,a+1))
+    return mesh(vertices,faces),mesh(rim_vertices,rim_faces)
+
+
+def exterior():
+    # Outer monitor skins omit the front surface: the bezel and CRT fill it.
+    v=[(-160,-142,180),(160,-142,180),(160,192,180),(-160,192,180),
+       (-160,-142,460),(160,-142,460),(160,192,460),(-160,192,460)]
+    monitor=mesh(v,[(3,2,1,0),(1,2,6,5),(2,3,7,6),(3,0,4,7),(4,5,6,7)])
+    # Close the housing front with a chamfer down to the bezel's outer edge.
+    outer=[(-160,-142,180),(160,-142,180),(160,-142,460),(-160,-142,460)]
+    inner=[(-151.5,-154,188),(151.5,-154,188),(151.5,-154,452),(-151.5,-154,452)]
+    lip=mesh(outer+inner,[(i,(i+1)%4,(i+1)%4+4,i+4) for i in range(4)])
+    monitor=trimesh.util.concatenate([monitor,lip])
+    screen,bezel=crt_surround()
     # Fascia frame leaves a real aperture for each of the two drives.
     fascia=[box([-249,-209,36],[249,-201,60]),box([-249,-209,102],[249,-201,130]),
             box([-249,-209,60],[-231,-201,102]),box([-93,-209,60],[-69,-201,102]),
@@ -66,8 +89,8 @@ def exterior():
         ('drive-latches',trimesh.util.concatenate(latches),'metal'),
         ('stand',box([-85,-60,135],[85,110,180]),'paint'),
         ('monitor',monitor,'paint'),
-        ('bezel',frame(-151.5,151.5,188,452,-154,-142,22),'dark'),
-        ('screen',mesh(vertices,faces),'pcb'),
+        ('bezel',bezel,'dark'),
+        ('screen',screen,'pcb'),
         ('keyboard',slope_box(-247,247,-455,-255,1.2,19,36),'blue'),
         ('deck',slope_box(-238,238,-445,-298,17,19,32),'dark'),
     ]

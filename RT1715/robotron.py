@@ -94,6 +94,28 @@ def sample(flight,time):
     return tuple(sample_track(flight['keyframes'],time,k) for k in ('eye','target'))
 
 
+def drone_rotation(flight, time):
+    """Original ship nose is local +X; align it with the 3D path tangent."""
+    keys=flight['drone'];start=keys[0]['time'];end=keys[-1]['time']
+    def velocity(t):
+        lo=max(start,t-.05);hi=min(end,t+.05)
+        return (sample_track(keys,hi,'position')-sample_track(keys,lo,'position'))/(hi-lo)
+    v=velocity(time);speed=np.linalg.norm(v)
+    if speed<1e-6: raise ValueError('Drone track has no heading at this sample')
+    forward=v/speed
+    left=np.cross([0.,0.,1.],forward);left/=np.linalg.norm(left)
+    up=np.cross(forward,left)
+    # Bank into the turn, instead of an unrelated periodic rocking motion.
+    lo=max(start,time-.15);hi=min(end,time+.15)
+    before=velocity(lo);after=velocity(hi)
+    turn=math.atan2(before[0]*after[1]-before[1]*after[0],
+                    before[0]*after[0]+before[1]*after[1])/(hi-lo)
+    bank=np.clip(-math.atan2(speed*turn,180.),-math.radians(20),math.radians(20))
+    c,s=math.cos(bank),math.sin(bank)
+    roll=np.array([[1,0,0],[0,c,-s],[0,s,c]])
+    return np.column_stack((forward,left,up)) @ roll
+
+
 def encode_animation(poses, visibility, fov):
     """Encode complete authored tracks, including motion while off screen."""
     previous = np.zeros((len(poses[0]),12), dtype=np.int64)
@@ -208,13 +230,7 @@ def prepare(root, build, command):
     for f in range(flight['frames']):
         t=f/flight['fps'];eye,target=sample(flight,t)
         drone_pos=sample_track(flight['drone'],t,'position')
-        velocity=sample_track(flight['drone'],min(t+.15,51.42),'position')-sample_track(flight['drone'],max(0,t-.15),'position')
-        yaw=math.atan2(velocity[1],velocity[0])+math.pi/2
-        c,s=math.cos(yaw),math.sin(yaw)
-        rotation=np.array([[c,-s,0],[s,c,0],[0,0,1.]])
-        bank=math.radians(18*math.sin(t*.7))
-        cb,sb=math.cos(bank),math.sin(bank)
-        rotation=rotation @ np.array([[cb,0,sb],[0,1,0],[-sb,0,cb]])
+        rotation=drone_rotation(flight,t)
         rotation*=SCALE/96  # Approximately 7.5 mm wide in the assembly's units.
         drone_state=tuple(np.rint(drone_pos*SCALE-rotation@center).astype(int))+tuple(
             np.rint(rotation.flatten()*16384).astype(int))
