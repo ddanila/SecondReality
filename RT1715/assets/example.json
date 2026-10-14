@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "models": [
+    {"slot": 2, "scad": "models/tower.scad", "color": 64, "shades": 32, "rotate_z": 0},
+    {"slot": 4, "scad": "models/stepped.scad", "color": 160, "shades": 32, "rotate_z": 0}
+  ],
+  "credits": [
+    {
+      "render_model": "models/tower.scad",
+      "lines": ["RT1715", "OpenSCAD city", "Models / Your name"],
+      "hold_frames": 200
+    },
+    {
+      "render_model": "models/stepped.scad",
+      "lines": ["Rendered from SCAD", "ASCII: abc XYZ 0123", "[] {} <> @#$% &* +-=!"],
+      "hold_frames": 200
+    }
+  ]
+}

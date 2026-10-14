@@ -7,6 +7,9 @@
 KEYBON=1
 DEBUG=0
 ;FINAL=1
+IFDEF RT1715
+FINAL=0
+ENDIF
 TESTF=0
 
 include stmika.inc
@@ -672,7 +675,9 @@ start:  ;set stack
         mov     ds,cs:ownpsp
         call    file_getexepath
         call    dis_setint
+IFNDEF RT1715
 	call	file_initpacking
+ENDIF
         call    file_setint
         call    flushkbd
         mov     ax,3
@@ -684,7 +689,9 @@ start:  ;set stack
 	cmp	cs:errorcode,0
 	jne	fatalexit0
 	;check/process commandline
+IFNDEF RT1715
 	call	checkcmdline
+ENDIF
 	cmp	cs:errorcode,0
 	jne	fatalexit0
 ;======== Here we go! ========
@@ -700,10 +707,14 @@ start:  ;set stack
         mov     word ptr ds:[bx+2],0
         mov     ax,cs
         mov     ds,ax
+IFDEF RT1715
+        include ..\rt1715\setup.inc
+ELSE
         mov     si,OFFSET exe0
 	mov	cs:normalkbd,1
         call    executehigh
 	mov	cs:normalkbd,0
+ENDIF
         mov     ax,SEG _zinit
         mov     cs:stmikseg,ax
         lds     bx,cs:msgareapnt
@@ -782,12 +793,19 @@ start:  ;set stack
         mov     es,cs:stmikseg
         mov     es:_zpollmix,1
 
+IFDEF RT1715
+        push    18 ; city music entry (decimal order index)
+ELSE
         push    0
+ENDIF
         call    _zplaysong
         add     sp,2
                 
 	;--------------------------
 @@partsagain:
+IFDEF RT1715
+        include ..\rt1715\sequence.inc
+ELSE
 	mov	cs:notextmode,1
         test    cs:whattorun,1
         jz      @@skipp1
@@ -932,6 +950,7 @@ start:  ;set stack
         call    restartmus
 	jmp	@@partsagain
         ;--------------------------
+ENDIF
 @@partsdone:    
 	mov	cs:notextmode,0
 	;fade music
@@ -971,7 +990,9 @@ fatalexit0:
 	call	copperwaitborder
 	pop	cx
 	loop	@@cwb1
+IFNDEF RT1715
 	call	printend
+ENDIF
 	call	printdebug
         call    file_resetint
 fatalexit00:
@@ -990,7 +1011,12 @@ fatalexit00:
 	mov	ax,cs:minmemfree
 	int	3
 	ENDIF
+IFDEF RT1715
+        mov     ax,cs:errorcode
+        mov     ah,4ch
+ELSE
         mov     ax,4c00h
+ENDIF
         int     21h
 u2_text ENDS
 
