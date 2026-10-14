@@ -270,8 +270,8 @@ and ADRAW object modules supply the VGA rasterizer. Improvements include
 global face-depth sorting across objects, bounded offscreen projection (preventing
 16-bit coordinate wrap), shared vertex/projection/normal scratch buffers,
 and removal of the city-specific drone ordering override. Robotron meshes
-omit the obsolete eight precomputed sort lists and use numbered slots above
-42; the native loader already supports these. The original drone stays in
+omit the obsolete eight precomputed sort lists and use numbered mesh slots
+while reserving slot 28 for the drone. The original drone stays in
 slot 28. These changes keep the extra legends inside conventional memory.
 painter.c queues up to 4000 visible faces and sorts them together, so case
 panels cannot cover nearby keyboard keys or drive fronts merely because their
@@ -279,7 +279,8 @@ object centres sort differently. This remains a painter renderer; arbitrary
 intersecting polygons still require care. The animation uses an 8 KB streaming
 buffer with a host-enforced 4 KB maximum encoded frame, leaving conventional
 memory for the more detailed front geometry.
-DOSBox-X uses a 486 with 120000 fixed cycles and 32 MB, headless only.
+DOSBox-X uses a 486 with the dynamic core, 300000 fixed cycles and 32 MB,
+headless only.
 
 assets/robotron/flight.json contains independent camera eye/target and drone
 position tracks in canonical millimetres. Time-aware cubic Hermite curves
@@ -288,7 +289,8 @@ has zero incoming/outgoing velocity, allowing a stationary shot without
 spline overshoot. The 2031 samples at 35 Hz cover about 58 seconds: keyboard,
 drive fronts, case corner, CRT, complete-machine reveal, then drone return.
 The original +X drone nose follows its velocity; banking follows turn rate.
-The drone passes close to the camera on the swoosh and leaves the shot.
+The drone crosses diagonally from lower-left to upper-right near the camera
+on the swoosh, retaining forward clearance instead of aiming into the lens.
 
 Synchronization uses MUSIC0 continuously, starting at order 18. music.py
 reads its XOR-packed S3M patterns, including speed changes and pattern breaks.
@@ -296,7 +298,7 @@ The flyover starts at order 19. Its clock follows the actual DIS order/row,
 interpolating with VGA retraces between rows. The swoosh is order 25 rows 6/8
 (51.60/51.84 seconds after music start, 47.76/48.00 into the flight). The full
 Robotron is fully visible by flight second 45.5, before the swoosh. The camera
-holds still through second 49 and the drone continues straight behind it.
+holds still through second 49 and the drone continues straight out of view.
 The overview occupies the original Future Crew logo interval. The final
 frame survives loading CRED.EXE; CRED.SYN gates the first card at order 28,
 row 0 (62.40 seconds after music start). Order/row numbers here are decimal.
@@ -352,3 +354,30 @@ Latest validation: capture/20261014-170328-690943, 29 host tests passing,
 Overview 24:56 precedes swoosh 25:8; credits start at 28:0 and end at 43:29.
 Reviewed captured keyboard/drive occlusion, monitor joint and wide-before-pass
 sequence. All 21 rendered image hashes are distinct; current SCAD hashes match.
+
+Keyboard rendering follow-up: the supporting shell/deck tops are divided into
+20 mm panels so one large polygon cannot overwrite an entire bank of keys.
+The globally sorted draw pass transforms only each flat-shaded face's vertices
+and normal in a contiguous batch, avoiding repeated whole-object transforms.
+Fully offscreen faces are rejected before sorting; the shell has an opening
+under the deck, so hidden overlapping keyboard skins are not drawn. Gouraud objects retain
+the full transform path. The loader uses DOS UMB-first allocation when available
+and restores the previous DOS allocation strategy/link state before returning;
+DOSBox-X's existing umb=true supplies the extra scene memory.
+CPU and CRT-controller cards show their complete boards with the relevant IC
+highlighted in amber. The floppy-controller view includes surrounding circuitry.
+The current local model identifies the 32 RAM packages as M4164B-12; the cards
+follow that corrected source label. These local source updates are consumed
+read-only and recorded by content hashes, including uncommitted model updates.
+
+Performance comparison against capture/20261014-170328-690943: RGB frame
+hashes over the first 50 seconds show 1019 image changes versus 848 (+20%).
+The first 20 seconds, containing the keyboard sweep, improve from 208 to 268
+(+29%). These count visible frame updates, not VGA refreshes or a fixed FPS
+guarantee. Detailed near views remain more expensive than the wide overview.
+
+Keyboard/diagonal-pass validation: capture/20261014-172653-440061, all 31
+host tests pass and all 21 cards complete. Captured audio is 174.930 seconds;
+wall time is 176.99 seconds. Overview 24:56, swoosh 25:7, credits 28:0–43:29.
+Headless playback exits normally with no confirmation. Reviewed keyboard
+closeups/pullback, the diagonal pass and the revised board-context images.

@@ -24,7 +24,7 @@ static void transform(object *o) {
 
 void rt_begin(void) { count=0; }
 void rt_queue(object *o) {
-    int i,j,n,offset,*face;
+    int i,j,n,offset,*face,clip;
     vlist *v; nlist *normal;
     long facing;
     long depth,nearest=0x7fffffffL;
@@ -35,6 +35,9 @@ void rt_queue(object *o) {
     n=o->pl[0][0]-3;
     for(i=0;i<n;i++) {
         offset=o->pl[0][i+2]; face=(int *)(o->pd+offset);
+        clip=31;
+        for(j=0;j<(face[0]&255);j++) clip&=o->pv[face[j+3]].vf;
+        if(clip) continue;
         v=&o->v[face[3]];normal=&o->n[face[2]];
         facing=(v->x/16)*normal->x+(v->y/16)*normal->y+(v->z/16)*normal->z;
         if(!(face[0]&F_2SIDE) && facing>=0) continue;
@@ -54,13 +57,30 @@ static int __watcall compare(const void *a,const void *b) {
 }
 void rt_flush(void) {
     unsigned i;
-    object *last=NULL,*o;
+    object *o;
+    int j,index,first,last,*face;
     int single[4];
     qsort(faces,count,sizeof(struct face_entry),compare);
     single[0]=4;single[3]=0;
     for(i=0;i<count;i++) {
         o=faces[i].owner;
-        if(o!=last) { transform(o);last=o; }
+        face=(int *)(o->pd+faces[i].offset);
+        /* Sorting interleaves objects. Transform only this face, not every
+         * vertex in its owner again. Keep full normals for Gouraud objects. */
+        if(o->flags&F_GOURAUD) transform(o);
+        else {
+            o->v=vertices;o->pv=projected;o->n=normals;
+            first=last=face[3];
+            for(j=1;j<(face[0]&255);j++) {
+                index=face[j+3];
+                if(index<first) first=index;
+                if(index>last) last=index;
+            }
+            calc_rotate(last-first+1,vertices+first,o->v0+first,o->r);
+            calc_project(last-first+1,projected+first,vertices+first);
+            index=face[2];
+            calc_nrotate(1,normals+index,o->n0+index,o->r);
+        }
         single[1]=o->pl[0][1];single[2]=faces[i].offset;
         draw_polylist(single,o->pd,o->v,o->pv,o->n,o->flags);
     }

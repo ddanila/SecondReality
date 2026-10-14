@@ -24,7 +24,8 @@ def render_cards(config, output, records, load, chips, keys, command):
         selected=[]
         for instance,m,leads in chips:
             if instance['board']==board:
-                solids.append((instance['id'],m,'#303333'))
+                highlight=any(label in instance['label'] for label in view.get('highlight_chips',[]))
+                solids.append((instance['id'],m,'#c6a66a' if highlight else '#303333'))
                 solids.append((instance['id']+'-pins',leads,'#a6aaa5'))
                 if any(label in instance['label'] for label in view.get('focus_chips',[])):
                     selected.append(m)

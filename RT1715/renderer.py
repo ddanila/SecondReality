@@ -74,6 +74,29 @@ static void rt_refill(void) {
     scenelist[0].data=(char *)rt_buffer;scl=1;
 '''+s[b:]
             s=s.replace('// parse animation stream for 1 frame','rt_refill();\n\t\t// parse animation stream for 1 frame')
+            # Let DOS allocate scene geometry in UMBs before conventional RAM.
+            # Unsupported DOS functions leave the default strategy in place.
+            s=s.replace('dis_partstart();', r'''dis_partstart();
+    _asm {
+        mov ax,5800h
+        int 21h
+        mov rt_dos_strategy,ax
+        mov ax,5802h
+        int 21h
+        xor ah,ah
+        mov rt_dos_link,ax
+    }
+    _asm {
+        mov ax,5803h
+        mov bx,1
+        int 21h
+    }
+    _asm {
+        mov ax,5801h
+        mov bx,80h
+        int 21h
+    }
+''')
             # Read tracker position atomically; the VGA counter only interpolates
             # within a row. This also catches up after a slow rendering frame.
             s=s.replace('main(int argc,char *argv[])', r'''
@@ -83,6 +106,7 @@ unsigned rt_position(void);
 static unsigned rt_last=65535U, rt_stamp;
 static FILE *rt_trace;
 static int rt_cue=0;
+static unsigned rt_dos_strategy,rt_dos_link;
 static int rt_music_frame(void) {
     unsigned pos=rt_position(), order=pos>>6, row=pos&63;
     long frame;
@@ -110,6 +134,14 @@ main(int argc,char *argv[])''')
         unsigned pos=rt_position();
         fprintf(rt_trace,"END order=%u row=%u frame=%d\n",pos>>6,pos&63,currframe);
         fclose(rt_trace);
+    }
+    _asm {
+        mov ax,5801h
+        mov bx,rt_dos_strategy
+        int 21h
+        mov ax,5803h
+        mov bx,rt_dos_link
+        int 21h
     }
     return 0;''')
             s=s.replace('ip=readfile(tmpname);','ip=(int huge *)readfile(tmpname);')

@@ -17,10 +17,30 @@ def mesh(vertices, quads):
     return trimesh.Trimesh(vertices, [(q[0],q[i],q[i+1]) for q in quads for i in range(1,len(q)-1)], process=True)
 
 
-def slope_box(x0,x1,y0,y1,bottom,front,back):
-    return mesh([(x0,y0,bottom),(x1,y0,bottom),(x1,y1,bottom),(x0,y1,bottom),
-                 (x0,y0,front),(x1,y0,front),(x1,y1,back),(x0,y1,back)],
-                [(3,2,1,0),(0,1,5,4),(1,2,6,5),(2,3,7,6),(3,0,4,7),(4,5,6,7)])
+def slope_box(x0,x1,y0,y1,bottom,front,back,opening=None):
+    # Small top panels keep centroid sorting local to nearby raised keycaps.
+    vertices=[(x0,y0,bottom),(x1,y0,bottom),(x1,y1,bottom),(x0,y1,bottom),
+              (x0,y0,front),(x1,y0,front),(x1,y1,back),(x0,y1,back)]
+    faces=[(3,2,1,0),(0,1,5,4),(1,2,6,5),(2,3,7,6),(3,0,4,7)]
+    regions=[(x0,x1,y0,y1)]
+    if opening:
+        ox0,ox1,oy0,oy1=opening
+        regions=[(x0,ox0,y0,y1),(ox1,x1,y0,y1),
+                 (ox0,ox1,y0,oy0),(ox0,ox1,oy1,y1)]
+    for ax,bx,ay,by in regions:
+        nx=int(np.ceil((bx-ax)/20));ny=int(np.ceil((by-ay)/20))
+        start=len(vertices)
+        for j in range(ny+1):
+            y=ay+(by-ay)*j/ny
+            for i in range(nx+1):
+                vertices.append((ax+(bx-ax)*i/nx,y,
+                                 front+(back-front)*(y-y0)/(y1-y0)))
+        for j in range(ny):
+            for i in range(nx):
+                a=start+j*(nx+1)+i
+                faces.append((a,a+1,a+nx+2,a+nx+1))
+    return mesh(vertices,faces)
+
 
 
 def crt_surround():
@@ -91,7 +111,7 @@ def exterior():
         ('monitor-joint',joint,'black'),
         ('bezel',bezel,'dark'),
         ('screen',screen,'pcb'),
-        ('keyboard',slope_box(-247,247,-455,-255,1.2,19,36),'blue'),
+        ('keyboard',slope_box(-247,247,-455,-255,1.2,19,36,(-238,238,-445,-298)),'blue'),
         ('deck',slope_box(-238,238,-445,-298,17,19,32),'dark'),
     ]
 

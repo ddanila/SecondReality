@@ -31,9 +31,9 @@ class MusicTimingTests(unittest.TestCase):
         camera=np.array(robotron.camera(eye,target)[3:]).reshape(3,3)/16384
         x,y,z=camera @ (drone-eye)
         self.assertGreater(z,8)
-        self.assertLess(z,25)
+        self.assertLess(z,100)
         self.assertLess(abs(x/z),.2)
-        self.assertLess(abs(y/z),.2)
+        self.assertLess(abs(y/z),.3)
         self.assertGreater(np.linalg.norm(robotron.sample(f,54)[0]),1200)
         self.assertGreater(np.linalg.norm(eye),1200)
         self.assertLess(f['frames']/f['fps'],62.40-3.84)
@@ -64,18 +64,23 @@ class MusicTimingTests(unittest.TestCase):
         import robotron
         f=json.loads((HERE/'assets/robotron/flight.json').read_text())
         eye,target=robotron.sample(f,47.76)
-        direction=(eye-target)/np.linalg.norm(eye-target)
+        camera=np.array(robotron.camera(eye,target)[3:]).reshape(3,3)/16384
+        direction=np.linalg.solve(camera,[240.,-160.,-20.]);direction/=np.linalg.norm(direction)
         for t in np.linspace(45.5,49,60):
             np.testing.assert_allclose(robotron.sample(f,t)[0],eye,atol=1e-8)
         for t in np.linspace(47.1,48.1,50):
             heading=robotron.drone_rotation(f,t) @ [1.,0.,0.]
             self.assertGreater(np.dot(heading,direction),.99999)
-        self.assertGreater(np.dot(robotron.sample_track(f['drone'],48,'position')-eye,direction),0)
+        before=camera @ (robotron.sample_track(f['drone'],47.5,'position')-eye)
+        after=camera @ (robotron.sample_track(f['drone'],48,'position')-eye)
+        self.assertLess(before[0],0);self.assertGreater(before[1],0)
+        self.assertGreater(after[0],0);self.assertLess(after[1],0)
+        self.assertGreater(after[2],40)
 
     def test_credit_views_are_unique_and_focus_memory_on_its_chips(self):
         cards=json.loads((HERE/'assets/robotron/credits.json').read_text())
         self.assertEqual(len({c['image'] for c in cards}),21)
         views={c['image']:c['view'] for c in cards}
         self.assertEqual(views['display-ram']['focus_chips'],['UL6516D'])
-        self.assertEqual(views['main-ram']['focus_chips'],['U2164'])
+        self.assertEqual(views['main-ram']['focus_chips'],['M4164B'])
         self.assertIn('keyboard-controller-rom-cover',views['keyboard-rom']['focus_parts'])

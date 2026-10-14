@@ -7,7 +7,8 @@ not modify either sibling repository. Generated meshes are reduced derivatives;
 small holes, fittings and hidden surfaces are omitted for the DOS renderer.
 Critical front parts are freshly exported from model.scad. The generated
 build/robotron/report.json records source mesh and SCAD hashes.
-Latest source checked: 3d-models commit b9be369, browser model version 35.
+Source base: 3d-models commit b9be369 plus current local model updates.
+The build report hashes identify the exact source snapshot consumed.
 
 Assembly/specification evidence:
   3d-models/models/robotron-1715m/README.md
@@ -37,7 +38,7 @@ Technical credit pages (assets/robotron/credits.json):
     These are explicitly labelled reference details on screen. They do not
     identify the installed EPROM or establish the exact drive suffix/media.
   dac/src/inspection.js, mainboard-detail / adapter-detail:
-    UA880, 32 U2164, UA858 DMA, UA8560 SIO, two CTCs, U8272 at A44;
+    UA880, UA858 DMA, UA8560 SIO, two CTCs, U8272 at A44;
     05-330-0024 adapters, 34-way drive / 26-way ribbon connectors.
   3d-models/models/robotron-1715m/README.md and board-layout.json:
     photographed SAB8275P, three UL6516D, 39 display-board IC positions;
@@ -46,3 +47,7 @@ Technical credit pages (assets/robotron/credits.json):
   dac/src/inspection.js: W1715/330 specimen label.
 No PSU rail voltages/power, CRT resolution, ROM identity or unverified drive
 capacity is inferred. Each technical page has its own component view or crop.
+
+Current canonical pcb-components.json/browser manifest correct the main-memory
+package identification to 32 M4164B-12 (256 KB); use this over the older dac
+U2164 label. The source repository is never modified by this builder.

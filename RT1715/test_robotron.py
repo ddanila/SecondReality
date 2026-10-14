@@ -113,3 +113,22 @@ class RobotronTests(unittest.TestCase):
         bridges=(sides[:,:,2].min(axis=1)<320)&(sides[:,:,2].max(axis=1)>320)
         self.assertFalse(np.any(bridges))
         self.assertEqual(parts['monitor-joint'].bounds[:,2].tolist(),[319,321])
+
+    def test_keyboard_support_faces_stay_local_to_keycaps(self):
+        from robotron_lod import exterior
+        import numpy as np
+        for name,m,color in exterior():
+            if name not in ('keyboard','deck'): continue
+            top=m.triangles[m.face_normals[:,2]>.9]
+            self.assertGreater(len(top),100)
+            self.assertLessEqual(np.ptp(top[:,:,0],axis=1).max(),20)
+            self.assertLessEqual(np.ptp(top[:,:,1],axis=1).max(),20)
+            self.assertLessEqual(len(m.vertices),500)
+
+    def test_keyboard_shell_does_not_cover_the_deck_opening(self):
+        from robotron_lod import exterior
+        import numpy as np
+        shell=next(m for name,m,color in exterior() if name=='keyboard')
+        centers=shell.triangles_center[shell.face_normals[:,2]>.9]
+        inside=(np.abs(centers[:,0])<238)&(centers[:,1]>-445)&(centers[:,1]<-298)
+        self.assertFalse(np.any(inside))
