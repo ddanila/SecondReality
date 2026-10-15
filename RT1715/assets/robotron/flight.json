@@ -15,7 +15,8 @@
         -380,
         35
       ],
-      "subject": "Skim the first key rows"
+      "subject": "Skim the first key rows",
+      "curve": "quintic"
     },
     {
       "time": 7,
@@ -29,23 +30,7 @@
         -365,
         35
       ],
-      "subject": "Across the keycaps",
-      "stop": true
-    },
-    {
-      "time": 8.1,
-      "eye": [
-        -100,
-        -425,
-        75
-      ],
-      "target": [
-        -20,
-        -365,
-        35
-      ],
-      "subject": "Read the legends before crossing to the keypad",
-      "stop": true
+      "subject": "Across the keycaps"
     },
     {
       "time": 14,
@@ -87,23 +72,7 @@
         -207,
         82
       ],
-      "subject": "Track the right drive",
-      "stop": true
-    },
-    {
-      "time": 25.1,
-      "eye": [
-        100,
-        -275,
-        110
-      ],
-      "target": [
-        -15,
-        -207,
-        82
-      ],
-      "subject": "Read the drive mouth and latch",
-      "stop": true
+      "subject": "Track the right drive"
     },
     {
       "time": 29.5,
@@ -136,8 +105,8 @@
     {
       "time": 36,
       "eye": [
-        -240,
-        -235,
+        -320,
+        -300,
         310
       ],
       "target": [
@@ -145,51 +114,21 @@
         -147,
         320
       ],
-      "subject": "Climb toward the CRT"
-    },
-    {
-      "time": 37,
-      "eye": [
-        -225,
-        -255,
-        330
-      ],
-      "target": [
-        -150,
-        -137,
-        320
-      ],
-      "stop": true,
-      "subject": "Find the monitor cabinet seam"
-    },
-    {
-      "time": 37.8,
-      "eye": [
-        -225,
-        -255,
-        330
-      ],
-      "target": [
-        -150,
-        -137,
-        320
-      ],
-      "stop": true,
-      "subject": "Let the horizontal joint register"
+      "subject": "Continuous climb beside the monitor corner"
     },
     {
       "time": 41,
       "eye": [
-        40,
-        -270,
-        400
+        -180,
+        -520,
+        430
       ],
       "target": [
-        45,
-        -150,
-        350
+        -10,
+        -100,
+        330
       ],
-      "subject": "Cross the glass and bank away"
+      "subject": "Glide across the monitor with room around the cabinet"
     },
     {
       "time": 42.7,
@@ -233,35 +172,37 @@
         190
       ],
       "stop": true,
-      "subject": "Hold the wide shot through the swoosh"
+      "subject": "Steady wide camera while the complete workstation turns"
     },
     {
       "time": 54,
       "eye": [
-        780,
-        -1310,
-        765
+        760,
+        -1300,
+        760
       ],
       "target": [
         0,
         -100,
         190
       ],
-      "subject": "Hold full overview through the logo interval"
+      "subject": "Steady wide camera while the complete workstation turns",
+      "stop": true
     },
     {
       "time": 58,
       "eye": [
-        800,
-        -1320,
-        770
+        760,
+        -1300,
+        760
       ],
       "target": [
         0,
         -100,
         190
       ],
-      "subject": "Hold until the credits theme"
+      "subject": "Steady wide camera while the complete workstation turns",
+      "stop": true
     }
   ],
   "drone": [
@@ -415,5 +356,20 @@
     "max_degrees": 16,
     "smoothing_seconds": 0.24,
     "acceleration_scale": 200
+  },
+  "follow": {
+    "weight": 0.55,
+    "fade_start": 30,
+    "end": 36
+  },
+  "turntable": {
+    "start": 48.5,
+    "end": 57.2,
+    "degrees": 90,
+    "pivot": [
+      0,
+      -100,
+      0
+    ]
   }
 }

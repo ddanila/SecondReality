@@ -40,9 +40,19 @@ Motion and materials
 --------------------
 flight.json contains camera eye/target tracks, drone positions and bank settings.
 The drone uses continuous-acceleration interpolation, tangent-aligned heading,
-and smoothed banking capped at 16 degrees. Camera stop points mark detail holds.
-Keep the wide camera at 45.5..49 seconds and the straight final crossing around
-47.76 seconds: these are the existing musical reveal/swoosh anchors.
+and smoothed banking capped at 16 degrees. The camera also uses continuous-
+acceleration interpolation: avoid duplicate positions or stop flags in the close
+flyover. The follow block blends the target toward the drone (weight 0.55),
+then smoothly releases tracking from fade_start=30 to end=36 seconds for the
+monitor pass. Keep the wide camera stationary from 45.5 seconds onward and the
+straight final crossing around 47.76 seconds: these preserve the musical anchors.
+
+The turntable block rotates every computer part around a shared world-space
+pivot in millimetres. Positive degrees turn counterclockwise when seen from
+above (+Z); the drone is excluded. The current 90-degree turn eases in after
+the drone disappears, from 48.5 to 57.2 seconds, before the final fade. Moving
+parts require regenerated animation and route-cache files; the host build does
+both automatically.
 
 materials.json controls the eight Robotron ramps. Their palette slots are fixed;
 the original drone colors are untouched. The screen is a smooth-normal surface

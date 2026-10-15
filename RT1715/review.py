@@ -10,8 +10,9 @@ from PIL import Image,ImageDraw,ImageFont
 
 HERE=Path(__file__).resolve().parent
 SHOTS=[('KEYBOARD',8,4),('KEYPAD / TURN',17,3),('DRIVE FRONTS',30,4),
-       ('MONITOR SEAM',43,3),('CRT GLASS',46,2),('FULL REVEAL',50,3),
-       ('DRONE SWOOSH',53,2),('CREDITS HANDOFF',62,7),('CPU LOCATOR',71,3),
+       ('MONITOR CORNER',43,3),('MONITOR PASS',46,2),('FULL REVEAL',50,3),
+       ('DRONE SWOOSH',53,2),('TURN START',55.2,1),
+       ('TURN MID',59,1),('TURN END',62.3,1),('CREDITS HANDOFF',62,7),('CPU LOCATOR',71,3),
        ('RAM LOCATOR',102,3),('DISPLAY MEMORY',118,3),('CLOSING CARD',170,3)]
 
 def render(capture):

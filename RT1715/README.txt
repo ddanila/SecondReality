@@ -870,3 +870,26 @@ At 300000 cycles, overview/end remain 24:54/26:57 and 1905 flight frames render.
 At 100000 cycles, overview/end are 24:55/26:58 (within cue tolerances); 1195
 frames render as the player skips overdue poses to keep up with the music.
 The normal-speed review contact sheet was visually inspected.
+
+
+Continuous pursuit and rotating overview (2026-10-15)
+---------------------------------------------------
+The close camera route now uses continuous-acceleration quintic interpolation,
+with the duplicate detail holds removed. Its target follows the drone at 55%
+weight, smoothly releasing that influence from 30 to 36 seconds. The monitor
+shot is a moving arc past the left cabinet corner and horizontal seam, with
+more distance from the glass before the wide reveal.
+
+After the unchanged diagonal swoosh, the camera stays fixed and the complete
+workstation turns 90 degrees counterclockwise about world Z (viewed from above).
+Every part, including each key, shares the pivot [0,-100,0] mm. The turn eases
+in and out from 48.5 to 57.2 seconds, before the final fade; the drone is excluded.
+The host regenerates animation and exact-pose draw lists for this moving scene.
+No runtime renderer or music changes are needed.
+
+All 52 host tests pass, including camera speed/acceleration continuity, rigid
+rotation, and the fixed wide camera. The headless DOS route audit verifies all
+2,031 draw lists against live culling/sorting. Drone transforms and visibility
+are identical to the previous release at every pose; original music is byte-
+identical. Playback evidence is in benchmarks/camera-motion.json. The review
+reel/contact sheet now includes the beginning, middle and end of the turn.

@@ -78,7 +78,7 @@ def camera(eye, target):
 
 
 def sample_track(keys, time, field):
-    """Time-aware cubic Hermite track: continuous speed across scenic waypoints."""
+    """Time-aware Hermite track; quintic mode also keeps acceleration continuous."""
     for i,(left,right) in enumerate(zip(keys,keys[1:])):
         if time <= right['time']:
             dt=right['time']-left['time']
@@ -105,7 +105,27 @@ def sample_track(keys, time, field):
 
 
 def sample(flight,time):
-    return tuple(sample_track(flight['keyframes'],time,k) for k in ('eye','target'))
+    eye,target=(sample_track(flight['keyframes'],time,k) for k in ('eye','target'))
+    follow=flight.get('follow')
+    if follow and time<follow['end']:
+        u=np.clip((time-follow['fade_start'])/(follow['end']-follow['fade_start']),0,1)
+        weight=follow['weight']*(1-u*u*u*(10-15*u+6*u*u))
+        target=target*(1-weight)+sample_track(flight['drone'],time,'position')*weight
+    return eye,target
+
+
+def assembly_pose(flight,time,pose):
+    """Rigid world-Z turn of every computer part, independent of the drone."""
+    turn=flight.get('turntable')
+    if not turn or time<=turn['start']:return tuple(pose)
+    u=np.clip((time-turn['start'])/(turn['end']-turn['start']),0,1)
+    angle=math.radians(turn['degrees'])*u*u*u*(10-15*u+6*u*u)
+    c,s=math.cos(angle),math.sin(angle)
+    rotation=np.array([[c,-s,0],[s,c,0],[0,0,1.]])
+    pivot=np.array(turn['pivot'])*SCALE
+    position=rotation @ (np.array(pose[:3])-pivot)+pivot
+    basis=rotation @ np.array(pose[3:]).reshape(3,3)
+    return tuple(np.rint(position).astype(int))+tuple(np.rint(basis.flatten()).astype(int))
 
 
 def drone_rotation(flight, time):
@@ -317,7 +337,7 @@ def prepare(root, build, command, presentation=None):
         frame=[camera(eye,target)]; enabled=[True]
         for inst in instances:
             slot=inst['slot']
-            pose=list(drone_state if slot==28 else inst['pose'])
+            pose=list(drone_state if slot==28 else assembly_pose(flight,t,inst['pose']))
             frame.append(pose)
             enabled.append(not (slot==28 and t>48.1))
         # Conservative sphere/frustum culling, rebuilt for this camera. A wide

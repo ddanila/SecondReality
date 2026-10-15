@@ -30,6 +30,13 @@ def load(path=DEFAULT, source=None):
         if track[0]['time']!=0 or any(a['time']>=b['time'] for a,b in zip(track,track[1:])):
             raise ValueError('Motion times must increase from zero')
         if track[-1]['time']<(flight['frames']-1)/flight['fps']:raise ValueError('Motion ends too early')
+    follow=flight.get('follow')
+    if follow and not (0<=follow['weight']<=1 and 0<=follow['fade_start']<follow['end']<=45.5):
+        raise ValueError('Invalid camera-follow interval')
+    turn=flight.get('turntable')
+    if turn and not (48.1<=turn['start']<turn['end']<=58 and 0<turn['degrees']<=180
+                     and len(turn['pivot'])==3 and all(isinstance(v,(int,float)) for v in turn['pivot'])):
+        raise ValueError('Turntable must follow the drone flyby and finish before credits')
     if len(cards)!=21:raise ValueError('Keep 21 cards for the music interval')
     names=set()
     source_data=json.loads((root/'browser/model.json').read_text())
