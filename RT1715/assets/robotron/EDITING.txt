@@ -36,6 +36,15 @@ fit 500 polygons, 500 vertices (including the center), 500 normals and the
 64 KiB object format. Errors identify unsupported geometry; reduce/split it.
 The original drone slot 28 is protected. Credit renders can use detailed models.
 
+Runtime keys use keyMeshes plus coreMesh/insertMesh from the canonical manifest.
+keycaps.py samples exterior sections and the dished top, preserving skirt steps
+and rounded bodies while omitting hidden cavities. It does not decimate thin
+shells. Black/red caps have pale ink; function keys use a silver face and a
+blue-grey rim as an opaque palette approximation of their clear shells. Ink is
+projected onto the rendered dish. The existing six-face distant LOD remains;
+close views use the source-derived geometry. Every variant must still fit the
+500-vertex/normal/polygon object limits.
+
 Motion and materials
 --------------------
 flight.json contains camera eye/target tracks, drone positions and bank settings.

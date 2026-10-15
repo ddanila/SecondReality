@@ -12,7 +12,7 @@ import struct
 import numpy as np
 import trimesh
 import scene
-import legends
+import keycaps
 from robotron_lod import exterior, keycap
 from PIL import Image, ImageOps
 from prepare import openscad
@@ -269,14 +269,24 @@ def prepare(root, build, command, presentation=None):
     a=math.radians(data['keyboard']['slope']);c,s=math.cos(a),math.sin(a)
     rot=np.array([[1,0,0],[0,c,-s],[0,s,c]])
     key_variants={}
+    cap_geometry={}
+    key_styles={}
     for key in data['keys']:
         signature=(key['mesh'],tuple(key['legend']),key['style'])
         if signature not in key_variants:
             name='key-'+str(len(key_variants))
             key_variants[signature]=name
             source=load(keymesh[key['mesh']])
-            objects.append((name,keycap(source),'blue' if key['style'] else 'white','keycap'))
-            key_legends[name]=legends.polygons(key['legend'],source.bounds,SCALE)
+            if key['mesh'] not in cap_geometry:
+                pieces=[source]
+                for field in ('coreMesh','insertMesh'):
+                    if key.get(field):pieces.append(load(keymesh[key[field]]))
+                cap_geometry[key['mesh']]=keycaps.detailed(trimesh.util.concatenate(pieces))
+            cap=cap_geometry[key['mesh']]
+            material={0:'black',1:'metal',2:'red'}[key['style']]
+            objects.append((name,cap,material,'keycap'))
+            key_styles[name]=key['style']
+            key_legends[name]=keycaps.surface_legends(key['legend'],cap,SCALE)
         name=key_variants[signature]
         position=rot @ np.array([key['x'],key['y'],0])+np.array([0,data['keyboard']['y'],data['keyboard']['z']])
         pose=tuple(np.rint(position*SCALE).astype(int))+tuple(np.rint(rot.flatten()*16384).astype(int))
@@ -296,7 +306,15 @@ def prepare(root, build, command, presentation=None):
         print(f'Robotron {slot:02}: {label}: {len(triangles)} polygons',flush=True)
         render_name=label
         ink=key_legends.get(label,[])
-        face_colors=[colors[color][0]]*len(triangles)+[colors['black'][0]]*len(ink)
+        face_colors=[colors[color][0]]*len(triangles)
+        if kind=='keycap' and key_styles[label]==1:
+            # The opaque DOS palette approximates the clear function-key shell
+            # with a blue-grey rim around its silver insert.
+            for i,face in enumerate(triangles[6:],6):
+                if min(p[2] for p in face)/SCALE < mesh.bounds[1,2]-1:
+                    face_colors[i]=colors['blue'][0]
+        ink_color='white' if kind=='keycap' and key_styles[label]!=1 else 'black'
+        face_colors += [colors[ink_color][0]]*len(ink)
         triangles+=ink
         sort_center=None
         binary=scene.encode('"'+render_name[:20]+'"',triangles,colors[color][0],16,
@@ -369,7 +387,7 @@ def prepare(root, build, command, presentation=None):
     write_credit_schedule(HERE.parent/'MAIN/MUSIC0.S3M',output,config['transition'],len(credits))
     end=(flight['frames']-1)*2
     (output/'U2E.PRS').write_text(f"{end-round(config['transition']['flight_fade_seconds']*70)} {end}\n")
-    report['exterior_lod']='RT1715/robotron_lod.py (authored panels; source-dimension keycaps)'
+    report['exterior_lod']='RT1715/robotron_lod.py panels; keycaps.py source-sampled skirts, shoulders and dishes'
     (output/'report.json').write_text(json.dumps(report,indent=2)+'\n')
     return project
 

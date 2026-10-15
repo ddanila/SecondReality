@@ -893,3 +893,23 @@ rotation, and the fixed wide camera. The headless DOS route audit verifies all
 are identical to the previous release at every pose; original music is byte-
 identical. Playback evidence is in benchmarks/camera-motion.json. The review
 reel/contact sheet now includes the beginning, middle and end of the turn.
+
+
+Source-shaped keyboard (2026-10-15)
+---------------------------------
+The close flyover now uses source-sampled keycaps instead of generic tapered
+cream/blue blocks. The converter combines the canonical shell/core/insert
+exports, samples their exterior, keeps the stepped skirt and rounded body, and
+projects both the shallow dish and legend ink onto the visible surface. Hidden
+underside cavities are omitted; shared shapes are cached across legend variants.
+Black keys carry pale legends, the CE key is red, and light function keys have
+silver tops with blue-grey rims (an opaque approximation of the clear shell).
+The existing inexpensive distant LOD and the original palette reservations stay
+in place. All key mesh hashes and placements match the latest sibling manifest.
+
+54 host tests pass, including silhouette checks at multiple heights and legend
+surface clearance. Build/playback evidence is in benchmarks/source-keycaps.json.
+At fixed 300000 DOSBox-X cycles the richer keys render 1,790 flight frames
+(previously 1,925), about 31 fps averaged over the authored 58-second flight.
+Full headless playback passes: overview 24:54, swoosh 25:6, flight end 26:57,
+and credits 28:0 through 43:29; all 21 card entries retain zero cue error.
