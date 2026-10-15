@@ -74,3 +74,16 @@ class MachineActionTests(unittest.TestCase):
         with Image.open(machine.BOOT/'prompt.png') as prompt:
             self.assertIsNotNone(prompt.crop((0,48,16,60)).getbbox())
             self.assertIsNone(prompt.crop((16,48,24,60)).getbbox())
+
+    def test_captured_drive_activity_uses_the_screen_clock(self):
+        for name,clocks in [('loader.png',12),('system.png',38),('startup.png',56),('prompt.png',100)]:
+            frame=next(f for f in self.settings['boot_frames'] if f['image']==name)
+            clock=self.settings['boot_clock']
+            self.assertEqual(np.interp(frame['time'],[p[0] for p in clock],[p[1] for p in clock]),clocks)
+        self.assertFalse(machine.drive_lit(26,self.settings))
+        self.assertFalse(machine.drive_lit(40,self.settings))
+        states=json.loads((machine.BOOT/'activity.json').read_text())['states']
+        self.assertTrue(any(s&2 for s in states))
+        for i,state in enumerate(states):
+            captured=any(a<=i/10<b for a,b in machine.drive_activity())
+            self.assertEqual(captured,bool(state&2))

@@ -369,9 +369,10 @@ def prepare(root, build, command, presentation=None):
         face_colors += [colors[ink_color][0]]*len(ink)
         triangles+=ink
         sort_center=None
-        shades=1 if kind in ('machine-text','machine-led') else 16
+        shades=1 if kind in ('machine-text','machine-led') or (kind=='marking' and color=='white') else 16
         if kind=='machine-text':face_colors=[79]*len(triangles)
         if kind=='machine-led':face_colors=[127]*len(triangles)
+        if kind=='marking' and color=='white':face_colors=[159]*len(triangles)
         binary=scene.encode('"'+render_name[:20]+'"',triangles,colors[color][0],shades,
                             face_colors=face_colors,precomputed_orders=False,sort_center=sort_center,smooth=(label=='screen'))
         (output/f'U2E.{slot:03}').write_bytes(binary)
@@ -397,6 +398,8 @@ def prepare(root, build, command, presentation=None):
     # Disable city-specific colouring/sorting names; normal renderer remains.
     material[15]=ord('T')
     (output/'U2E.00M').write_bytes(material)
+    import detail_palette
+    (output/'U2E.AA').write_bytes(detail_palette.lookup(bytes(material[16:784])))
     flight=json.loads(inputs['flight'].read_text())
     drone=scene.decode((HERE.parent/'MAIN/DATA/U2E.028').read_bytes())
     center=np.array([(a+b)/2 for a,b in drone['bounds']])

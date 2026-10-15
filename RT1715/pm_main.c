@@ -172,22 +172,31 @@ static void render(unsigned page) {
 }
 /* No music/retrace waits here: identical decoded poses, timed render work only.
  * Uploads remain inside render(); hashing is outside the timed interval. */
-static int benchmark(void) {
-    static const int poses[]={420,980,1840,2660,3200,3750};
+static int benchmark(int visual) {
+    int poses[32]={420,980,1840,2660,3200,3750},count=6,iterations=visual?1:120;
     unsigned i,j;clock_t start,elapsed;unsigned long hash;FILE *f;
     extern unsigned char rt_color[64000];
+    if(visual) {
+        int value;FILE *points=fopen("VISUAL.PTS","rt");
+        if(!points)fail("Missing visual poses");count=0;
+        while(fscanf(points,"%d",&value)==1) {
+            if(count==32 || value<2 || value>4062 || (value&1) || (count && value<=poses[count-1]))fail("Invalid visual pose");
+            poses[count++]=value;
+        }
+        fclose(points);if(!count)fail("Empty visual pose list");
+    }
     f=fopen("BENCH.LOG","wt");if(!f) fail("Cannot create benchmark log");
     rt_video_init();rt_ram_color=1;
-    for(i=0;i<sizeof(poses)/sizeof(poses[0]);i++) {
+    for(i=0;i<count;i++) {
         while(currframe<poses[i] && !finished) { next_frame();currframe+=2; }
         if(finished) fail("Benchmark pose beyond animation");
         render(0); /* warm-up outside measurement */
         start=clock();
-        for(j=0;j<120;j++) render(0);
+        for(j=0;j<iterations;j++) render(0);
         elapsed=clock()-start;hash=2166136261UL;
         for(j=0;j<64000;j++) hash=(hash^rt_color[j])*16777619UL;
-        fprintf(f,"POSE %d iterations=120 ticks=%lu hz=%lu color=%08lx vertices=%lu triangles=%lu spans=%lu\n",
-                poses[i],(unsigned long)elapsed,(unsigned long)CLOCKS_PER_SEC,hash,
+        fprintf(f,"POSE %d iterations=%d ticks=%lu hz=%lu color=%08lx vertices=%lu triangles=%lu spans=%lu\n",
+                poses[i],iterations,(unsigned long)elapsed,(unsigned long)CLOCKS_PER_SEC,hash,
                 rt_vertices,rt_triangles,rt_spans);fflush(f);
         {
             char name[20];FILE *image;int x,y,k;unsigned color;
@@ -211,7 +220,8 @@ static int benchmark(void) {
 int main(int argc,char **argv) {
     size_t size;unsigned char *materials;unsigned offset,pos,tick,page=0;
     int audit=argc>1 && !strcmp(argv[1],"/audit");
-    int bench=audit || (argc>1 && !strcmp(argv[1],"/bench"));
+    int visual=argc>1 && !strcmp(argv[1],"/visual");
+    int bench=visual || audit || (argc>1 && !strcmp(argv[1],"/bench"));
     int i,j,index,target,cue=0;char name[32];FILE *config;
     typedef char check_vertex_size[sizeof(vlist)==16?1:-1];
     typedef char check_normal_size[sizeof(nlist)==8?1:-1];
@@ -244,7 +254,14 @@ int main(int argc,char **argv) {
     fprintf(trace,"PROTECTED DOS32A flat-memory color=%s data=%p\n",rt_ram_color?"RAM":"VGA",(void *)scene);fflush(trace);
     if(!bench) { rt_dis(0);rt_snapshot(&tick); }
     materials=readfile("U2E.00M",&size);
-    if(size<784) fail("Invalid materials");benchmark_palette=materials+16;offset=dword(materials+4);
+    if(size<784) fail("Invalid materials");memset(materials+16+252*3,0,12);benchmark_palette=materials+16;offset=dword(materials+4);
+    config=optional_file("U2E.AA","rb");
+    if(config) {
+        unsigned long saved_hash=asset_hash;size_t aa_size;unsigned char *aa;
+        fclose(config);aa=readfile("U2E.AA",&aa_size);asset_hash=saved_hash;
+        if(aa_size!=32768)fail("Invalid detail palette");
+        rt_detail_init(materials+16,aa);
+    }
     if(offset+2>size) fail("Invalid scene index");object_count=word(materials+offset);
     if(object_count<2 || object_count>MAXOBJ || offset+object_count*2>size) fail("Invalid scene count");
     camera_object.r=camera_object.r0=&camera;scene[0].o=&camera_object;
@@ -299,7 +316,7 @@ int main(int argc,char **argv) {
             fail("Invalid presentation fade");
         fclose(config);
     }
-    if(bench) return benchmark();
+    if(bench) return benchmark(visual);
     intro(materials+16);rt_dis(0);
     do { pos=rt_snapshot(&tick);if((pos>>6)<19) rt_wait(); } while((pos>>6)<19 && !rt_dis(2));
     next_frame();currframe=2;

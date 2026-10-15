@@ -51,3 +51,14 @@ capacity is inferred. Each technical page has its own component view or crop.
 Current canonical pcb-components.json/browser manifest correct the main-memory
 package identification to 32 M4164B-12 (256 KB); use this over the older dac
 U2164 label. The source repository is never modified by this builder.
+
+Finishing-pass specification audit:
+  dac/src/inspection.js drive-labels distinguishes two assemblies: one rear
+  plate identifies Robotron K 5601 (serial 044713); the other identifies Ratan
+  Exports & Industries Ltd., India. TEAC numbers identify their electronics,
+  not proof that both complete mechanisms carry the same manufacturer badge.
+  Credits now preserve that distinction. Main RAM is 256 KiB, and the TOS/M
+  disk geometry uses 80 cylinders with two sides (160 tracks total).
+  CPU, keyboard CPU, video controller/RAM, DMA/SIO, adapters, board orientation
+  and fan claims were checked against the canonical README/board records and
+  DAC inspection entries. Reference clock/matrix/media labels remain explicit.

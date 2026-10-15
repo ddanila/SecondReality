@@ -69,8 +69,8 @@
     "image": "drives",
     "lines": [
       "Twin floppy drives",
-      "Robotron K5601",
-      "Removable programs and data"
+      "K5601 / Ratan assemblies",
+      "TEAC-labelled electronics"
     ],
     "view": {
       "parts": [
@@ -220,7 +220,7 @@
     "image": "main-ram",
     "lines": [
       "Main memory",
-      "256 KB / 32 M4164B-12 chips",
+      "256 KiB / 32 M4164B-12 chips",
       "Working storage for programs"
     ],
     "view": {
@@ -511,7 +511,7 @@
     "image": "diskette",
     "lines": [
       "Disk organization",
-      "80 tracks / 2 sides",
+      "80 cylinders / 2 sides",
       "TOS/M reference: 5 x 1024 B/track"
     ],
     "view": {

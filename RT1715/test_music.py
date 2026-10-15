@@ -44,7 +44,7 @@ class MusicTimingTests(unittest.TestCase):
         for card in cards:
             printable(card['lines'])
         text=' '.join(line for c in cards for line in c['lines'])
-        for value in ('256 KB','U8272','UA858','UL6516D','reference'):
+        for value in ('256 KiB','U8272','UA858','UL6516D','reference'):
             self.assertIn(value,text)
 
     def test_runtime_trace_rejects_truncated_flight_and_late_credits(self):

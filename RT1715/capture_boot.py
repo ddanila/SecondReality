@@ -45,18 +45,31 @@ for(const [slot,name] of [[0,'s550.bin'],[1,'cas.bin'],[3,'tosm10.img']]){{
  w._free(p);
 }}
 w._dac_power(s,1);
+const activity=[];
 for(let n=1;n<=100;n++){{
- for(let k=0;k<10;k++)if(w._dac_run(s,100000)!==100000)throw Error('short run');
+ for(let k=0;k<10;k++){{
+  if(w._dac_run(s,100000)!==100000)throw Error('short run');
+  activity.push(w._dac_drive_status_unit(s,0));
+ }}
  if({json.dumps(list(SAMPLES.values()))}.includes(n)){{
   const p=w._dac_video(s);
   await writeFile(out+'/'+n+'.rgba',w.HEAPU8.slice(p,p+640*288*4));
  }}
 }}
+await writeFile(out+'/activity.json',JSON.stringify(activity));
 w._dac_destroy(s);
 '''
         (work/'capture.mjs').write_text(script)
         subprocess.run(['node',str(work/'capture.mjs')],check=True,timeout=90)
         out.mkdir(parents=True,exist_ok=True)
+        states=json.loads((work/'activity.json').read_text());ranges=[];start=None
+        for i,state in enumerate(states+[0]):
+            if state&2 and start is None:start=i/10
+            if not state&2 and start is not None:ranges.append([start,i/10]);start=None
+        activity={'sample_clocks':100000,'total_clocks':100000000,
+                  'signal':'dac_drive_status_unit(session,0) bit 1: active FDC transfer',
+                  'active_million_clocks':ranges,'states':states}
+        (out/'activity.json').write_text(json.dumps(activity,indent=2)+'\n')
         for name,clocks in SAMPLES.items():
             data=(work/f'{clocks}.rgba').read_bytes()
             rgba=np.array(Image.frombytes('RGBA',(640,288),data))
@@ -69,7 +82,7 @@ w._dac_destroy(s);
     provenance={'description':'Unmodified DAC S550 + TOS/M 1.0 read-only cold boot; foreground masks from actual 640x288 framebuffer. Final cursor separated for blinking. Timing compressed for demo.',
                 'emulator':manifest,'media':media,'samples_million_clocks':SAMPLES,
                 'foreground':'green channel > 100','cursor_box':[16,48,24,60],
-                'assets':{p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(out.glob('*.png'))}}
+                'assets':{p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted([*out.glob('*.png'),out/'activity.json'])}}
     (out/'provenance.json').write_text(json.dumps(provenance,indent=2)+'\n')
     print('Captured real TOS/M boot:',out)
 

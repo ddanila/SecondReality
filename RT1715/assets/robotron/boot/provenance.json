@@ -74,6 +74,7 @@
     60
   ],
   "assets": {
+    "activity.json": "111930afa2e2859eb42cef2a47754169afea6077116fbaf714ee5e5ae2447a26",
     "cursor.png": "ba5a715ca72615e1159c82823bbe47e3c284f39c24a41bce086b796e15a88847",
     "loader.png": "212e6116ce45346d02b261371924f7ff9ebc67940454d2798fdd566624576018",
     "prompt.png": "ac0991e18b7f4aee8ac1ce8fa76c4ab6baf1acb7622143c7fc7924db995bdefa",

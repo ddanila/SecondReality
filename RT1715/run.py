@@ -177,6 +177,9 @@ exit
                "renderer_sha256": hashlib.sha256((dos / "U2E.EXE").read_bytes()).hexdigest(),
                "scene_sha256": scene_hash.hexdigest(),
                "video_files": [p.name for p in videos], "audio": audio}
+    summary['runtime_sha256']={p.name:hashlib.sha256(p.read_bytes()).hexdigest()
+        for p in sorted(dos.iterdir()) if p.is_file() and (p.name.startswith('U2E.') or
+        p.suffix.upper() in ('.EXE','.CRD') or p.name in ('REALITY.FC','CRED.IDX','CRED.SYN','CRED.CUE','CRED.TIM'))}
     flight_text=(capture/"flight.log").read_text() if (capture/"flight.log").exists() else ""
     summary["renderer_mode"]="protected" if flight_text.startswith("PROTECTED ") else "real"
     if summary["renderer_mode"]=="real": summary["color_backend"]="legacy-vga"

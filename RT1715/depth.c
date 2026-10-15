@@ -108,6 +108,9 @@ static int clip_left=0,clip_right=320,clip_top=0,clip_bottom=200;
 void rt_depth_window(int left,int right,int top,int bottom) {
     clip_left=left;clip_right=right;clip_top=top;clip_bottom=bottom;
 }
+static void detail_begin(void);
+static void detail_end(void);
+static void detail_flush(void);
 void rt_depth_begin(void) {
 #ifdef RT_PM
     static int old_top=-1,old_bottom=-1;
@@ -120,6 +123,7 @@ void rt_depth_begin(void) {
         owners=malloc(64000*sizeof(*owners));surfaces=malloc((QUEUE_LIMIT+1)*sizeof(*surfaces));
         if(!owners || !surfaces) exit(3);
     }
+    detail_begin();
     queued=surface_count=0;band_top=0;band_bottom=200;
     if(rt_occlusion) memset(coarse_depth,0,sizeof(coarse_depth));
     if(rt_visible_spans) memset(owners,0,64000*sizeof(*owners));
@@ -142,6 +146,7 @@ void rt_depth_begin(void) {
 }
 void rt_depth_end(void) {
 #if defined(RT_HOST_TEST) || defined(RT_PM)
+    detail_end();
     free(triangle_queue);free(owners);free(surfaces);
     triangle_queue=0;owners=0;surfaces=0;
 #endif
@@ -366,6 +371,7 @@ void rt_depth_flush(void) {
         queued=0;flushing=0;band_top=0;band_bottom=200;
     }
     if(rt_visible_spans && surface_count) flush_surfaces();
+    detail_flush();
 }
 #else
 void rt_depth_flush(void) { }
@@ -393,3 +399,5 @@ void rt_raster(rt_vertex *vertices,int count,int decal) {
     n=clip(b,a,n,1,clip_bottom,1);if(n<3) return;
     for(i=1;i<n-1;i++) triangle(&a[0],&a[i],&a[i+1],decal);
 }
+
+#include "detail_aa.h"

@@ -1,0 +1,20 @@
+{
+  "source": "3d-models/models/robotron-1715m/reference/photos/PXL_20261013_113529099.jpg",
+  "sha256": "6229a9e179bab726bf561cefd25b856d3e89aafa98f033dd29ddd7577a267596",
+  "crop": [
+    230,
+    2190,
+    2280,
+    2370
+  ],
+  "rotation_degrees": 1.1,
+  "method": "White ink threshold min(R,G,B)>235; straighten baseline, crop bounds, resample to 384x22. Photo-derived glyphs and spacing.",
+  "placement_mm": {
+    "center_x": -188.5,
+    "center_z": 49,
+    "width": 82,
+    "height": 4.6,
+    "y": -211
+  },
+  "uncertainty": "Photo estimate relative to drive front width; not a physical measurement."
+}

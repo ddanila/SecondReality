@@ -34,3 +34,17 @@ ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 
 For more information, please refer to <http://unlicense.org/>
+
+
+Robotron 1715M DOS cut (rt1715 branch)
+-------------------------------------
+
+This branch also contains a host-built DOS presentation: a close flyover of a
+Robotron 1715M, an animated disk load and captured TOS/M startup, followed by
+21 technical credit cards synchronized to the original music.
+
+See [RT1715 build and playback instructions](RT1715/README.txt) and
+[asset editing](RT1715/assets/robotron/EDITING.txt). The release packager includes
+DOSBox-X settings, unattended headless launch scripts, checksums and provenance.
+Derived model/component assets retain their own attribution and licence terms;
+see [source notices](RT1715/assets/robotron/SOURCES.txt).

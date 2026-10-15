@@ -7,12 +7,13 @@ The Robotron presentation includes the protected-mode renderer, scenic close-up
 flight, tangent-facing banked drone, differentiated materials and CRT shading,
 and 21 technical cards synchronized to the original music. Later renderer
 experiments and retained defaults are documented at the end of this file.
-All 49 host tests, both native suites and full headless DOSBox-X playback
-passed; all card entrances matched their scheduled tracker rows.
+The finishing pass adds coverage-filtered markings, captured drive activity,
+a photo-derived front badge, visual baselines and a checked release packager.
+Validation details are in benchmarks/finishing.json.
 
 Start with assets/robotron/EDITING.txt and assets/robotron/presentation.json for
 the current Robotron workflow. Validation evidence is tracked in
-benchmarks/presentation.json. The older generic city replacement workflow below
+benchmarks/finishing.json. The older generic city replacement workflow below
 remains available separately.
 
 Build outputs, source snapshots and video captures are local generated files,
@@ -992,11 +993,12 @@ build/robotron-slow-preview.mp4. Reproduce cadence measurements with:
 
 Front markings and climb framing
 --------------------------------
-front_markings.py adds geometric robotron 1715M lettering above the drives,
+The initial front_markings.py revision added geometric robotron 1715M lettering above the drives,
 plus RESET / POWER / OFF / ON at the source model's control-label positions.
 The model-name badge uses explicit 5x7 lettering raised 2 mm from the fascia
 to avoid grazing-angle depth interference. It is a presentation addition; its typography and placement
-are not claimed to be a traced historical logo. The same lettering is included
+were not claimed to be a traced historical logo. That initial badge is now
+superseded by the photo-derived badge described under Finishing pass. The same lettering is included
 in workstation credit renders. Runtime ink objects use the decal depth bias.
 
 flight.json climb_framing coordinates camera distance with the miniature's
@@ -1053,7 +1055,7 @@ at 3 o'clock (+X), remains there until seating, and rotates 90 degrees
 clockwise to 6 o'clock (-Z). At closure the seated disk is behind the lever in Y.
 The right lever and sibling source repository remain unchanged. This small
 mechanical adjustment is for animation clearance, not a measured correction
-to the source computer. The drive LED flickers during the authored load.
+to the source computer. The drive LED follows captured FDC transfers on the shared boot clock.
 
 assets/robotron/boot contains actual 640x288 framebuffer foreground masks
 captured by booting DAC's S550 ROM and read-only TOS/M 1.0 image. The sequence
@@ -1079,3 +1081,62 @@ The tool checks DAC media/emulator hashes, mounts the disk read-only and runs
 100 million emulated clocks using DAC's WASM core under Node. It modifies only
 the requested output folder. See benchmarks/disk-boot-corrections.json for
 clearance, capture reproducibility and DOS playback verification.
+
+Finishing pass: readability, evidence, regression frames and distribution
+----------------------------------------------------------------------
+Credit audit: the two photographed drive assemblies are identified separately
+as K5601 / Ratan, while TEAC identifies their controller boards. Memory uses
+KiB; the reference disk has 80 cylinders and two sides. Existing reference
+labels for clocks, matrix and media remain. See assets/robotron/SOURCES.txt.
+
+Small-detail filtering: detail_aa.h retains Q4 projected positions for ink,
+key legends and monitor vent marks. Four fixed coverage samples per pixel are
+composited after opaque depth, so fractional strokes blend instead of jumping
+between whole pixels. Top-left edge ownership prevents double coverage at
+shared edges. A host-generated RGB555 lookup chooses an existing palette entry;
+no original drone palette entries are modified. Only touched pixels are reset
+and resolved; ordinary polygons still use the assembly scanline renderer.
+The extra buffers/table use about 1 MiB of protected-mode memory. This is
+selective coverage filtering, not full-scene anti-aliasing; details narrower
+than the sample spacing can still alias. It trades some speed for stability.
+The legacy/direct-VGA path remains unfiltered. U2E.AA enables the RAM path.
+
+capture_boot.py now records drive A's FDC-transfer bit every 100,000 clocks.
+The checked-in activity.json and framebuffer masks share one capture. The
+flight.json machine.boot_clock maps their original clock positions to the
+music: closure -> 0; loader -> 12M; OS -> 38M; startup -> 56M; prompt -> 100M.
+The LED integrates transfers over each authored 1/35-second frame, preserving
+short activity pulses without inventing periodic flicker. This retimes emulator
+activity; it does not claim measured physical drive-lamp timing.
+
+The badge is traced by trace_badge.py from owner photograph
+PXL_20261013_113529099.jpg. White ink, glyph shapes, spacing and the location
+below the left drive replace the earlier black 5x7 approximation above it.
+The 82 x 4.6 mm footprint at X=-188.5, Z=49 is a photo estimate relative to
+the drive front. badge.json records the photo hash, crop and straightening.
+Flight uses thin quads; credit rendering uses closed solids of the same ink.
+White ink uses the bright white palette entry to remain legible at VGA scale.
+
+Visual checks are deterministic fixed-pose DOS renders plus the first full
+credit card from a successful real playback. The normal check never updates
+its baseline. --accept is an explicit baseline replacement after visual review:
+  python3 RT1715/visual_regression.py --capture RT1715/capture/<run>
+  python3 RT1715/visual_regression.py --capture RT1715/capture/<run> --accept
+The /visual renderer mode consumes an ascending VISUAL.PTS list of even 70 Hz
+frame indices and writes exact 320x200 PPMs. It does not invoke music or change
+the shipped choreography. References cover keyboard, inserting/seated disk,
+closed lever, loader/startup/prompt, swoosh, final view and credit handoff.
+All image differences fail and produce diagnostic images; cue checks remain
+separate so intentional-looking but mistimed frames cannot pass on images alone.
+
+A validated runtime can be packaged without guest compilation:
+  python3 RT1715/package_release.py --capture RT1715/capture/<run> \
+    --visual RT1715/build/visual-regressions/<passing-run>
+The ZIP contains only selected runtime assets, fixed tested DOSBox-X settings,
+unattended launch scripts, user instructions, per-file SHA-256 checksums and
+source/toolchain/validation provenance. Required attribution, component source
+notices and toolchain licences accompany it. No historical firmware/disk image,
+local debug settings or captures ship. A clean commit gives an unambiguous
+release name; an uncommitted build is explicitly suffixed -work. The packager
+rejects assets changed since validation. Extract and run the archive in an
+isolated directory to verify the actual distribution before sharing it.

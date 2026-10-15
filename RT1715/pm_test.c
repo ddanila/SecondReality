@@ -176,6 +176,23 @@ int main(void) {
         rt_depth_begin();rt_color_begin();
         check(rt_depth_at(1,1)==0 && rt_color_at(1,1)==255,"viewport shrink clears old borders");
     }
+    {
+        static unsigned char pal[768],lut[32768];unsigned k;
+        rt_vertex background[4]={{0,0,1000,0},{320,0,1000,0},{320,200,1000,0},{0,200,1000,0}};
+        rt_vertex ink[4]={{160,160,1100,63},{168,160,1100,63},{168,320,1100,63},{160,320,1100,63}};
+        for(k=0;k<256;k++)pal[k*3]=pal[k*3+1]=pal[k*3+2]=(unsigned char)(k<64?k:63);
+        for(k=0;k<32768;k++)lut[k]=(unsigned char)((((k>>10)&31)+((k>>5)&31)+(k&31))*2/3);
+        rt_ram_color=1;rt_depth_window(0,320,0,200);rt_detail_init(pal,lut);
+        rt_depth_begin();rt_color_begin();rt_raster(background,4,0);rt_detail_raster(ink,4);rt_depth_flush();
+        check(rt_color_at(10,15)>=29 && rt_color_at(10,15)<=33,"filtered half-pixel coverage");
+        check(rt_color_at(11,15)==0,"filtered stroke bounds");
+        rt_depth_begin();rt_color_begin();rt_detail_raster(ink,4);
+        for(k=0;k<4;k++){background[k].z=2000;background[k].c=20;}
+        rt_raster(background,4,0);rt_depth_flush();
+        check(rt_color_at(10,15)==20,"opaque occludes deferred detail");
+        rt_detail_init(0,0);
+        puts("PASS protected-mode subpixel coverage and deferred occlusion");
+    }
     check_video_pages();
     puts("PASS protected-mode kernels");return 0;
 }

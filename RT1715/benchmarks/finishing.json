@@ -1,0 +1,427 @@
+{
+  "changes": [
+    "corrected drive identification, KiB and cylinder terminology",
+    "four-sample filtered markings with Q4 projection",
+    "captured FDC activity on boot screen clock",
+    "photo-traced white badge below left drive",
+    "fixed-pose visual regression and negative control",
+    "checksummed minimal runtime ZIP with licences and provenance"
+  ],
+  "validation": {
+    "host_tests": 73,
+    "protected_native": [
+      "PASS 2000 signed 64-bit intermediate multiply/divides",
+      "PASS 2000 wide dot products, negative shifts and overflow truncation",
+      "PASS 800 spans: flat/smooth, decals, empty spans, wrap and guards",
+      "PASS transforms, 128 matrix/normal cases and single-pass full-width projection",
+      "PASS 40000 fused vertices versus separate pipeline; 2000 conservative bounds",
+      "PASS 258 uploads, alignment, byte tails and guards",
+      "PASS 160 complete raster images across C, assembly and eight experimental combinations",
+      "PASS protected-mode subpixel coverage and deferred occlusion",
+      "PASS four VGA pages, repeated clears, viewport changes, RAM/direct and 8 direct raster images",
+      "PASS protected-mode kernels",
+      ""
+    ],
+    "route_audit": {
+      "poses": 2031,
+      "result": "PASS",
+      "archive": "20261015-190826-finishing-release"
+    },
+    "unchanged_camera_drone_poses": 2031,
+    "original_music_drone_mesh_palette": "byte-exact",
+    "visual_check": {
+      "archive": "20261015-191947",
+      "passed": true,
+      "images": {
+        "key-channel": {
+          "changed_pixels": 0,
+          "sha256": "5108f06fdf46676f0bf98db00cf46b395a9f786df75b6e91b02891d0f26b85a8"
+        },
+        "disk-inserting": {
+          "changed_pixels": 0,
+          "sha256": "4086f3514aa672f6ed9584b4f327e4391087c50aa66973acc6e4d4b66253db05"
+        },
+        "disk-seated": {
+          "changed_pixels": 0,
+          "sha256": "2c375b8f6df026d9c8b8fc1f4d88d451a20c05d7c0297cf6d2e60170c0db677a"
+        },
+        "lever-closed": {
+          "changed_pixels": 0,
+          "sha256": "a4e42ae5ea2e02a2c0f72ee34e9800a19fc705b7f9063825d6075cb9497f5cb0"
+        },
+        "boot-loader": {
+          "changed_pixels": 0,
+          "sha256": "9360fb2854eea54b9373dfac91cbd27d3539dacce9b10b80da71de15ad08369a"
+        },
+        "boot-startup": {
+          "changed_pixels": 0,
+          "sha256": "e70aa6cf3dde2678d7f450343c511da0310ba4a5aaaef6a91879ae30489b7d0e"
+        },
+        "boot-prompt": {
+          "changed_pixels": 0,
+          "sha256": "40d28f6a8966008ea204cdd7894c86a6c30b23362f3f502314f8fec2db4a6d8d"
+        },
+        "swoosh": {
+          "changed_pixels": 0,
+          "sha256": "5178e574025314cf60deadc20b57400ae80fd55ed2357b6df063b13d5e002bee"
+        },
+        "handoff": {
+          "changed_pixels": 0,
+          "sha256": "84342d7c2fbb27f3b7dbed6ae03831b76558b6939faffbf0bd510bebeeea53bf"
+        },
+        "credit-handoff": {
+          "changed_pixels": 0,
+          "sha256": "c65d49f4d8fabfb9bf61bac10fbecf2572a0dab600cc2c32741d1c5a5ea78064"
+        }
+      },
+      "validated_asset_count": 238
+    },
+    "negative_control": "One changed reference pixel rejected: key-channel",
+    "extra_detail_memory_bytes": 992768
+  },
+  "playbacks": {
+    "normal": {
+      "capture": "20261015-190828-736281",
+      "dos_exit": "PASS",
+      "headless": true,
+      "cpu_cycles": "fixed 300000",
+      "color_backend": "ram",
+      "renderer_sha256": "d94c07cd5be451f404f37fe763acac4419edafe4b5be232b23a2d78867a2763f",
+      "scene_sha256": "561c84680def163afd4d2d69c890670645c23131c77cd847e288290aa8c8e597",
+      "music_cues": {
+        "swoosh": [
+          25,
+          6
+        ],
+        "overview": [
+          24,
+          54
+        ],
+        "flight_end": [
+          26,
+          58
+        ],
+        "credits_start": [
+          28,
+          0
+        ],
+        "credits_end": [
+          43,
+          29
+        ]
+      },
+      "credit_schedule": {
+        "cards": 21,
+        "positions": [
+          [
+            28,
+            0
+          ],
+          [
+            28,
+            40
+          ],
+          [
+            29,
+            16
+          ],
+          [
+            29,
+            56
+          ],
+          [
+            30,
+            40
+          ],
+          [
+            31,
+            16
+          ],
+          [
+            31,
+            56
+          ],
+          [
+            32,
+            32
+          ],
+          [
+            33,
+            8
+          ],
+          [
+            33,
+            48
+          ],
+          [
+            34,
+            32
+          ],
+          [
+            35,
+            8
+          ],
+          [
+            35,
+            48
+          ],
+          [
+            36,
+            24
+          ],
+          [
+            37,
+            0
+          ],
+          [
+            38,
+            8
+          ],
+          [
+            39,
+            24
+          ],
+          [
+            41,
+            0
+          ],
+          [
+            41,
+            40
+          ],
+          [
+            42,
+            16
+          ],
+          [
+            42,
+            56
+          ]
+        ],
+        "entry_error_cs": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "end": [
+          43,
+          29
+        ]
+      },
+      "render_counters": {
+        "frames": 1573,
+        "vertices": 9304954,
+        "triangles": 2982604,
+        "spans": 38220457,
+        "clipped": 212796,
+        "ems_maps": 0
+      },
+      "cadence": {
+        "window_seconds": [
+          8,
+          46
+        ],
+        "cpu_cycles": "fixed 300000",
+        "captured_frames": 2663,
+        "unique_image_runs": 1060,
+        "mean_image_hold_ms": 35.85,
+        "p95_image_hold_ms": 71.34,
+        "max_image_hold_ms": 99.88,
+        "holds_over_100_ms": 0
+      }
+    },
+    "extracted_package_slow": {
+      "capture": "20261015-191830-632466",
+      "dos_exit": "PASS",
+      "headless": true,
+      "cpu_cycles": "fixed 100000",
+      "color_backend": "ram",
+      "renderer_sha256": "d94c07cd5be451f404f37fe763acac4419edafe4b5be232b23a2d78867a2763f",
+      "scene_sha256": "d9dc43cf4a87c6bdadd4161ef8e10e5d1fa13c8710ce409e5d195f4bd7a4b022",
+      "music_cues": {
+        "swoosh": [
+          25,
+          8
+        ],
+        "overview": [
+          24,
+          55
+        ],
+        "flight_end": [
+          26,
+          58
+        ],
+        "credits_start": [
+          28,
+          0
+        ],
+        "credits_end": [
+          43,
+          29
+        ]
+      },
+      "credit_schedule": {
+        "cards": 21,
+        "positions": [
+          [
+            28,
+            0
+          ],
+          [
+            28,
+            40
+          ],
+          [
+            29,
+            16
+          ],
+          [
+            29,
+            56
+          ],
+          [
+            30,
+            40
+          ],
+          [
+            31,
+            16
+          ],
+          [
+            31,
+            56
+          ],
+          [
+            32,
+            32
+          ],
+          [
+            33,
+            8
+          ],
+          [
+            33,
+            48
+          ],
+          [
+            34,
+            32
+          ],
+          [
+            35,
+            8
+          ],
+          [
+            35,
+            48
+          ],
+          [
+            36,
+            24
+          ],
+          [
+            37,
+            0
+          ],
+          [
+            38,
+            8
+          ],
+          [
+            39,
+            24
+          ],
+          [
+            41,
+            0
+          ],
+          [
+            41,
+            40
+          ],
+          [
+            42,
+            16
+          ],
+          [
+            42,
+            56
+          ]
+        ],
+        "entry_error_cs": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "end": [
+          43,
+          29
+        ]
+      },
+      "render_counters": {
+        "frames": 684,
+        "vertices": 3707978,
+        "triangles": 1166446,
+        "spans": 15560389,
+        "clipped": 89916,
+        "ems_maps": 0
+      },
+      "cadence": {
+        "window_seconds": [
+          8,
+          46
+        ],
+        "cpu_cycles": "fixed 100000",
+        "captured_frames": 2663,
+        "unique_image_runs": 486,
+        "mean_image_hold_ms": 78.18,
+        "p95_image_hold_ms": 185.49,
+        "max_image_hold_ms": 242.56,
+        "holds_over_100_ms": 72
+      }
+    }
+  },
+  "packaging": {
+    "checksum_files": 287,
+    "archive_test": "extracted ZIP, verified every file checksum, then full headless playback at fixed 100000",
+    "dependency_fix": "CRED.SYN is explicitly packaged; omission detected by first extraction test",
+    "provenance": "commit plus source, toolchain, boot capture and tested runtime hashes",
+    "negative_control": "Modified CRED.SYN rejected before writing output"
+  }
+}

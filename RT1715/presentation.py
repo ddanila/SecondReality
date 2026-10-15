@@ -47,6 +47,9 @@ def load(path=DEFAULT, source=None):
         if not 0<=start<end<=close_start<close_end<machine['ready']<45.5:
             raise ValueError('Disk must seat before lever closure and boot completion')
         if not 5<=machine['latch_lift_mm']<=8:raise ValueError('Lever hub must clear the disk slot')
+        clock=machine['boot_clock']
+        if clock[0]!=[close_end,0] or clock[-1]!=[machine['ready'],100] or any(a[0]>=b[0] or a[1]>=b[1] for a,b in zip(clock,clock[1:])):
+            raise ValueError('Boot clock must map captured progress monotonically from closure to ready')
         if not machine['boot_frames']:raise ValueError('Boot sequence needs captured screens')
         from PIL import Image
         for line in machine['boot_frames']:

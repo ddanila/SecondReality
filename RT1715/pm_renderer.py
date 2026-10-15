@@ -24,7 +24,7 @@ def build_renderer(build, assembler=None, linker=None, watcom=None):
     values=[int(n) for row in table.splitlines() if row.startswith('dw ') for n in re.findall(r'\d+',row)]
     assert len(values)==256
     (out/'pm_tangent.h').write_text('static const unsigned short rt_tangent[256]={'+','.join(map(str,values))+'};\n')
-    for name in ('pm.h','pm_fast.h','pm_fast.asm','pm_platform.c','pm_main.c','painter.c','depth.c','depth.h','lighting.h'):
+    for name in ('pm.h','pm_fast.h','pm_fast.asm','pm_platform.c','pm_main.c','painter.c','depth.c','depth.h','detail_aa.h','lighting.h'):
         shutil.copyfile(HERE/name,out/name)
     for name in ('pm_main','pm_platform','painter','depth'):
         subprocess.run([str(compiler),'-zq','-bt=dos','-mf','-3r','-ot','-s','-ecc','-dRT_PM',

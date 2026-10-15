@@ -58,6 +58,7 @@ def main():
     shutil.copyfile(build.HERE/'pm_test.c',out/'pm_test.c')
     # Use current shared raster source, not a stale build copy.
     shutil.copyfile(build.HERE/'depth.c',out/'depth.c')
+    shutil.copyfile(build.HERE/'detail_aa.h',out/'detail_aa.h')
     for name in ('pm_test','pm_platform','depth'):
         subprocess.run([str(cc),'-zq','-bt=dos','-mf','-3r','-ot','-s','-ecc','-dRT_PM','-dRT_PM_VERIFY',f'-i={watcom / "h"}',f'-fo={name}.obj',name+'.c'],cwd=out,check=True)
     subprocess.run([build.tool('jwasm'),'-q','-Cp','-omf','-Fopm_fast.obj','pm_fast.asm'],cwd=out,check=True)

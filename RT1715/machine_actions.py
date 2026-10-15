@@ -1,6 +1,8 @@
 """Authored disk loading and CRT startup, baked into the music-clock scene."""
 from pathlib import Path
 import math
+import json
+from functools import lru_cache
 import numpy as np
 import trimesh
 from PIL import Image
@@ -67,10 +69,24 @@ def pose(label,base,time,settings,data):
     return tuple(result)
 
 
+@lru_cache(maxsize=1)
+def drive_activity():
+    return json.loads((BOOT/'activity.json').read_text())['active_million_clocks']
+
+
+def drive_lit(time,settings):
+    clock=settings['boot_clock']
+    if time<clock[0][0] or time>=clock[-1][0]:return False
+    # Integrate one authored frame so short captured transfers remain visible.
+    end=min(time+1/35,clock[-1][0])
+    a,b=np.interp([time,end],[p[0] for p in clock],[p[1] for p in clock])
+    return any(lo<b and hi>a for lo,hi in drive_activity())
+
+
 def visible(label,time,settings):
     if label.startswith('disk-'):return time<=settings['close'][1]+.1
     if label=='boot-led':
-        return settings['close'][1]<=time<settings['ready'] and int(time*6)%3!=2
+        return drive_lit(time,settings)
     if label.startswith('boot-'):
         line=int(label.split('-')[1]);entry=settings['boot_frames'][line]
         if time<entry['time'] or time>=entry.get('until',1e9):return False
