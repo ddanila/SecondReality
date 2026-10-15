@@ -16,7 +16,7 @@ class CameraMotionTests(unittest.TestCase):
         def acceleration(t,component):
             h=.0001
             return (robotron.sample(f,t+h)[component]-2*robotron.sample(f,t)[component]+robotron.sample(f,t-h)[component])/(h*h)
-        for t in [k['time'] for k in f['keyframes'][1:-1]]+[30,36]:
+        for t in [k['time'] for k in f['keyframes'][1:-1]]+[8,16,30,36]:
             for component in (0,1):
                 left=2*acceleration(t-.0002,component)-acceleration(t-.0004,component)
                 right=2*acceleration(t+.0002,component)-acceleration(t+.0004,component)
@@ -49,3 +49,11 @@ class CameraMotionTests(unittest.TestCase):
             eye,target=robotron.sample(self.flight,t);v=target-eye
             pitches.append(np.degrees(np.arctan2(v[2],np.linalg.norm(v[:2]))))
         self.assertLess(max(abs(np.diff(pitches)))/.01,3)
+
+    def test_climb_preserves_apparent_drone_size(self):
+        ratios=[]
+        for t in np.linspace(8,20,241):
+            eye,_=robotron.sample(self.flight,t)
+            drone=robotron.sample_track(self.flight['drone'],t,'position')
+            ratios.append(robotron.drone_scale(self.flight,t)/np.linalg.norm(drone-eye))
+        self.assertLess(max(ratios)/min(ratios),1.15)

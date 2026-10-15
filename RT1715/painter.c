@@ -30,14 +30,20 @@ static void polygon(object *o,rt_face_word *face,int decal) {
     if(n>8) exit(3);
     flat_color=face[1];
     if(!(face[0]&F_GOURAUD)) flat_color+=rt_readable_shade(rt_shade(&normals[face[2]],face[0]),&normals[face[2]],face[0],readable);
+    /* Most polygons never cross the near plane. Send projected vertices
+     * straight to the rasterizer instead of constructing and copying a
+     * second camera-space polygon for every key face and ink triangle. */
+    for(i=0;i<n;i++) if(vertices[face[i+3]].z<512) { all_inside=0;break; }
+    if(all_inside) {
+        for(i=0;i<n;i++) {
+            index=face[i+3];b[i]=screen[index];
+            b[i].c=(face[0]&F_GOURAUD)?face[1]+(glass?rt_glass_shade_cached(normals,o->v0[index].normal):rt_readable_shade(rt_shade_cached(normals,o->v0[index].normal,face[0]),&normals[o->v0[index].normal],face[0],readable)):flat_color;
+        }
+        rt_raster(b,n,decal);return;
+    }
     for(i=0;i<n;i++) {
         index=face[i+3];a[i].x=vertices[index].x;a[i].y=vertices[index].y;a[i].z=vertices[index].z;
-        if(a[i].z<512) all_inside=0;
         a[i].c=(face[0]&F_GOURAUD)?face[1]+(glass?rt_glass_shade_cached(normals,o->v0[index].normal):rt_readable_shade(rt_shade_cached(normals,o->v0[index].normal,face[0]),&normals[o->v0[index].normal],face[0],readable)):flat_color;
-    }
-    if(all_inside) {
-        for(i=0;i<n;i++) { b[i]=screen[face[i+3]];b[i].c=a[i].c; }
-        rt_raster(b,n,decal);return;
     }
     v=a[n-1];previous=v.z>=512;
     for(i=0;i<n;i++) {
@@ -65,7 +71,7 @@ void rt_begin(void) {
 }
 void rt_flush(void) { }
 void rt_queue(object *o) {
-    int i,j,n,offset,clip,key,coarse=0,coarse_vertices,coarse_faces;
+    int i,j,n,offset,clip,key,ink,coarse=0,coarse_vertices,coarse_faces;
     rt_face_word *face;
     vlist *v;nlist *normal;
     long nearest=0x7fffffffL,facing;
@@ -73,6 +79,7 @@ void rt_queue(object *o) {
     if(o->vnum>500 || o->nnum>500) exit(3);
     o->v=vertices;o->pv=projected;o->n=normals;
     key=!strncmp(o->name,"\"key-",5);
+    ink=!strncmp(o->name,"\"ink-",5);
     glass=!strcmp(o->name,"\"screen\"");
     rounded_key=!strncmp(o->name,"\"key-r-",7);
     drone=!strcmp(o->name,"\"s01\"");
@@ -121,6 +128,6 @@ void rt_queue(object *o) {
         v=&vertices[face[3]];normal=&normals[face[2]];
         facing=(v->x/16)*normal->x+(v->y/16)*normal->y+(v->z/16)*normal->z;
         if(!(face[0]&F_2SIDE) && facing>=0) continue;
-        polygon(o,face,key && (face[1]==96 || (rounded_key && face[1]==144)));
+        polygon(o,face,ink || (key && (face[1]==96 || (rounded_key && face[1]==144))));
     }
 }

@@ -37,6 +37,9 @@ def render_cards(config, output, records, load, chips, keys, command):
         names=list(dict.fromkeys(names))
         solids=[(n,load(records[n]),records[n].get('color','#999999')) for n in names]
         solids=[(n,m,'#41494a' if n=='drives' else color) for n,m,color in solids]
+        if 'fascia' in names:
+            from front_markings import markings
+            solids.extend((n,m,'#080a0a') for n,m,_,_ in markings())
         board=view.get('board')
         selected=[]; marked=set(view.get('highlight_parts',[]))
         for instance,m,leads in chips:

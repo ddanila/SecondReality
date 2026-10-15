@@ -989,3 +989,27 @@ find no rapid reversals within eight poses across the first 20 seconds.
 The normal preview stays at build/robotron-preview.mp4; the slow comparison is
 build/robotron-slow-preview.mp4. Reproduce cadence measurements with:
   python3 RT1715/cadence.py RT1715/capture/<completed-capture>
+
+Front markings and climb framing
+--------------------------------
+front_markings.py adds geometric robotron 1715M lettering above the drives,
+plus RESET / POWER / OFF / ON at the source model's control-label positions.
+The model-name badge uses explicit 5x7 lettering raised 2 mm from the fascia
+to avoid grazing-angle depth interference. It is a presentation addition; its typography and placement
+are not claimed to be a traced historical logo. The same lettering is included
+in workstation credit renders. Runtime ink objects use the decal depth bias.
+
+flight.json climb_framing coordinates camera distance with the miniature's
+existing scale restoration. From 8 to 20 seconds the scale/distance ratio stays
+within 15%; the correction fades out by 30 seconds. The drone path, steering,
+key-channel clearance, final swoosh and music cues are unchanged. The first
+credit camera now looks from the final turntable view's direction (inverse
+90-degree assembly rotation), preserving the visible side of the workstation.
+
+The common unclipped-polygon path feeds projected vertices directly to the
+rasterizer. Six old-scene benchmark poses remain pixel-identical; measured
+100000-cycle improvements are modest (approximately 0 to 2%). Hidden detailed
+key undersides are also omitted: all 2031 camera poses stay at least 14.19 mm
+above their bottom plane, and six reference images remain pixel-identical. This is not a
+claim that slow-playback frame holds have been eliminated. See the latest
+benchmarks/front-polish.json for final capture and validation evidence.

@@ -111,6 +111,23 @@ def sample(flight,time):
         u=np.clip((time-follow['fade_start'])/(follow['end']-follow['fade_start']),0,1)
         weight=follow['weight']*(1-u*u*u*(10-15*u+6*u*u))
         target=target*(1-weight)+sample_track(flight['drone'],time,'position')*weight
+    # Keep the growing miniature at a steady angular size while it clears
+    # the keys. Fade back to the authored drive pass with C2 endpoints.
+    framing=flight.get('climb_framing')
+    if framing and framing['start']<time<framing['end']:
+        start,full,end=(framing[k] for k in ('start','full','end'))
+        def ease(u):
+            u=np.clip(u,0,1)
+            return u*u*u*(10-15*u+6*u*u)
+        weight=ease((time-start)/(full-start))*(1-ease((time-full)/(end-full)))
+        position=sample_track(flight['drone'],time,'position')
+        offset=eye-position;distance=np.linalg.norm(offset)
+        wanted=drone_scale(flight,time)*framing['distance_per_scale']
+        extra=max(0,wanted-distance)
+        # Ease the first millimetre too, avoiding a derivative jump when the
+        # authored separation crosses the desired distance between keyframes.
+        extra*=ease(extra)
+        eye=position+offset*(1+weight*extra/distance)
     return eye,target
 
 
@@ -252,6 +269,9 @@ def prepare(root, build, command, presentation=None):
     objects=[(label,mesh,color,'exterior') for label,mesh,color in exterior()]
     from source_geometry import front_parts
     objects.extend(front_parts(load,records))
+    from front_markings import markings
+    objects.extend((name,mesh.submesh([np.flatnonzero(mesh.face_normals[:,1]<-.9)],append=True),color,kind)
+                   for name,mesh,color,kind in markings())
     for override in config.get('models',[]):
         matches=[i for i,item in enumerate(objects) if item[0]==override['name']]
         if len(matches)!=1:raise ValueError(f"Unknown exterior override: {override['name']}")
@@ -317,10 +337,15 @@ def prepare(root, build, command, presentation=None):
     for slot,(label,mesh,color,kind) in zip(slots,objects):
         triangles=polygons(mesh)
         if kind=='keycap':
+            # The authored camera stays above the key bottoms. Omit their
+            # hidden underside faces; retain every skirt, shoulder and dish.
+            bottom=round(mesh.bounds[0,2]*SCALE)
+            triangles=[face for face in triangles if not all(p[2]==bottom for p in face)]
             # Rounded coarse prefix: 14 faces and 16 vertices, then detail.
             triangles=keycaps.coarse_polygons(mesh,SCALE)+triangles
         print(f'Robotron {slot:02}: {label}: {len(triangles)} polygons',flush=True)
         render_name=label.replace("key-","key-r-",1) if kind=="keycap" else label
+        if kind=='marking':render_name='ink-'+label
         ink=key_legends.get(label,[])
         face_colors=[colors[color][0]]*len(triangles)
         if kind=='keycap' and key_styles[label]==1:

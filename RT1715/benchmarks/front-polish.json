@@ -1,0 +1,725 @@
+{
+  "host_tests": 59,
+  "native_suite": "PASS",
+  "route_audit": {
+    "poses": 2031,
+    "archive": "20261015-153028-front-done-audit",
+    "result": "PASS"
+  },
+  "source_snapshot": {
+    "source": "/Users/ddanila/fun/3d-models/models/robotron-1715m",
+    "model_scad_sha256": "7c5c16c60dbf21044b84915e50c9199b848d673fab463bc2321adb0ed76ed852",
+    "snapshot_sha256": "f9e57e8c0010011be6990b8fa4ca1c010098bc29c0af4d74cce42d2f1a4b436c"
+  },
+  "badge": {
+    "text": "robotron 1715M",
+    "font": "explicit 5x7 bitmap converted to geometry",
+    "height_mm": 10,
+    "relief_mm": 2,
+    "control_labels": [
+      "RESET",
+      "POWER",
+      "OFF",
+      "ON"
+    ],
+    "visual_check": "DOS drive-pass capture, including grazing angle"
+  },
+  "climb": {
+    "scale_distance_ratio_max_over_min_8_to_20_seconds": 1.1421,
+    "minimum_camera_height_above_key_bottom_mm": 14.1963,
+    "unchanged_drone_poses": 2031,
+    "original_mesh_and_music": "byte-exact"
+  },
+  "credits_handoff": {
+    "first_camera_angle": [
+      68.135,
+      0,
+      -57.653
+    ],
+    "basis": "final camera vector transformed by inverse 90-degree assembly rotation"
+  },
+  "kernel_comparison": {
+    "before": {
+      "archive": "20261015-151553-front-before",
+      "result": {
+        "options": "profile 1",
+        "stage_logs": [
+          "STAGES clear=384 objects=275 draw=57012 upload=0 hz=1000 pixels=37660282 passed=22000825 occluded=0 queries=0 route_skipped=53966"
+        ],
+        "label": "front-before",
+        "samples": 1,
+        "cpu_cycles": "fixed 100000",
+        "scene_sha256": "02f59cec0ba1394c81a500798e9a5d032f687f62d69f62a19314a39f21555c0c",
+        "renderer_sha256": "5f190f96b7e301904867f7009a757ceed3e7963842e3122af8f42283e3e8795d",
+        "poses": [
+          {
+            "frame": 420,
+            "iterations": 120,
+            "ticks": 20871,
+            "hz": 1000,
+            "color": "73f1b7d5",
+            "vertices": 1121186,
+            "triangles": 533731,
+            "spans": 0,
+            "sample_ticks": [
+              20871
+            ],
+            "milliseconds_per_render": 173.925
+          },
+          {
+            "frame": 980,
+            "iterations": 120,
+            "ticks": 9886,
+            "hz": 1000,
+            "color": "65b37dc7",
+            "vertices": 621819,
+            "triangles": 298628,
+            "spans": 0,
+            "sample_ticks": [
+              9886
+            ],
+            "milliseconds_per_render": 82.383
+          },
+          {
+            "frame": 1840,
+            "iterations": 120,
+            "ticks": 6976,
+            "hz": 1000,
+            "color": "5e5d8e61",
+            "vertices": 312422,
+            "triangles": 107448,
+            "spans": 0,
+            "sample_ticks": [
+              6976
+            ],
+            "milliseconds_per_render": 58.133
+          },
+          {
+            "frame": 2660,
+            "iterations": 120,
+            "ticks": 4613,
+            "hz": 1000,
+            "color": "4da635cf",
+            "vertices": 53240,
+            "triangles": 46585,
+            "spans": 0,
+            "sample_ticks": [
+              4613
+            ],
+            "milliseconds_per_render": 38.442
+          },
+          {
+            "frame": 3200,
+            "iterations": 120,
+            "ticks": 7305,
+            "hz": 1000,
+            "color": "bfdb154e",
+            "vertices": 750442,
+            "triangles": 309276,
+            "spans": 0,
+            "sample_ticks": [
+              7305
+            ],
+            "milliseconds_per_render": 60.875
+          },
+          {
+            "frame": 3750,
+            "iterations": 120,
+            "ticks": 7525,
+            "hz": 1000,
+            "color": "bde4d199",
+            "vertices": 731203,
+            "triangles": 313632,
+            "spans": 0,
+            "sample_ticks": [
+              7525
+            ],
+            "milliseconds_per_render": 62.708
+          }
+        ]
+      }
+    },
+    "after": {
+      "archive": "20261015-151846-front-kernel",
+      "result": {
+        "options": "profile 1",
+        "stage_logs": [
+          "STAGES clear=219 objects=220 draw=56518 upload=110 hz=1000 pixels=37660282 passed=22000825 occluded=0 queries=0 route_skipped=53966"
+        ],
+        "label": "front-kernel",
+        "samples": 1,
+        "cpu_cycles": "fixed 100000",
+        "scene_sha256": "02f59cec0ba1394c81a500798e9a5d032f687f62d69f62a19314a39f21555c0c",
+        "renderer_sha256": "150c9d9b6ddcccb28fe0cfd22d2e6af67a67e83033fa7e21dc48211140b91004",
+        "poses": [
+          {
+            "frame": 420,
+            "iterations": 120,
+            "ticks": 20707,
+            "hz": 1000,
+            "color": "73f1b7d5",
+            "vertices": 1121186,
+            "triangles": 533731,
+            "spans": 0,
+            "sample_ticks": [
+              20707
+            ],
+            "milliseconds_per_render": 172.558,
+            "time_change_percent": -0.79
+          },
+          {
+            "frame": 980,
+            "iterations": 120,
+            "ticks": 9832,
+            "hz": 1000,
+            "color": "65b37dc7",
+            "vertices": 621819,
+            "triangles": 298628,
+            "spans": 0,
+            "sample_ticks": [
+              9832
+            ],
+            "milliseconds_per_render": 81.933,
+            "time_change_percent": -0.55
+          },
+          {
+            "frame": 1840,
+            "iterations": 120,
+            "ticks": 6975,
+            "hz": 1000,
+            "color": "5e5d8e61",
+            "vertices": 312422,
+            "triangles": 107448,
+            "spans": 0,
+            "sample_ticks": [
+              6975
+            ],
+            "milliseconds_per_render": 58.125,
+            "time_change_percent": -0.01
+          },
+          {
+            "frame": 2660,
+            "iterations": 120,
+            "ticks": 4614,
+            "hz": 1000,
+            "color": "4da635cf",
+            "vertices": 53240,
+            "triangles": 46585,
+            "spans": 0,
+            "sample_ticks": [
+              4614
+            ],
+            "milliseconds_per_render": 38.45,
+            "time_change_percent": 0.02
+          },
+          {
+            "frame": 3200,
+            "iterations": 120,
+            "ticks": 7195,
+            "hz": 1000,
+            "color": "bfdb154e",
+            "vertices": 750442,
+            "triangles": 309276,
+            "spans": 0,
+            "sample_ticks": [
+              7195
+            ],
+            "milliseconds_per_render": 59.958,
+            "time_change_percent": -1.51
+          },
+          {
+            "frame": 3750,
+            "iterations": 120,
+            "ticks": 7360,
+            "hz": 1000,
+            "color": "bde4d199",
+            "vertices": 731203,
+            "triangles": 313632,
+            "spans": 0,
+            "sample_ticks": [
+              7360
+            ],
+            "milliseconds_per_render": 61.333,
+            "time_change_percent": -2.19
+          }
+        ]
+      }
+    },
+    "all_six_frame_hashes_match": true
+  },
+  "key_undersides": {
+    "comparison": {
+      "archive": "20261015-152716-front-key-check",
+      "result": {
+        "options": "profile 1",
+        "stage_logs": [
+          "STAGES clear=384 objects=987 draw=56356 upload=54 hz=1000 pixels=37660282 passed=22000825 occluded=0 queries=0 route_skipped=0"
+        ],
+        "label": "front-key-check",
+        "samples": 1,
+        "cpu_cycles": "fixed 100000",
+        "scene_sha256": "6fe77cf72eac55e93ad17381a3fd95a458c1488e5d52386fcf0baf9de4e9e1e3",
+        "renderer_sha256": "c24234f3f6d33a8a1b229910ed210b4f3cc4f97987caee90fb6578ee0222c613",
+        "poses": [
+          {
+            "frame": 420,
+            "iterations": 120,
+            "ticks": 20762,
+            "hz": 1000,
+            "color": "73f1b7d5",
+            "vertices": 1121186,
+            "triangles": 533731,
+            "spans": 0,
+            "sample_ticks": [
+              20762
+            ],
+            "milliseconds_per_render": 173.017
+          },
+          {
+            "frame": 980,
+            "iterations": 120,
+            "ticks": 9832,
+            "hz": 1000,
+            "color": "65b37dc7",
+            "vertices": 621819,
+            "triangles": 298628,
+            "spans": 0,
+            "sample_ticks": [
+              9832
+            ],
+            "milliseconds_per_render": 81.933
+          },
+          {
+            "frame": 1840,
+            "iterations": 120,
+            "ticks": 6975,
+            "hz": 1000,
+            "color": "5e5d8e61",
+            "vertices": 312422,
+            "triangles": 107448,
+            "spans": 0,
+            "sample_ticks": [
+              6975
+            ],
+            "milliseconds_per_render": 58.125
+          },
+          {
+            "frame": 2660,
+            "iterations": 120,
+            "ticks": 4669,
+            "hz": 1000,
+            "color": "4da635cf",
+            "vertices": 53240,
+            "triangles": 46585,
+            "spans": 0,
+            "sample_ticks": [
+              4669
+            ],
+            "milliseconds_per_render": 38.908
+          },
+          {
+            "frame": 3200,
+            "iterations": 120,
+            "ticks": 7415,
+            "hz": 1000,
+            "color": "bfdb154e",
+            "vertices": 750442,
+            "triangles": 309276,
+            "spans": 0,
+            "sample_ticks": [
+              7415
+            ],
+            "milliseconds_per_render": 61.792
+          },
+          {
+            "frame": 3750,
+            "iterations": 120,
+            "ticks": 7635,
+            "hz": 1000,
+            "color": "bde4d199",
+            "vertices": 731203,
+            "triangles": 313632,
+            "spans": 0,
+            "sample_ticks": [
+              7635
+            ],
+            "milliseconds_per_render": 63.625
+          }
+        ]
+      }
+    },
+    "all_six_frame_hashes_match": true,
+    "timings_not_comparable": "This geometry-isolation check uses live culling rather than the old baked visibility cache."
+  },
+  "playbacks": {
+    "normal": {
+      "capture": "20261015-153026-498811",
+      "result": {
+        "dos_exit": "PASS",
+        "headless": true,
+        "wall_seconds": 175.28,
+        "cpu_cycles": "fixed 300000",
+        "color_backend": "ram",
+        "renderer_sha256": "c24234f3f6d33a8a1b229910ed210b4f3cc4f97987caee90fb6578ee0222c613",
+        "scene_sha256": "d2559d53ecbfa4344463f63be0e549353824e16213ed55ada5a214cbd2e6bbf3",
+        "video_files": [
+          "rt1715_000.avi",
+          "rt1715_001.avi",
+          "rt1715_002.avi"
+        ],
+        "audio": [
+          {
+            "file": "rt1715_000.wav",
+            "seconds": 174.858,
+            "nonzero_samples": true
+          }
+        ],
+        "renderer_mode": "protected",
+        "render_counters": {
+          "frames": 1830,
+          "vertices": 8124019,
+          "triangles": 3443653,
+          "spans": 39066445,
+          "clipped": 185324,
+          "ems_maps": 0
+        },
+        "music_cues": {
+          "swoosh": [
+            25,
+            6
+          ],
+          "overview": [
+            24,
+            54
+          ],
+          "flight_end": [
+            26,
+            57
+          ],
+          "credits_start": [
+            28,
+            0
+          ],
+          "credits_end": [
+            43,
+            29
+          ]
+        },
+        "credit_schedule": {
+          "cards": 21,
+          "positions": [
+            [
+              28,
+              0
+            ],
+            [
+              28,
+              40
+            ],
+            [
+              29,
+              16
+            ],
+            [
+              29,
+              56
+            ],
+            [
+              30,
+              40
+            ],
+            [
+              31,
+              16
+            ],
+            [
+              31,
+              56
+            ],
+            [
+              32,
+              32
+            ],
+            [
+              33,
+              8
+            ],
+            [
+              33,
+              48
+            ],
+            [
+              34,
+              32
+            ],
+            [
+              35,
+              8
+            ],
+            [
+              35,
+              48
+            ],
+            [
+              36,
+              24
+            ],
+            [
+              37,
+              0
+            ],
+            [
+              38,
+              8
+            ],
+            [
+              39,
+              24
+            ],
+            [
+              41,
+              0
+            ],
+            [
+              41,
+              40
+            ],
+            [
+              42,
+              16
+            ],
+            [
+              42,
+              56
+            ]
+          ],
+          "entry_error_cs": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "end": [
+            43,
+            29
+          ]
+        }
+      },
+      "cadence": {
+        "window_seconds": [
+          8,
+          46
+        ],
+        "cpu_cycles": "fixed 300000",
+        "captured_frames": 2663,
+        "unique_image_runs": 1143,
+        "mean_image_hold_ms": 33.24,
+        "p95_image_hold_ms": 57.07,
+        "max_image_hold_ms": 85.61,
+        "holds_over_100_ms": 0
+      }
+    },
+    "slow": {
+      "capture": "20261015-153027-714909",
+      "result": {
+        "dos_exit": "PASS",
+        "headless": true,
+        "wall_seconds": 175.1,
+        "cpu_cycles": "fixed 100000",
+        "color_backend": "ram",
+        "renderer_sha256": "c24234f3f6d33a8a1b229910ed210b4f3cc4f97987caee90fb6578ee0222c613",
+        "scene_sha256": "d2559d53ecbfa4344463f63be0e549353824e16213ed55ada5a214cbd2e6bbf3",
+        "video_files": [
+          "rt1715_000.avi",
+          "rt1715_001.avi",
+          "rt1715_002.avi"
+        ],
+        "audio": [
+          {
+            "file": "rt1715_000.wav",
+            "seconds": 174.858,
+            "nonzero_samples": true
+          }
+        ],
+        "renderer_mode": "protected",
+        "render_counters": {
+          "frames": 1093,
+          "vertices": 3691036,
+          "triangles": 1539599,
+          "spans": 20540563,
+          "clipped": 98728,
+          "ems_maps": 0
+        },
+        "music_cues": {
+          "swoosh": [
+            25,
+            7
+          ],
+          "overview": [
+            24,
+            55
+          ],
+          "flight_end": [
+            26,
+            58
+          ],
+          "credits_start": [
+            28,
+            0
+          ],
+          "credits_end": [
+            43,
+            29
+          ]
+        },
+        "credit_schedule": {
+          "cards": 21,
+          "positions": [
+            [
+              28,
+              0
+            ],
+            [
+              28,
+              40
+            ],
+            [
+              29,
+              16
+            ],
+            [
+              29,
+              56
+            ],
+            [
+              30,
+              40
+            ],
+            [
+              31,
+              16
+            ],
+            [
+              31,
+              56
+            ],
+            [
+              32,
+              32
+            ],
+            [
+              33,
+              8
+            ],
+            [
+              33,
+              48
+            ],
+            [
+              34,
+              32
+            ],
+            [
+              35,
+              8
+            ],
+            [
+              35,
+              48
+            ],
+            [
+              36,
+              24
+            ],
+            [
+              37,
+              0
+            ],
+            [
+              38,
+              8
+            ],
+            [
+              39,
+              24
+            ],
+            [
+              41,
+              0
+            ],
+            [
+              41,
+              40
+            ],
+            [
+              42,
+              16
+            ],
+            [
+              42,
+              56
+            ]
+          ],
+          "entry_error_cs": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "end": [
+            43,
+            29
+          ]
+        }
+      },
+      "cadence": {
+        "window_seconds": [
+          8,
+          46
+        ],
+        "cpu_cycles": "fixed 100000",
+        "captured_frames": 2663,
+        "unique_image_runs": 750,
+        "mean_image_hold_ms": 50.66,
+        "p95_image_hold_ms": 128.41,
+        "max_image_hold_ms": 156.95,
+        "holds_over_100_ms": 64
+      }
+    }
+  },
+  "limitations": "100000-cycle keyboard playback still has long image holds; renderer micro-optimizations do not eliminate this bottleneck."
+}
