@@ -431,5 +431,59 @@
     "full": 16,
     "end": 30,
     "distance_per_scale": 154
+  },
+  "machine": {
+    "drive": 0,
+    "withdraw_mm": 90,
+    "insert": [
+      24,
+      26
+    ],
+    "close": [
+      26.25,
+      27.25
+    ],
+    "ready": 39,
+    "boot_lines": [
+      {
+        "time": 32.0,
+        "z": 397,
+        "text": "ROBOTRON 1715M"
+      },
+      {
+        "time": 33.3,
+        "z": 373,
+        "text": "256 KB RAM"
+      },
+      {
+        "time": 34.5,
+        "z": 349,
+        "text": "BOOT A:"
+      },
+      {
+        "time": 35.4,
+        "z": 325,
+        "text": "READING SYSTEM...",
+        "until": 39
+      },
+      {
+        "time": 39,
+        "z": 301,
+        "text": "SYSTEM READY"
+      },
+      {
+        "time": 40,
+        "z": 265,
+        "text": "A>"
+      },
+      {
+        "time": 40,
+        "z": 265,
+        "x": -77.4,
+        "text": "_",
+        "blink": true
+      }
+    ],
+    "font_unit": 1.35
   }
 }

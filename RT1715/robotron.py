@@ -228,6 +228,7 @@ def prepare(root, build, command, presentation=None):
     manifest=Path(presentation or DEFAULT).resolve()
     config,source_root,inputs=load_presentation(manifest,root)
     root=snapshot(source_root,build/'model-snapshot') if source_root!=(build/'model-snapshot').resolve() else source_root
+    flight=json.loads(inputs['flight'].read_text())
     colors_config=json.loads(inputs['materials'].read_text())
     colors={name:(r['base'],r['rgb']) for name,r in colors_config.items()}
     browser=root/'browser'
@@ -245,7 +246,8 @@ def prepare(root, build, command, presentation=None):
     source_stamp=fresh/'sources.sha256'
     fresh_names=['fascia','drives','drive-insets','drive-latch-0','drive-latch-1',
                  'drive-led-0','drive-led-1','drive-direction-0','drive-direction-1',
-                 'reset','power','power-housing','case-base']
+                 'reset','power','power-housing','case-base',
+                 'drive-diskette-0','drive-medium-0','drive-diskette-label-0']
     for name in fresh_names:
         path=fresh/(name+'.stl')
         if not path.exists() or not source_stamp.exists() or source_stamp.read_text()!=source_key:
@@ -287,6 +289,9 @@ def prepare(root, build, command, presentation=None):
         color=override.get('material',color)
         if color not in colors:raise ValueError('Unknown replacement material')
         objects[i]=(label,trimesh.load_mesh(stl,process=True),color,kind)
+    if flight.get('machine'):
+        import machine_actions
+        objects.extend(machine_actions.objects(load,records,data,flight['machine']))
     key_legends={}
     instances=[{'mesh':label,'pose':(0,0,0,*IDENTITY),'kind':kind}
                for label,mesh,color,kind in objects]
@@ -351,7 +356,7 @@ def prepare(root, build, command, presentation=None):
             triangles=keycaps.coarse_polygons(mesh,SCALE)+triangles
         print(f'Robotron {slot:02}: {label}: {len(triangles)} polygons',flush=True)
         render_name=label.replace("key-","key-r-",1) if kind=="keycap" else label
-        if kind=='marking':render_name='ink-'+label
+        if kind in ('marking','machine-text'):render_name='ink-'+label
         ink=key_legends.get(label,[])
         face_colors=[colors[color][0]]*len(triangles)
         if kind=='keycap' and key_styles[label]==1:
@@ -364,7 +369,10 @@ def prepare(root, build, command, presentation=None):
         face_colors += [colors[ink_color][0]]*len(ink)
         triangles+=ink
         sort_center=None
-        binary=scene.encode('"'+render_name[:20]+'"',triangles,colors[color][0],16,
+        shades=1 if kind in ('machine-text','machine-led') else 16
+        if kind=='machine-text':face_colors=[79]*len(triangles)
+        if kind=='machine-led':face_colors=[127]*len(triangles)
+        binary=scene.encode('"'+render_name[:20]+'"',triangles,colors[color][0],shades,
                             face_colors=face_colors,precomputed_orders=False,sort_center=sort_center,smooth=(label=='screen'))
         (output/f'U2E.{slot:03}').write_bytes(binary)
         report['objects'].append({'slot':slot,'name':label,'kind':kind,'polygons':len(triangles)})
@@ -383,6 +391,9 @@ def prepare(root, build, command, presentation=None):
         for j in range(16):
             for k,v in enumerate(color):
                 material[16+(base+j)*3+k]=round(v/255*63*(ramp['ambient']+ramp['diffuse']*j/15))
+    if flight.get('machine'):
+        # Glass lighting uses shades 2..13; the last reserved CRT entry is phosphor.
+        material[16+79*3:16+80*3]=bytes([36,58,40])
     # Disable city-specific colouring/sorting names; normal renderer remains.
     material[15]=ord('T')
     (output/'U2E.00M').write_bytes(material)
@@ -402,9 +413,15 @@ def prepare(root, build, command, presentation=None):
         frame=[camera(eye,target)]; enabled=[True]
         for inst in instances:
             slot=inst['slot']
-            pose=list(drone_state if slot==28 else assembly_pose(flight,t,inst['pose']))
+            base=inst.get('pose')
+            if slot!=28 and flight.get('machine'):
+                base=machine_actions.pose(inst['mesh'],base,t,flight['machine'],data)
+            pose=list(drone_state if slot==28 else assembly_pose(flight,t,base))
             frame.append(pose)
-            enabled.append(not (slot==28 and t>48.1))
+            on=not (slot==28 and t>48.1)
+            if slot!=28 and flight.get('machine'):
+                on=machine_actions.visible(inst['mesh'],t,flight['machine'])
+            enabled.append(on)
         # Conservative sphere/frustum culling, rebuilt for this camera. A wide
         # vertical margin avoids coupling this bake to VGA aspect corrections.
         cam=np.array(frame[0][3:]).reshape(3,3)/16384

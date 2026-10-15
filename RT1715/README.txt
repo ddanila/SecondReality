@@ -1036,3 +1036,34 @@ The canonical SCAD bezel/housing dimensions are mirrored in monitor_geometry.py;
 only CRT profile parameters are read automatically from browser/model.json.
 Update those profiles if the source enclosure changes. Source comparisons,
 headless playback and timing evidence are in benchmarks/monitor-detail.json.
+
+Animated disk loading and CRT startup
+------------------------------------
+flight.json's machine section controls an authored mechanical/startup vignette:
+left drive (unit 0), insertion 24.0-26.0 s, lever closure 26.25-27.25 s,
+startup lines from 32 s, ready at 39 s and blinking A> cursor from 40 s.
+Times use the same 35 Hz animation/music clock as the flight. Skipped render
+frames still advance the entire machine state, so slower CPUs do not delay
+loading relative to the music or drone. No guest build or boot process runs.
+
+machine_actions.py preserves the source floppy jacket openings, magnetic medium
+and label. The disk starts 90 mm withdrawn, slides into the existing slot, and
+is hidden only after the lever shuts. The left lever rotates rigidly about the
+manifest's latchPivot; the right lever stays unchanged. The source LED gets a
+lit overlay during loading. Source disk pieces are refreshed from SCAD locally.
+The camera and original drone choreography are unchanged; loading clears the
+drone's conservative bounding box throughout its pass.
+
+CRT text follows the actual curved DOS glass surface and uses the repository's
+GRAB/SYSFONT/FONT8X14.INC ROM-font capture. Green phosphor uses reserved palette
+entry 79; glass shading stays in entries 66..77 with a spare dark guard entry 78.
+The original drone's protected palette is unchanged. All text/LED reveals,
+cursor blinks and part poses are baked on the host into U2E.0AB and U2E.VIS.
+They continue to follow the assembled machine during the final rotation.
+
+This is a stylized startup animation, not a verified reproduction of the
+installed firmware or OS boot messages. It displays the established 256 KB
+configuration without claiming a particular ROM/OS version. Edit the ASCII
+lines and their times/positions in flight.json. Keep the disk seated before
+closing the lever and the first boot line after closure; the builder validates
+that ordering and checks text against the CRT surface. See benchmarks/disk-boot.json.

@@ -147,3 +147,13 @@ smooth normals; bezel uses the paint palette with a five-step shade reduction.
 The original screen object name is required for CRT shading. Housing meshes
 are split into small objects without geometry simplification. Top vents are
 dark surface marks. The 2 mm horizontal housing gap remains actual geometry.
+
+Disk/boot animation: flight.json machine.drive selects the source drive unit;
+insert/close are [start,end] times on the authored music-clock timeline.
+withdraw_mm is the initially exposed disk travel. The source driveMotion
+latchPivot defines the lever axis; keep insertion complete before closing.
+boot_lines contains printable ASCII text, time, z, optional x/until/blink.
+font_unit is millimetres per ROM-font pixel. The builder projects text onto the
+rendered glass, rejects lines outside it, and encodes timed visibility. Green
+phosphor entry 79 is reserved only when machine animation is enabled. These
+are presentation messages, not a claim about original firmware startup text.

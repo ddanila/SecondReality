@@ -39,6 +39,21 @@ def load(path=DEFAULT, source=None):
     miniature=flight.get('miniature')
     if miniature and not (0<miniature['scale']<=1 and 0<=miniature['start']<miniature['end']<=19):
         raise ValueError('Miniature drone must regain full size before the drive pass')
+    machine=flight.get('machine')
+    if machine:
+        start,end=machine['insert'];close_start,close_end=machine['close']
+        if machine['drive'] not in (0,1) or not 0<machine['withdraw_mm']<=133.35:
+            raise ValueError('Invalid animated drive or disk withdrawal')
+        if not 0<=start<end<=close_start<close_end<machine['ready']<45.5:
+            raise ValueError('Disk must seat before lever closure and boot completion')
+        if not .5<=machine.get('font_unit',.95)<=1.5:raise ValueError('Invalid CRT font size')
+        if not machine['boot_lines']:raise ValueError('Boot sequence needs text')
+        for line in machine['boot_lines']:
+            printable([line['text']])
+            if not line['text'].strip() or not close_end<=line['time']<45.5:
+                raise ValueError('Boot text must follow drive closure')
+            if line.get('until',58)<=line['time']:
+                raise ValueError('Boot line expiry must follow its appearance')
     turn=flight.get('turntable')
     if turn and not (48.1<=turn['start']<turn['end']<=58 and 0<turn['degrees']<=180
                      and len(turn['pivot'])==3 and all(isinstance(v,(int,float)) for v in turn['pivot'])):
