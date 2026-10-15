@@ -43,7 +43,7 @@ def main():
     names += [line.split()[0] for line in (dos/'CRED.IDX').read_text().splitlines()[1:]]
     for name in names:shutil.copyfile(dos/name,out/name)
     (out/'PM.CFG').write_bytes(b'ram\r\n')
-    config=(HERE/'dosbox-x.conf').read_text().replace('cycles = max 95%','cycles = fixed 300000').replace('mount c build/dos','mount c .')
+    config=(HERE/'dosbox-x.conf').read_text().replace('mount c build/dos','mount c .')
     (out/'RT1715.CON').write_text(config+'\nexit\n')
     (out/'HEADLESS.SH').write_text('#!/bin/sh\nset -eu\ncd "$(dirname "$0")"\nexport SDL_VIDEODRIVER=dummy SDL_AUDIODRIVER=dummy\nexec dosbox-x -conf RT1715.CON -fastlaunch\n');(out/'HEADLESS.SH').chmod(0o755)
     (out/'HEADLESS.BAT').write_bytes(b'@echo off\r\nset SDL_VIDEODRIVER=dummy\r\nset SDL_AUDIODRIVER=dummy\r\ndosbox-x -conf RT1715.CON -fastlaunch\r\n')
@@ -59,7 +59,7 @@ No guest compiler, model files, firmware or disk image is needed.
 Controls: Escape exits. Playback runs once, about 175 seconds, then returns.
 Sound is fixed to Sound Blaster Pro: port 220h, IRQ 7, DMA 1 (T4).
 Tested emulator profile: 486 dynamic core, VGA, 32 MB, XMS/EMS/UMB enabled,
-fixed 300000 cycles. Slower profiles work but reduce motion smoothness.
+fixed 600000 cycles. Slower profiles work but reduce motion smoothness.
 These are tested emulator settings, not a real-hardware minimum claim.
 The 32-bit renderer includes DOS/32A. Run the launcher, not U2E.EXE alone.
 

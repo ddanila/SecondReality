@@ -41,6 +41,27 @@ class DetailTests(unittest.TestCase):
             self.setUp();self.draw(160+offset,168+offset);self.lib.rt_depth_flush()
             energies.append(sum(self.lib.rt_color_at(x,15) for x in range(9,13)))
         self.assertLessEqual(max(energies)-min(energies),2)
+    def test_quarter_pixel_stroke_survives_pan(self):
+        energies=[]
+        for offset in range(16):
+            self.setUp();self.draw(160+offset,164+offset);self.lib.rt_depth_flush()
+            energies.append(sum(self.lib.rt_color_at(x,15) for x in range(9,13)))
+        self.assertGreater(min(energies),12)
+        self.assertLessEqual(max(energies)-min(energies),2)
+
+    def test_sloping_surface_does_not_occlude_its_own_ink(self):
+        for slope in (4,16,64,-4,-16,-64):
+            self.setUp()
+            self.lib.rt_raster((Vertex*4)(
+                Vertex(0,0,2000,0),Vertex(20,0,2000+slope*20,0),
+                Vertex(20,30,2000+slope*20,0),Vertex(0,30,2000,0)),4,0)
+            left=2000+slope*10;right=left+slope//4
+            self.lib.rt_detail_raster((Vertex*4)(
+                Vertex(160,160,left,63),Vertex(164,160,right,63),
+                Vertex(164,320,right,63),Vertex(160,320,left,63)),4)
+            self.lib.rt_depth_flush()
+            self.assertTrue(13<=self.lib.rt_color_at(10,15)<=17,slope)
+
     def test_clipping_and_frame_reset(self):
         self.draw(-160,16);self.lib.rt_depth_flush();self.assertEqual(self.lib.rt_color_at(0,15),63)
         self.setUp();self.lib.rt_depth_flush();self.assertEqual(self.lib.rt_color_at(0,15),0)

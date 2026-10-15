@@ -59,7 +59,7 @@ def crt_surround(profile=None):
     glass=surface(rings,center=[0,position[1]-depth,position[2]])
     # A continuous dark gasket, sharing the exact glass boundary. Its outer
     # skirt runs back to the source bezel return; no uncovered corner wedges.
-    outer=outline(274,227,power=power)
+    outer=outline(size[0]+1,size[1]+1,power=power)
     gasket=surface([rings[-1],ring(outer,position[1]-glass_depth(outer,depth,radii),position[2]),
                     ring(outer,-142,position[2])])
     # Ring winding is chosen for the outward (-Y) front surface.
@@ -84,7 +84,7 @@ def bezel():
         return np.array(result)
     profiles=[ring(radial(303,264,19),-145),ring(radial(302,263,21),-150),
               ring(radial(296,257,22),-153),ring(radial(290,239,20),-153,324),
-              ring(outline(274,227),-142,324)]
+              ring(outline(259,212),-142,324)]
     m=surface(profiles)
     if np.mean(m.face_normals[:,1])>0:m.invert()
     return m

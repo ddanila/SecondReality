@@ -305,7 +305,7 @@ Robotron meshes omit the obsolete eight precomputed sort lists, reserve slot
 28 for the unchanged drone, and share transform scratch buffers. The animation
 uses an 8 KB streaming buffer with a host-enforced 4 KB maximum encoded frame.
 EMS keeps the depth buffer out of the conventional/upper memory used by models.
-DOSBox-X uses a 486 dynamic core, an adaptive 95% CPU budget and 32 MB, headless only.
+DOSBox-X uses a 486 dynamic core, fixed 600000 cycles and 32 MB, headless only.
 The adaptive CPU budget compensates for depth testing and finer close-up meshes;
 close-ups are still more expensive than overview shots.
 
@@ -1090,13 +1090,13 @@ KiB; the reference disk has 80 cylinders and two sides. Existing reference
 labels for clocks, matrix and media remain. See assets/robotron/SOURCES.txt.
 
 Small-detail filtering: detail_aa.h retains Q4 projected positions for ink,
-key legends and monitor vent marks. Four fixed coverage samples per pixel are
+key legends and monitor vent marks. Sixteen fixed coverage samples per pixel are
 composited after opaque depth, so fractional strokes blend instead of jumping
 between whole pixels. Top-left edge ownership prevents double coverage at
 shared edges. A host-generated RGB555 lookup chooses an existing palette entry;
 no original drone palette entries are modified. Only touched pixels are reset
 and resolved; ordinary polygons still use the assembly scanline renderer.
-The extra buffers/table use about 1 MiB of protected-mode memory. This is
+The extra buffers/table use 3,360,768 bytes of protected-mode memory. This is
 selective coverage filtering, not full-scene anti-aliasing; details narrower
 than the sample spacing can still alias. It trades some speed for stability.
 The legacy/direct-VGA path remains unfiltered. U2E.AA enables the RAM path.
@@ -1140,3 +1140,33 @@ local debug settings or captures ship. A clean commit gives an unambiguous
 release name; an uncommitted build is explicitly suffixed -work. The packager
 rejects assets changed since validation. Extract and run the archive in an
 isolated directory to verify the actual distribution before sharing it.
+
+Smoother playback and monitor/keyboard corrections
+--------------------------------------------------
+The default headless DOSBox-X and packaged profiles now use fixed 600000 CPU
+cycles with the existing 32 MiB RAM. Override with run.py --cycles when comparing
+slower machines. The authored route remains 35 Hz; music and action timing are
+unchanged. This profile uses a stronger emulated CPU, not a new DOS platform.
+
+Detail filtering uses a 4x4 coverage grid instead of 2x2. Depth is evaluated
+once per covered triangle/pixel, at the same pixel centre as opaque geometry,
+then shared by its coverage samples. This removes repeated depth divisions
+and avoids false occlusion from comparing different points on sloping keys.
+Coverage edge equations advance by additions across the sample grid instead
+of repeating three cross-product calculations at every sample.
+Quarter-pixel strokes retain their energy across all 16 Q4 horizontal phases.
+Sub-quarter-pixel details remain limited by sampling and the 256-colour palette.
+
+CRT glass uses a darker green material; the two brightest reserved CRT entries
+provide medium and bright green phosphor for filtered boot text. Historical
+captured glyphs are unchanged. The front CRT gasket is reduced from 8 mm to
+0.5 mm per side and the bezel return meets its new edge. The horizontal housing
+joint remains present. See benchmarks/smoothing.json for measured cadence and
+headless validation results.
+
+Final measured close-pass cadence (8..46 seconds): mean image hold 32.39 ms
+(previous 35.85), p95 42.80 ms (previous 71.34), maximum 85.61 ms (previous
+99.88). Full flight rendered 1868 frames versus 1573. Full headless playback,
+music/credit synchronization, 76 host tests, protected-mode kernel tests and
+reviewed visual regression frames pass. The 1000000-cycle trial exceeded this
+host's real-time capacity and was rejected in favour of 600000 cycles.

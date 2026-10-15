@@ -13,9 +13,9 @@
   },
   "pcb": {
     "base": 64,
-    "rgb": "#7fb58e",
-    "ambient": 0.21,
-    "diffuse": 0.22
+    "rgb": "#326b40",
+    "ambient": 0.12,
+    "diffuse": 0.2
   },
   "metal": {
     "base": 80,

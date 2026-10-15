@@ -393,8 +393,9 @@ def prepare(root, build, command, presentation=None):
             for k,v in enumerate(color):
                 material[16+(base+j)*3+k]=round(v/255*63*(ramp['ambient']+ramp['diffuse']*j/15))
     if flight.get('machine'):
-        # Glass lighting uses shades 2..13; the last reserved CRT entry is phosphor.
-        material[16+79*3:16+80*3]=bytes([36,58,40])
+        # Glass lighting uses shades 2..13; reserve 14..15 for green phosphor.
+        material[16+78*3:16+79*3]=bytes([6,34,12])
+        material[16+79*3:16+80*3]=bytes([12,63,22])
     # Disable city-specific colouring/sorting names; normal renderer remains.
     material[15]=ord('T')
     (output/'U2E.00M').write_bytes(material)

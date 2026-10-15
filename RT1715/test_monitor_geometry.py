@@ -29,6 +29,11 @@ class MonitorGeometryTests(unittest.TestCase):
             self.assertLessEqual(len(decoded['vertices']),500)
             self.assertLessEqual(len(decoded['faces']),500)
 
+    def test_front_gasket_is_half_a_millimetre(self):
+        glass,gasket=monitor.crt_surround()
+        self.assertAlmostEqual(gasket.extents[0]-glass.extents[0],1)
+        self.assertAlmostEqual(gasket.extents[2]-glass.extents[2],1)
+
     def test_shell_has_rounded_corners_and_source_envelope(self):
         shell=monitor.housing()
         np.testing.assert_allclose(shell.bounds,[[-160,-142,180],[160,192,460]],atol=.01)
