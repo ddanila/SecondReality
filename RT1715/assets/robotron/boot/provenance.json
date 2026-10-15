@@ -1,0 +1,83 @@
+{
+  "description": "Unmodified DAC S550 + TOS/M 1.0 read-only cold boot; foreground masks from actual 640x288 framebuffer. Final cursor separated for blinking. Timing compressed for demo.",
+  "emulator": {
+    "version": "0.8.8",
+    "repository": "https://github.com/ddanila/dac-emulation",
+    "commit": "65ac4213d9377d57916413e6e6be31bc84a39b7b",
+    "abi": 1,
+    "emscripten": "6.0.12",
+    "sha256": {
+      "LICENSE": "5f37b6aa73439398b45f8b972c02bfbd07418c4e00d374adb68695a6edb38e5f",
+      "NOTICE": "6254d78393a11a6317ea65bf2108f4e2b147bb09bebf4770ce82b114dc7c5034",
+      "chips-LICENSE": "0c692ece632a8ec6d2a566c9234fdabda655644e6abc70027da9ff7c35e48634",
+      "dac.js": "b53a916f0ec2417f1d3883c759b9f14b959299f23fe915d4cc3bed868de17d4e",
+      "dac.wasm": "63f68868db4df78dbaa29213a81394e6154fda7fb35ca3554c3dec1c532ee9a9",
+      "demo/cas.bin": "605d3ca65a8561d008d6e45cf0b66cbbc1cd19c9587cb3a5e0409012687cf2ea",
+      "demo/glyphs.bin": "0dbe552cbdb211727f0b91b655f8b3571f9a06f224bd6c2d837b0b6a4b567da0",
+      "demo/juku.bin": "54a89a9bd6a47bd44994e5c4abd4c34490ad2b64ca0c4ad01102cbf0c9ea7b0e",
+      "demo/robotron.bin": "000a3c32a5a90ddcc3e6f891498fc37a08012de00ac8706bce57f256880aca5c",
+      "demo/vjuga.bin": "54a89a9bd6a47bd44994e5c4abd4c34490ad2b64ca0c4ad01102cbf0c9ea7b0e",
+      "i8080-LICENSE": "c924d3588bdec43adb9be0732e37d393f1c054cdebea3e0496c7d237e307680a",
+      "robotron-reference-LICENSE": "7a198aa8879f6c87b7c018f36ffdf428ec30cacd0f81dc001131920aa59a532c",
+      "demo/manifest.json": "fd014596ae2772498aefd52dd34b57b4fb2e961ff2c43b99a6444de543995892"
+    }
+  },
+  "media": {
+    "name": "Robotron S550 / TOS/M 1.0",
+    "source": "https://github.com/usovmv/robotron-1715m-fpga/releases/download/v0.1/Release-v0.1.zip",
+    "archive_sha256": "d3b072a98a90fe80e3d12acab61221ec6a02a31cfbd8ca620096165bb243cb49",
+    "original_td0_sha256": "26b6342ce9e05cb3c94bba28287cb6c7f030a6c3b17ae1db2d9ecec661e0ad9e",
+    "files": [
+      {
+        "file": "s550.bin",
+        "sha256": "37e58472a049e1785c3521ec6b23c2d269d93fa5fede696dc7bd72eabb4af031",
+        "size": 2048,
+        "role": "boot ROM",
+        "conversion": "Unmodified rom/s550.bin"
+      },
+      {
+        "file": "cas.bin",
+        "sha256": "8a085e4b8988c47de9ca05bdd65cfa7657d45b87efb72e3ee6a0bbcbf6bab23b",
+        "size": 256,
+        "role": "CAS PROM",
+        "conversion": "fpga/rtl/287.hex converted to 256 raw bytes using dac-emulation/tools/prepare_robotron_media.py"
+      },
+      {
+        "file": "tosm10.img",
+        "sha256": "f724763d5e48c0f15341e95d7b85f645533dd7dfa270cbce4e44d3025e62b23b",
+        "size": 819200,
+        "role": "TOS/M 1.0 boot disk",
+        "conversion": "tools/robotron_td0_to_raw.c with libdsk; 80 cylinders, 2 heads, sectors 1..5, 1024 bytes; all 800 reads succeeded"
+      },
+      {
+        "file": "s600.bin",
+        "size": 2048,
+        "sha256": "4b54891c02a8ec279e2b8aec03489a961fc8647e08ad2036dcf82d0634bf7273",
+        "source": "https://www.sax.de/~zander/pc1715/eprom/s600.bin",
+        "role": "K7658 reference keyboard firmware; specimen revision unverified"
+      }
+    ],
+    "rights": "Historical third-party media; redistribution licence not established. Excluded from DAC MIT licence.",
+    "specimen": "Reference configuration, not a dump of Danila\u2019s machine."
+  },
+  "samples_million_clocks": {
+    "loader": 12,
+    "system": 38,
+    "startup": 56,
+    "prompt": 100
+  },
+  "foreground": "green channel > 100",
+  "cursor_box": [
+    16,
+    48,
+    24,
+    60
+  ],
+  "assets": {
+    "cursor.png": "ba5a715ca72615e1159c82823bbe47e3c284f39c24a41bce086b796e15a88847",
+    "loader.png": "212e6116ce45346d02b261371924f7ff9ebc67940454d2798fdd566624576018",
+    "prompt.png": "ac0991e18b7f4aee8ac1ce8fa76c4ab6baf1acb7622143c7fc7924db995bdefa",
+    "startup.png": "f8b214d5ae7025b42db85b8e4d8af18fa64900e4c4efa79b25affb6e8e38da48",
+    "system.png": "293a302250ab62931a6ca73db1d0e83f1ca115d982ed10146e426f6f8da06b09"
+  }
+}

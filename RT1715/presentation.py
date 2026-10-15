@@ -46,12 +46,15 @@ def load(path=DEFAULT, source=None):
             raise ValueError('Invalid animated drive or disk withdrawal')
         if not 0<=start<end<=close_start<close_end<machine['ready']<45.5:
             raise ValueError('Disk must seat before lever closure and boot completion')
-        if not .5<=machine.get('font_unit',.95)<=1.5:raise ValueError('Invalid CRT font size')
-        if not machine['boot_lines']:raise ValueError('Boot sequence needs text')
-        for line in machine['boot_lines']:
-            printable([line['text']])
-            if not line['text'].strip() or not close_end<=line['time']<45.5:
-                raise ValueError('Boot text must follow drive closure')
+        if not 5<=machine['latch_lift_mm']<=8:raise ValueError('Lever hub must clear the disk slot')
+        if not machine['boot_frames']:raise ValueError('Boot sequence needs captured screens')
+        from PIL import Image
+        for line in machine['boot_frames']:
+            image=HERE/'assets/robotron/boot'/line['image']
+            with Image.open(image) as im:
+                if im.size!=(640,288) or im.mode!='1':raise ValueError('Use a monochrome 640x288 boot capture')
+            if not close_end<=line['time']<45.5:
+                raise ValueError('Boot screen must follow drive closure')
             if line.get('until',58)<=line['time']:
                 raise ValueError('Boot line expiry must follow its appearance')
     turn=flight.get('turntable')

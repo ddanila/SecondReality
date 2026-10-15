@@ -10,6 +10,7 @@ from source_geometry import chunks
 from monitor_geometry import crt_surround
 
 IDENTITY=(16384,0,0,0,16384,0,0,0,16384)
+BOOT=Path(__file__).resolve().parent/'assets/robotron/boot'
 
 
 def ease(time,interval):
@@ -17,25 +18,12 @@ def ease(time,interval):
     return u*u*u*(10-15*u+6*u*u)
 
 
-def font_bitmap(text):
-    # Reuse the demo repository's captured DOS ROM font, not a host font.
-    path=Path(__file__).resolve().parent.parent/'GRAB/SYSFONT/FONT8X14.INC'
-    rows=[[int(v)&255 for v in line.split(';')[0][3:].strip().split(',')]
-          for line in path.read_text().splitlines() if line.startswith('db ')]
-    im=Image.new('1',(max(1,len(text)*8),14))
-    for i,char in enumerate(text):
-        if not 32<=ord(char)<127:raise ValueError('Boot text must be printable ASCII')
-        for y,value in enumerate(rows[ord(char)][:14]):
-            for x in range(8):im.putpixel((i*8+x,y),bool(value & (128>>x)))
-    return im
-
-
-def text_mesh(text,x,z,glass,unit=.95):
+def bitmap_mesh(bitmap,x,z,glass,pixel_size):
     vertices=[];faces=[]
-    for x0,y0,x1,y1 in rectangles(font_bitmap(text)):
+    for x0,y0,x1,y1 in rectangles(bitmap):
         index=len(vertices)
         for a,b in [(x0,y1),(x1,y1),(x1,y0),(x0,y0)]:
-            px=x+a*unit;pz=z-b*unit
+            px=x+a*pixel_size[0];pz=z-b*pixel_size[1]
             distance=hits(glass,np.array([px,-200.,pz]),np.array([0.,1.,0.]))
             if not len(distance):raise ValueError('Boot text extends outside CRT')
             vertices.append((px,-200+min(distance)-1.0,pz))
@@ -50,8 +38,11 @@ def objects(load,records,data,settings):
         # Retain the jacket openings, medium and label; only subpixel welds.
         for i,m in enumerate(chunks(source,precision=(.1,.1,.02))):
             yield f'disk-{part}-{i}',m,color,'machine-disk'
-    for line,entry in enumerate(settings['boot_lines']):
-        source=text_mesh(entry['text'],entry.get('x',-99),entry['z'],glass,settings.get('font_unit',.95))
+    for line,entry in enumerate(settings['boot_frames']):
+        screen=settings['screen']
+        with Image.open(BOOT/entry['image']) as bitmap:
+            source=bitmap_mesh(bitmap,screen['x'],screen['z'],glass,
+                               (screen['width']/640,screen['height']/288))
         for i,m in enumerate(chunks(source,faces_per_chunk=80,precision=(.001,.001,.001))):
             yield f'boot-{line}-{i}',m,'pcb','machine-text'
     # Lit overlay over the existing source drive LED; the unlit housing stays.
@@ -66,9 +57,12 @@ def pose(label,base,time,settings,data):
         result[1]-=round((1-ease(time,settings['insert']))*settings['withdraw_mm']*64)
     if label.startswith(f"src-drive-latch-{settings['drive']}-"):
         pivot=np.array(next(d for d in data['driveMotion'] if d['unit']==settings['drive'])['latchPivot'])*64
-        angle=math.pi/2*ease(time,settings['close']);c,s=math.cos(angle),math.sin(angle)
+        # Source hub overlaps the insertion plane. Raise the complete lever
+        # above the slot, then swing its tip from +Z (open) to -Z (closed).
+        lift=np.array([0,0,settings['latch_lift_mm']*64])
+        angle=math.pi*(ease(time,settings['close'])-.5);c,s=math.cos(angle),math.sin(angle)
         rotation=np.array([[c,0,s],[0,1,0],[-s,0,c]])
-        result[:3]=np.rint(pivot-rotation@pivot).astype(int)
+        result[:3]=np.rint(pivot+lift-rotation@pivot).astype(int)
         result[3:]=np.rint(rotation.flatten()*16384).astype(int)
     return tuple(result)
 
@@ -78,7 +72,7 @@ def visible(label,time,settings):
     if label=='boot-led':
         return settings['close'][1]<=time<settings['ready'] and int(time*6)%3!=2
     if label.startswith('boot-'):
-        line=int(label.split('-')[1]);entry=settings['boot_lines'][line]
+        line=int(label.split('-')[1]);entry=settings['boot_frames'][line]
         if time<entry['time'] or time>=entry.get('until',1e9):return False
         if entry.get('blink'):return int((time-entry['time'])*2)%2==0
     return True

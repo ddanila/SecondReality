@@ -150,10 +150,12 @@ dark surface marks. The 2 mm horizontal housing gap remains actual geometry.
 
 Disk/boot animation: flight.json machine.drive selects the source drive unit;
 insert/close are [start,end] times on the authored music-clock timeline.
-withdraw_mm is the initially exposed disk travel. The source driveMotion
-latchPivot defines the lever axis; keep insertion complete before closing.
-boot_lines contains printable ASCII text, time, z, optional x/until/blink.
-font_unit is millimetres per ROM-font pixel. The builder projects text onto the
-rendered glass, rejects lines outside it, and encodes timed visibility. Green
-phosphor entry 79 is reserved only when machine animation is enabled. These
-are presentation messages, not a claim about original firmware startup text.
+withdraw_mm is the initially exposed disk travel. latch_lift_mm raises the
+lever pivot above the insertion plane; keep at least 5 mm clearance adjustment
+and complete insertion before closing. The handle starts upright and turns down.
+boot_frames contains captured monochrome 640x288 image names from boot/, time,
+optional until/blink. screen defines the active CRT rectangle in millimetres.
+Keep its 80-column terminal scale; each pixel is projected onto the rendered
+curved glass. Green phosphor entry 79 is reserved for these masks. Regenerate
+with RT1715/capture_boot.py from DAC's read-only media, recording provenance.
+The messages/font/layout are real TOS/M output; the stage timings are authored.

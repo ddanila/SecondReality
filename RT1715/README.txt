@@ -1037,33 +1037,45 @@ only CRT profile parameters are read automatically from browser/model.json.
 Update those profiles if the source enclosure changes. Source comparisons,
 headless playback and timing evidence are in benchmarks/monitor-detail.json.
 
-Animated disk loading and CRT startup
-------------------------------------
-flight.json's machine section controls an authored mechanical/startup vignette:
-left drive (unit 0), insertion 24.0-26.0 s, lever closure 26.25-27.25 s,
-startup lines from 32 s, ready at 39 s and blinking A> cursor from 40 s.
-Times use the same 35 Hz animation/music clock as the flight. Skipped render
-frames still advance the entire machine state, so slower CPUs do not delay
-loading relative to the music or drone. No guest build or boot process runs.
+Animated disk loading and captured TOS/M startup
+------------------------------------------------
+flight.json's machine section controls the left drive (unit 0): insertion
+24.0-26.0 s, lever closure 26.25-27.25 s, boot screens from 30 s and A> prompt
+at 39 s. These times use the flight's 35 Hz music clock. Skipped render frames
+advance the complete state; slower CPUs do not delay the sequence.
 
-machine_actions.py preserves the source floppy jacket openings, magnetic medium
-and label. The disk starts 90 mm withdrawn, slides into the existing slot, and
-is hidden only after the lever shuts. The left lever rotates rigidly about the
-manifest's latchPivot; the right lever stays unchanged. The source LED gets a
-lit overlay during loading. Source disk pieces are refreshed from SCAD locally.
-The camera and original drone choreography are unchanged; loading clears the
-drone's conservative bounding box throughout its pass.
+machine_actions.py preserves the source floppy jacket openings, medium and
+label. The disk starts 90 mm withdrawn and disappears only after closure.
+The source hub at Z=92 intersects the moving jacket's Z=89..90.3 plane. The
+DOS adaptation raises the complete left lever 6 mm above its source pivot:
+the 6.5 mm hub radius then clears the label by 1.2 mm. The handle starts
+upright (+Z), remains there until seating, and rotates through +X to point
+vertically down (-Z). At closure the seated disk is behind the lever in Y.
+The right lever and sibling source repository remain unchanged. This small
+mechanical adjustment is for animation clearance, not a measured correction
+to the source computer. The drive LED flickers during the authored load.
 
-CRT text follows the actual curved DOS glass surface and uses the repository's
-GRAB/SYSFONT/FONT8X14.INC ROM-font capture. Green phosphor uses reserved palette
-entry 79; glass shading stays in entries 66..77 with a spare dark guard entry 78.
-The original drone's protected palette is unchanged. All text/LED reveals,
-cursor blinks and part poses are baked on the host into U2E.0AB and U2E.VIS.
-They continue to follow the assembled machine during the final rotation.
+assets/robotron/boot contains actual 640x288 framebuffer foreground masks
+captured by booting DAC's S550 ROM and read-only TOS/M 1.0 image. The sequence
+shows the SCP 3.0 loader, TOS/M system banner, automatic startup command and
+final FKEY output with A> prompt. Glyphs and placement are captured pixels,
+not replacement DOS fonts or invented messages. The final block cursor is
+separated from its capture and blinked. Screens replace each other; pauses
+are compressed to fit the existing music, not real-time boot emulation.
+This represents the bundled DAC reference configuration, not a dump of the
+physical specimen. Exact emulator/media identities and mask hashes are in
+boot/provenance.json. No firmware or disk image is copied into this repo.
 
-This is a stylized startup animation, not a verified reproduction of the
-installed firmware or OS boot messages. It displays the established 256 KB
-configuration without claiming a particular ROM/OS version. Edit the ASCII
-lines and their times/positions in flight.json. Keep the disk seated before
-closing the lever and the first boot line after closure; the builder validates
-that ordering and checks text against the CRT surface. See benchmarks/disk-boot.json.
+The full 80-column, 24-row display fits a 224x168 mm active area on the curved
+CRT. A character cell is 2.8x7 mm, replacing the oversized 10.8x18.9 mm text.
+Green phosphor uses palette entry 79; glass remains in 66..77 with dark guard
+entry 78. Text, cursor, LED and lever poses follow the final assembly rotation.
+Original camera/drone choreography, music and credit timing are unchanged.
+
+To refresh the captured screens on the host (optional; normal builds use the
+checked-in assets):
+  RT1715/build/host-python/bin/python RT1715/capture_boot.py --dac ../dac
+The tool checks DAC media/emulator hashes, mounts the disk read-only and runs
+100 million emulated clocks using DAC's WASM core under Node. It modifies only
+the requested output folder. See benchmarks/disk-boot-corrections.json for
+clearance, capture reproducibility and DOS playback verification.

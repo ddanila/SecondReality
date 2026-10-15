@@ -1,0 +1,445 @@
+{
+  "machine": {
+    "drive": 0,
+    "withdraw_mm": 90,
+    "insert": [
+      24,
+      26
+    ],
+    "close": [
+      26.25,
+      27.25
+    ],
+    "ready": 39,
+    "latch_lift_mm": 6,
+    "screen": {
+      "x": -112,
+      "z": 408,
+      "width": 224,
+      "height": 168
+    },
+    "boot_frames": [
+      {
+        "time": 30,
+        "until": 34,
+        "image": "loader.png"
+      },
+      {
+        "time": 34,
+        "until": 36.5,
+        "image": "system.png"
+      },
+      {
+        "time": 36.5,
+        "until": 39,
+        "image": "startup.png"
+      },
+      {
+        "time": 39,
+        "image": "prompt.png"
+      },
+      {
+        "time": 39,
+        "image": "cursor.png",
+        "blink": true
+      }
+    ]
+  },
+  "boot_source": "assets/robotron/boot/provenance.json",
+  "validation": {
+    "sampled_poses": 1001,
+    "minimum_separating_axis_gap_mm": 1.1999969482421875,
+    "recaptured_masks_identical": {
+      "loader.png": true,
+      "cursor.png": true,
+      "prompt.png": true,
+      "system.png": true,
+      "startup.png": true
+    },
+    "unchanged_camera_and_drone_poses": 2031,
+    "original_music_and_drone_mesh": "byte-exact",
+    "host_tests": 68,
+    "route_audit": {
+      "archive": "20261015-174730-boot-corrections",
+      "poses": 2031,
+      "result": "PASS"
+    },
+    "visual_review": [
+      "disk clears upright lever during insertion",
+      "lever closes after disk is fully inside",
+      "small 80-column captured TOS/M glyphs on curved CRT",
+      "captured FKEY output and A> prompt"
+    ],
+    "drone_lever_clearance": "No AABB overlap at 401 samples across 24..28 seconds"
+  },
+  "playbacks": {
+    "normal": {
+      "capture": "20261015-174730-059304",
+      "result": {
+        "dos_exit": "PASS",
+        "headless": true,
+        "wall_seconds": 175.27,
+        "cpu_cycles": "fixed 300000",
+        "color_backend": "ram",
+        "renderer_sha256": "41d0c1c5f4a2be738a5f1f94d56ebe32e01303e7f843d3e9df3b328b45db9ad0",
+        "scene_sha256": "1bb7c54c7d225ab2665c48e160a18b85d6ec773c6bb4e790703d323cb756306b",
+        "video_files": [
+          "rt1715_000.avi",
+          "rt1715_001.avi",
+          "rt1715_002.avi"
+        ],
+        "audio": [
+          {
+            "file": "rt1715_000.wav",
+            "seconds": 174.858,
+            "nonzero_samples": true
+          }
+        ],
+        "renderer_mode": "protected",
+        "render_counters": {
+          "frames": 1826,
+          "vertices": 11176913,
+          "triangles": 4054513,
+          "spans": 45590490,
+          "clipped": 241221,
+          "ems_maps": 0
+        },
+        "music_cues": {
+          "swoosh": [
+            25,
+            6
+          ],
+          "overview": [
+            24,
+            54
+          ],
+          "flight_end": [
+            26,
+            57
+          ],
+          "credits_start": [
+            28,
+            0
+          ],
+          "credits_end": [
+            43,
+            29
+          ]
+        },
+        "credit_schedule": {
+          "cards": 21,
+          "positions": [
+            [
+              28,
+              0
+            ],
+            [
+              28,
+              40
+            ],
+            [
+              29,
+              16
+            ],
+            [
+              29,
+              56
+            ],
+            [
+              30,
+              40
+            ],
+            [
+              31,
+              16
+            ],
+            [
+              31,
+              56
+            ],
+            [
+              32,
+              32
+            ],
+            [
+              33,
+              8
+            ],
+            [
+              33,
+              48
+            ],
+            [
+              34,
+              32
+            ],
+            [
+              35,
+              8
+            ],
+            [
+              35,
+              48
+            ],
+            [
+              36,
+              24
+            ],
+            [
+              37,
+              0
+            ],
+            [
+              38,
+              8
+            ],
+            [
+              39,
+              24
+            ],
+            [
+              41,
+              0
+            ],
+            [
+              41,
+              40
+            ],
+            [
+              42,
+              16
+            ],
+            [
+              42,
+              56
+            ]
+          ],
+          "entry_error_cs": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "end": [
+            43,
+            29
+          ]
+        }
+      },
+      "cadence": {
+        "window_seconds": [
+          8,
+          46
+        ],
+        "cpu_cycles": "fixed 300000",
+        "captured_frames": 2663,
+        "unique_image_runs": 1140,
+        "mean_image_hold_ms": 33.33,
+        "p95_image_hold_ms": 57.07,
+        "max_image_hold_ms": 85.61,
+        "holds_over_100_ms": 0
+      }
+    },
+    "slow": {
+      "capture": "20261015-174926-371336",
+      "result": {
+        "dos_exit": "PASS",
+        "headless": true,
+        "wall_seconds": 175.07,
+        "cpu_cycles": "fixed 100000",
+        "color_backend": "ram",
+        "renderer_sha256": "41d0c1c5f4a2be738a5f1f94d56ebe32e01303e7f843d3e9df3b328b45db9ad0",
+        "scene_sha256": "1bb7c54c7d225ab2665c48e160a18b85d6ec773c6bb4e790703d323cb756306b",
+        "video_files": [
+          "rt1715_000.avi",
+          "rt1715_001.avi",
+          "rt1715_002.avi"
+        ],
+        "audio": [
+          {
+            "file": "rt1715_000.wav",
+            "seconds": 174.858,
+            "nonzero_samples": true
+          }
+        ],
+        "renderer_mode": "protected",
+        "render_counters": {
+          "frames": 840,
+          "vertices": 4540441,
+          "triangles": 1607446,
+          "spans": 19868961,
+          "clipped": 112098,
+          "ems_maps": 0
+        },
+        "music_cues": {
+          "swoosh": [
+            25,
+            7
+          ],
+          "overview": [
+            24,
+            55
+          ],
+          "flight_end": [
+            26,
+            58
+          ],
+          "credits_start": [
+            28,
+            0
+          ],
+          "credits_end": [
+            43,
+            29
+          ]
+        },
+        "credit_schedule": {
+          "cards": 21,
+          "positions": [
+            [
+              28,
+              0
+            ],
+            [
+              28,
+              40
+            ],
+            [
+              29,
+              16
+            ],
+            [
+              29,
+              56
+            ],
+            [
+              30,
+              40
+            ],
+            [
+              31,
+              16
+            ],
+            [
+              31,
+              56
+            ],
+            [
+              32,
+              32
+            ],
+            [
+              33,
+              8
+            ],
+            [
+              33,
+              48
+            ],
+            [
+              34,
+              32
+            ],
+            [
+              35,
+              8
+            ],
+            [
+              35,
+              48
+            ],
+            [
+              36,
+              24
+            ],
+            [
+              37,
+              0
+            ],
+            [
+              38,
+              8
+            ],
+            [
+              39,
+              24
+            ],
+            [
+              41,
+              0
+            ],
+            [
+              41,
+              40
+            ],
+            [
+              42,
+              16
+            ],
+            [
+              42,
+              56
+            ]
+          ],
+          "entry_error_cs": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "end": [
+            43,
+            29
+          ]
+        }
+      },
+      "cadence": {
+        "window_seconds": [
+          8,
+          46
+        ],
+        "cpu_cycles": "fixed 100000",
+        "captured_frames": 2663,
+        "unique_image_runs": 582,
+        "mean_image_hold_ms": 65.29,
+        "p95_image_hold_ms": 128.41,
+        "max_image_hold_ms": 156.95,
+        "holds_over_100_ms": 64
+      }
+    }
+  }
+}
