@@ -94,3 +94,19 @@ class DetailTests(unittest.TestCase):
     def test_clipping_and_frame_reset(self):
         self.draw(-160,16);self.lib.rt_depth_flush();self.assertEqual(self.lib.rt_color_at(0,15),63)
         self.setUp();self.lib.rt_depth_flush();self.assertEqual(self.lib.rt_color_at(0,15),0)
+
+    def test_baked_masks_match_live_multicolour_coverage(self):
+        import random,struct
+        rng=random.Random(1715)
+        self.lib.rt_detail_masks.argtypes=[ctypes.c_char_p,ctypes.c_uint]
+        for trial in range(100):
+            self.setUp();groups=[]
+            for sample in range(16):
+                x=160+(sample%4)*4;y=240+(sample//4)*4
+                z=rng.choice([800,1100,1500]);col=rng.randrange(64);alpha=rng.choice([0,64,128,192,255])
+                self.lib.rt_detail_opacity(alpha)
+                self.lib.rt_detail_raster((Vertex*4)(Vertex(x,y,z,col),Vertex(x+4,y,z,col),Vertex(x+4,y+4,z,col),Vertex(x,y+4,z,col)),4)
+                if alpha:groups.append(struct.pack('<HHHBB',15*320+10,1<<sample,z+2,col,alpha))
+            self.lib.rt_depth_flush();expected=self.lib.rt_color_at(10,15)
+            self.setUp();self.lib.rt_detail_masks(b''.join(groups),len(groups))
+            self.assertEqual(self.lib.rt_color_at(10,15),expected,trial)

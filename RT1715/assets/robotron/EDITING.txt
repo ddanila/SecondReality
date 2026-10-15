@@ -170,3 +170,14 @@ or periodic flicker is added. Regenerate masks, activity and provenance together
 After intentional visual changes, inspect the full headless preview and the
 visual_regression.py contact sheet before replacing its baseline with --accept.
 The regular comparison must pass before package_release.py creates a ZIP.
+
+Drawing cache
+-------------
+Normal builds now create U2E.BKC on the host: filtered lettering masks,
+contributing face lists and projected geometry for the authored route. The
+cache is about 53 MB on disk and streams into about 221 KiB of extra DOS RAM.
+It is regenerated after route, model or renderer-math changes; do not hand-edit
+it. The runtime falls back to live rendering if it is missing or invalid.
+Host generation additionally requires a native C compiler and liblz4 (Homebrew
+package lz4). No new guest tools are needed. The default DOSBox-X profile is
+now fixed 300000 cycles, dynamic 486, 32 MiB RAM.

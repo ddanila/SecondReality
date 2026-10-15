@@ -9,6 +9,12 @@
 #endif
 #include "depth.h"
 #include "lighting.h"
+#if defined(RT_PM) && !defined(RT_BAKE)
+#include "baked.h"
+#endif
+#ifdef RT_BAKE
+void rt_bake_face(unsigned);
+#endif
 static vlist vertices[500];
 static pvlist projected[500];
 static nlist normals[500];
@@ -35,6 +41,9 @@ static void polygon(object *o,rt_face_word *face,int decal) {
     long d,num;
     int filtered=(decal || detail) && rt_detail_enabled();
     int readable=drone?2:(rounded_key && face[1]==32?1:0);
+#if defined(RT_PM) && !defined(RT_BAKE)
+    if(filtered && rt_baked_active && rt_use_masks)return;
+#endif
     if(filtered) rt_detail_opacity(rounded_key?key_opacity:(boot?boot_opacity:255));
     if(n>8) exit(3);
     flat_color=face[1];
@@ -145,6 +154,9 @@ void rt_queue(object *o) {
     rt_light_begin();
     n=o->pl[0][0]-3;
     for(i=key && !coarse?coarse_faces:0;i<(coarse?coarse_faces:n);i++) {
+#if defined(RT_PM) && !defined(RT_BAKE)
+        if(!rt_baked_face(o->cache_id,i))continue;
+#endif
         offset=o->pl[0][i+2];face=(rt_face_word *)(o->pd+offset);
         clip=31;
         for(j=0;j<(face[0]&255);j++) clip&=projected[face[j+3]].vf;
@@ -152,6 +164,9 @@ void rt_queue(object *o) {
         v=&vertices[face[3]];normal=&normals[face[2]];
         facing=(v->x/16)*normal->x+(v->y/16)*normal->y+(v->z/16)*normal->z;
         if(!(face[0]&F_2SIDE) && facing>=0) continue;
+#ifdef RT_BAKE
+        rt_bake_face(i);
+#endif
         polygon(o,face,ink || (key && (face[1]==96 || (rounded_key && face[1]==144))));
     }
 }

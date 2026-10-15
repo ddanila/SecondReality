@@ -130,3 +130,61 @@ Headless DOSBox-X results establish behavior and relative emulated timings;
 they do not establish the same cache-sensitive speedups on physical hardware.
 Measured results and the retained/default decision are in
 benchmarks/later-techniques.json and the README checkpoint.
+
+Native host drawing bake (2026-10-15)
+-----------------------------------
+The fixed route now permits substantially more work to move off the DOS CPU.
+bake.py compiles bake_host.c with the shared painter and portable depth renderer
+using the host C compiler. It evaluates all 2031 encoded poses, including the
+drone, disk, lever, boot screens, glow and final camera return. The host never
+runs a guest compiler. liblz4 is a host build dependency (Homebrew: lz4;
+Debian-family hosts: liblz4-dev). DOS uses our bounded scalar block decoder.
+
+Three independently selectable stages are retained:
+  masks 1      Replay host-filtered 4x4 coverage masks instead of rasterizing
+               thousands of tiny lettering triangles. Mask groups retain
+               per-sample winners, depth, colour and opacity. DOS resolves
+               depth and blends against its freshly rendered background.
+  faces 1      Use per-pose face sets from final opaque/sample ownership.
+               Fully hidden faces are removed, not merely off-screen objects.
+  projection 1 Replay visible projected/shaded polygons, still rasterizing
+               their spans and depth on DOS. Requires masks 1; otherwise the
+               live geometry path is used. This is not cached frame video.
+Defaults enable all three. Setting all three to zero selects the live reference
+renderer. They complement the existing object-level U2E.VIS cache.
+
+U2E.BKC contains separately LZ4-compressed blocks for each pose. The current
+route uses 55,066,417 bytes on disk, with 226,355 extra working bytes in DOS.
+It streams one block at a time: the 32 MiB emulator profile is unchanged.
+The six-pose benchmark deliberately reloads, decompresses and validates a block
+on every measured render; repeated-pose reuse does not hide that cost.
+Physical disk performance may differ from DOSBox-X's host-backed file system.
+
+The header fingerprints scene/animation inputs and the host/render math source.
+Changing these invalidates the cache. Each block is bounds-checked and hashed;
+missing, stale, malformed or corrupt data falls back to live rendering before
+submitting any geometry. Main builds bake the cache automatically. Standalone
+pm_renderer.py rebuilds a stale/missing cache, and release packaging includes it.
+Optional-file attribute checks retain compatibility with the resident loader.
+
+A broader mesh-LOD experiment collapses subpixel interior edges on distant
+monitor and drive meshes, locking open boundaries. It saves only 3.6/4.2 percent
+of retained polygons in the two overview samples and changes 219/218 pixels.
+It is NOT enabled or emitted into the default cache: the exact visibility and
+projection gains are substantially larger, without risking monitor seams or
+other silhouette details. Reproduce the rejected candidate on the host with:
+  python3 RT1715/bake.py --poses 420 980 1840 2660 3200 3750 --lod-experiment
+This writes build/baked/lod-trial.json without replacing U2E.BKC.
+
+Validation commands:
+  python3 RT1715/benchmark.py --label live --samples 3 --options 'masks 0 faces 0 projection 0'
+  python3 RT1715/benchmark.py --label masks --options 'masks 1 faces 0 projection 0'
+  python3 RT1715/benchmark.py --label faces --options 'masks 1 faces 1 projection 0'
+  python3 RT1715/benchmark.py --label projected --samples 3
+  python3 RT1715/benchmark.py --label projected-route --cache-audit
+  python3 RT1715/verify_baked.py --audit <projected-route-output-directory>
+The last command compares all DOS pose hashes with the native bake, checks the
+1963 existing motion-reference images, and tests missing/stale/corrupt cache
+fallback in headless DOSBox-X. Normal visual references are not re-accepted to
+conceal image changes. Host tests exercise alpha/depth/multicolour coverage,
+LZ4 overlap and malformed blocks, and invalid cache layouts with valid checksums.

@@ -1,0 +1,377 @@
+{
+  "baseline_commit": "7bc6cb7",
+  "retained": [
+    "native-host filtered coverage masks",
+    "per-pose contributing face lists",
+    "projected/shaded visible polygon replay"
+  ],
+  "rejected": {
+    "broader_mesh_lod": "3.6/4.2 percent fewer overview polygons, but 219/218 changed pixels; no quality tradeoff retained",
+    "trial": [
+      {
+        "frame": 420,
+        "color": "e5474708",
+        "ppm_sha256": "bb87c87568d2825676f8b46440db8d53fc180c297b5a507a929e1a8792770e13",
+        "submitted": 4653,
+        "retained": 1122,
+        "mask_groups": 2343,
+        "original_retained": 1122,
+        "changed_pixels": 0,
+        "raw_bytes": 53380,
+        "bytes": 42609
+      },
+      {
+        "frame": 980,
+        "color": "5dabad83",
+        "ppm_sha256": "23012c9bc69922d33ff099c2534837639f42faf53efecda3f9e7a801c92c4a22",
+        "submitted": 2613,
+        "retained": 1687,
+        "mask_groups": 1660,
+        "original_retained": 1687,
+        "changed_pixels": 0,
+        "raw_bytes": 64216,
+        "bytes": 47947
+      },
+      {
+        "frame": 1840,
+        "color": "6cedae7c",
+        "ppm_sha256": "cb2b336d0615bc025aa6f65551c6eb3a0ba9b77de82f7d7e4236b0efc92f7a32",
+        "submitted": 1692,
+        "retained": 444,
+        "mask_groups": 446,
+        "original_retained": 444,
+        "changed_pixels": 0,
+        "raw_bytes": 18473,
+        "bytes": 14189
+      },
+      {
+        "frame": 2660,
+        "color": "4b2c19c3",
+        "ppm_sha256": "f037d18250b13fd5feb880b27fa69f50c4f93c785e19345475287057ba861e9c",
+        "submitted": 672,
+        "retained": 462,
+        "mask_groups": 917,
+        "original_retained": 462,
+        "changed_pixels": 0,
+        "raw_bytes": 22999,
+        "bytes": 17185
+      },
+      {
+        "frame": 3200,
+        "color": "e16ce4bf",
+        "ppm_sha256": "8b783733b986d656646ea90d05f572110b5d44d839688564074ce8022e1ab820",
+        "submitted": 3953,
+        "retained": 1408,
+        "mask_groups": 373,
+        "original_retained": 1460,
+        "changed_pixels": 219,
+        "raw_bytes": 48563,
+        "bytes": 32543
+      },
+      {
+        "frame": 3750,
+        "color": "ca2341c9",
+        "ppm_sha256": "d3c634c6753c8514e969e8393ecc6608317ea6a39d919d5d88ba0f1df847f455",
+        "submitted": 1782,
+        "retained": 707,
+        "mask_groups": 588,
+        "original_retained": 738,
+        "changed_pixels": 218,
+        "raw_bytes": 27120,
+        "bytes": 19032
+      }
+    ]
+  },
+  "host_tests": 92,
+  "native_kernel_checks": [
+    "PASS 2000 signed 64-bit intermediate multiply/divides",
+    "PASS 2000 wide dot products, negative shifts and overflow truncation",
+    "PASS 800 spans: flat/smooth, decals, empty spans, wrap and guards",
+    "PASS transforms, 128 matrix/normal cases and single-pass full-width projection",
+    "PASS 40000 fused vertices versus separate pipeline; 2000 conservative bounds",
+    "PASS 258 uploads, alignment, byte tails and guards",
+    "PASS 160 complete raster images across C, assembly and eight experimental combinations",
+    "PASS protected-mode subpixel coverage and deferred occlusion",
+    "PASS four VGA pages, repeated clears, viewport changes, RAM/direct and 8 direct raster images",
+    "PASS protected-mode kernels"
+  ],
+  "cache": {
+    "file_bytes": 55066417,
+    "extra_working_bytes": 226355,
+    "dos_memory_mib": 32,
+    "sha256": "53d536acbc5fc40c4e045977c96402525c7e77b6fb350b1ccee8855affccb925",
+    "math_signature": "2645dba2",
+    "scene_signature": "4b627b0a",
+    "host_generation": "native C painter/raster reference and host liblz4",
+    "disk_io": "stream one compressed pose; benchmark includes block read, decode and validation on every render"
+  },
+  "validation": {
+    "dos_poses": 2031,
+    "original_reference_poses": 1963,
+    "different_poses": 0,
+    "fallback": {
+      "missing": "PASS: live rendering matches original pixels",
+      "stale": "PASS: live rendering matches original pixels",
+      "corrupt": "PASS: live rendering matches original pixels"
+    },
+    "fixed_visuals": 14,
+    "fixed_visuals_pass": true,
+    "original_visual_references_updated": false,
+    "audit_hash_log_sha256": "37d79198bf4a1e6d2d675182598cc8acbb9757223e8748783b6680525a5b9515",
+    "fallback_report": "build/bake-verification/20261015-231304"
+  },
+  "benchmark": {
+    "cpu_cycles": "fixed 300000",
+    "aggregation": "equal render count for each of six fixed poses",
+    "aggregate_time_reduction_percent": 54.46,
+    "samples": {
+      "baseline": 3,
+      "masks": 3,
+      "masks_and_faces": 1,
+      "projected": 3
+    },
+    "rows": [
+      {
+        "frame": 420,
+        "image_hash": "e5474708",
+        "baseline_ms": 77.817,
+        "masks_ms": 55.383,
+        "masks_and_faces_ms": 32.033,
+        "projected_ms": 23.8,
+        "time_change_percent": -69.42
+      },
+      {
+        "frame": 980,
+        "image_hash": "5dabad83",
+        "baseline_ms": 44.85,
+        "masks_ms": 37.533,
+        "masks_and_faces_ms": 31.583,
+        "projected_ms": 25.633,
+        "time_change_percent": -42.85
+      },
+      {
+        "frame": 1840,
+        "image_hash": "6cedae7c",
+        "baseline_ms": 22.883,
+        "masks_ms": 22.428,
+        "masks_and_faces_ms": 16.017,
+        "projected_ms": 11.9,
+        "time_change_percent": -48.0
+      },
+      {
+        "frame": 2660,
+        "image_hash": "4b2c19c3",
+        "baseline_ms": 28.383,
+        "masks_ms": 21.511,
+        "masks_and_faces_ms": 17.85,
+        "projected_ms": 14.642,
+        "time_change_percent": -48.41
+      },
+      {
+        "frame": 3200,
+        "image_hash": "e16ce4bf",
+        "baseline_ms": 34.333,
+        "masks_ms": 33.411,
+        "masks_and_faces_ms": 26.092,
+        "projected_ms": 18.308,
+        "time_change_percent": -46.67
+      },
+      {
+        "frame": 3750,
+        "image_hash": "ca2341c9",
+        "baseline_ms": 27.917,
+        "masks_ms": 22.428,
+        "masks_and_faces_ms": 17.392,
+        "projected_ms": 13.275,
+        "time_change_percent": -52.45
+      }
+    ],
+    "runs": {
+      "baseline": "build/pose-benchmarks/20261015-225130-substantial-baseline",
+      "masks": "build/pose-benchmarks/20261015-230021-masks",
+      "masks_and_faces": "build/pose-benchmarks/20261015-230338-masks-faces",
+      "projected": "build/pose-benchmarks/20261015-231755-projected-final"
+    },
+    "mask_comparison_note": "Original comparison rejected the new derived BKC as a scene edit. Recovered from three complete PASS sample logs after independently verifying the original scene digest and all six image hashes."
+  },
+  "playback": {
+    "capture": "20261015-231353-029110",
+    "dos_exit": "PASS",
+    "cpu_cycles": "fixed 300000",
+    "renderer_sha256": "318f4a3a52b890dbb9e57bb075e48154fb449c6187f6ad00deeedf757617262b",
+    "scene_sha256": "17df511abb2414ee1091bbe839c313656a0d6d7f6e9f2f4f182eb456056220ce",
+    "render_counters": {
+      "frames": 1972,
+      "vertices": 0,
+      "triangles": 2366730,
+      "spans": 36269875,
+      "clipped": 0,
+      "ems_maps": 0
+    },
+    "music_cues": {
+      "swoosh": [
+        25,
+        6
+      ],
+      "overview": [
+        24,
+        54
+      ],
+      "flight_end": [
+        26,
+        57
+      ],
+      "credits_start": [
+        28,
+        0
+      ],
+      "credits_end": [
+        43,
+        29
+      ]
+    },
+    "credit_schedule": {
+      "cards": 21,
+      "positions": [
+        [
+          28,
+          0
+        ],
+        [
+          28,
+          40
+        ],
+        [
+          29,
+          16
+        ],
+        [
+          29,
+          56
+        ],
+        [
+          30,
+          40
+        ],
+        [
+          31,
+          16
+        ],
+        [
+          31,
+          56
+        ],
+        [
+          32,
+          32
+        ],
+        [
+          33,
+          8
+        ],
+        [
+          33,
+          48
+        ],
+        [
+          34,
+          32
+        ],
+        [
+          35,
+          8
+        ],
+        [
+          35,
+          48
+        ],
+        [
+          36,
+          24
+        ],
+        [
+          37,
+          0
+        ],
+        [
+          38,
+          8
+        ],
+        [
+          39,
+          24
+        ],
+        [
+          41,
+          0
+        ],
+        [
+          41,
+          40
+        ],
+        [
+          42,
+          16
+        ],
+        [
+          42,
+          56
+        ]
+      ],
+      "entry_error_cs": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "end": [
+        43,
+        29
+      ]
+    }
+  },
+  "cadence": {
+    "window_seconds": [
+      8,
+      46
+    ],
+    "cpu_cycles": "fixed 300000",
+    "captured_frames": 2663,
+    "unique_image_runs": 1224,
+    "mean_image_hold_ms": 31.04,
+    "p95_image_hold_ms": 42.8,
+    "max_image_hold_ms": 57.07,
+    "holds_over_100_ms": 0
+  },
+  "previous_cadence": {
+    "window_seconds": [
+      8,
+      46
+    ],
+    "cpu_cycles": "fixed 600000",
+    "captured_frames": 2663,
+    "unique_image_runs": 1165,
+    "mean_image_hold_ms": 32.61,
+    "p95_image_hold_ms": 57.07,
+    "max_image_hold_ms": 71.34,
+    "holds_over_100_ms": 0
+  },
+  "default_cycles": 300000
+}

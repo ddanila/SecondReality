@@ -4,6 +4,10 @@
 #include <string.h>
 #include "depth.h"
 #ifdef RT_HOST_TEST
+#ifdef RT_BAKE
+unsigned rt_bake_tag;
+static unsigned bake_owners[64000];
+#endif
 static unsigned short test_depth[64000];
 static unsigned char test_color[64000];
 unsigned rt_depth_at(int x,int y) { return test_depth[y*320+x]; }
@@ -129,6 +133,9 @@ void rt_depth_begin(void) {
     if(rt_visible_spans) memset(owners,0,64000*sizeof(*owners));
 #endif
 #ifdef RT_HOST_TEST
+#ifdef RT_BAKE
+    memset(bake_owners,0,sizeof(bake_owners));
+#endif
     memset(test_depth,0,sizeof(test_depth));memset(test_color,255,sizeof(test_color));
 #elif defined(RT_PM)
     if(old_top!=clip_top || old_bottom!=clip_bottom) {
@@ -236,6 +243,9 @@ static void span(int y,int left,int right,long z,long dz,long c,long dc,int deca
                 index=(unsigned long)y*320+x;
                 if(depth>=test_depth[index]) {
                     test_depth[index]=depth;
+#ifdef RT_BAKE
+                    bake_owners[index]=rt_bake_tag;
+#endif
                     if(rt_visible_spans) owners[index]=(unsigned short)current_surface;
                     else test_color[index]=(unsigned char)(shade>>6);
                 }
@@ -399,5 +409,16 @@ void rt_raster(rt_vertex *vertices,int count,int decal) {
     n=clip(b,a,n,1,clip_bottom,1);if(n<3) return;
     for(i=1;i<n-1;i++) triangle(&a[0],&a[i],&a[i+1],decal);
 }
+
+#ifdef RT_BAKE
+int bake_clip(rt_vertex *v,int n,rt_vertex *out) {
+    rt_vertex a[16],b[16];memcpy(a,v,n*sizeof(*v));
+    n=clip(a,b,n,0,clip_left,0);if(n<3)return 0;
+    n=clip(b,a,n,0,clip_right,1);if(n<3)return 0;
+    n=clip(a,b,n,1,clip_top,0);if(n<3)return 0;
+    n=clip(b,a,n,1,clip_bottom,1);if(n<3)return 0;
+    memcpy(out,a,n*sizeof(*v));return n;
+}
+#endif
 
 #include "detail_aa.h"

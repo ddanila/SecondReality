@@ -6,6 +6,7 @@
 #include <time.h>
 #include <dos.h>
 #include "pm.h"
+#include "baked.h"
 #include "MUSIC.H"
 #define MAXOBJ 256
 static struct { object *o;long dist;int index,on; } scene[MAXOBJ];
@@ -139,6 +140,13 @@ static void render(unsigned page) {
     last_matrix_valid=0;
     if(rt_profile) stamp=clock();
     rt_draw_page(page);rt_color_begin();rt_camera(fov);rt_begin();
+    rt_baked_prepare(row);
+    if(rt_baked_active && rt_use_projection && rt_use_masks && !verify_route) {
+        if(rt_profile) {now=clock();stage_clear+=now-stamp;stamp=now;}
+        rt_baked_draw();rt_depth_flush();rt_baked_finish();
+        if(rt_profile) {now=clock();stage_draw+=now-stamp;stamp=now;}
+        rt_color_flush();rt_frames++;if(rt_profile)stage_upload+=clock()-stamp;return;
+    }
     if(rt_profile) { now=clock();stage_clear+=now-stamp;stamp=now; }
     if(cached) { start=route_offsets[row];end=route_offsets[row+1]; }
     for(i=1;i<object_count;i++) if(scene[i].on) {
@@ -166,7 +174,7 @@ static void render(unsigned page) {
     }
     if(rt_profile) { now=clock();stage_objects+=now-stamp;stamp=now; }
     for(i=0;i<n;i++) rt_queue(scene[order[i]].o);
-    rt_depth_flush();
+    rt_depth_flush();rt_baked_finish();
     if(rt_profile) { now=clock();stage_draw+=now-stamp;stamp=now; }
     rt_color_flush();rt_frames++;
     if(rt_profile) stage_upload+=clock()-stamp;
@@ -193,7 +201,7 @@ static int benchmark(int visual) {
         if(finished) fail("Benchmark pose beyond animation");
         render(0); /* warm-up outside measurement */
         start=clock();
-        for(j=0;j<iterations;j++) render(0);
+        for(j=0;j<iterations;j++) { rt_baked_forget();render(0); }
         elapsed=clock()-start;hash=2166136261UL;
         for(j=0;j<64000;j++) hash=(hash^rt_color[j])*16777619UL;
         fprintf(f,"POSE %d iterations=%d ticks=%lu hz=%lu color=%08lx vertices=%lu triangles=%lu spans=%lu\n",
@@ -215,12 +223,14 @@ static int benchmark(int visual) {
     fprintf(f,"STAGES clear=%lu objects=%lu draw=%lu upload=%lu hz=%lu pixels=%lu passed=%lu occluded=%lu queries=%lu route_skipped=%lu\n",
             stage_clear,stage_objects,stage_draw,stage_upload,(unsigned long)CLOCKS_PER_SEC,
             rt_pixels,rt_pixels_passed,rt_occluded,rt_occlusion_queries,route_skipped);
+    fprintf(f,"BAKED hits=%lu bytes_read=%lu working_bytes=%lu\n",rt_baked_hits,rt_baked_reads,rt_baked_memory);
     fprintf(f,"PASS\n");fclose(f);return 0;
 }
 
 int main(int argc,char **argv) {
     size_t size;unsigned char *materials;unsigned offset,pos,tick,page=0;
-    int audit=argc>1 && !strcmp(argv[1],"/audit");
+    int cache_audit=argc>1 && !strcmp(argv[1],"/cacheaudit");
+    int audit=cache_audit || (argc>1 && !strcmp(argv[1],"/audit"));
     int visual=argc>1 && !strcmp(argv[1],"/visual");
     int bench=visual || audit || (argc>1 && !strcmp(argv[1],"/bench"));
     int i,j,index,target,cue=0;char name[32];FILE *config;
@@ -246,6 +256,9 @@ int main(int argc,char **argv) {
             else if(!strcmp(name,"occlusion")) rt_occlusion=value;
             else if(!strcmp(name,"tiles")) rt_tiles=value;
             else if(!strcmp(name,"spans")) rt_visible_spans=value;
+            else if(!strcmp(name,"masks")) rt_use_masks=value;
+            else if(!strcmp(name,"faces")) rt_use_faces=value;
+            else if(!strcmp(name,"projection")) rt_use_projection=value;
             else if(!strcmp(name,"profile")) rt_profile=value;
             else fail("Unknown PM.OPT option");
         }
@@ -274,7 +287,9 @@ int main(int argc,char **argv) {
             scene[i].o->r=allocate(sizeof(rmatrix));scene[i].o->r0=allocate(sizeof(rmatrix));
         } else { sprintf(name,"U2E.%03d",index);scene[i].o=load_object(name); }
     }
+    for(i=1;i<object_count;i++)scene[i].o->cache_id=i;
     animation=readfile("U2E.0AB",&size);cursor=animation;animation_end=animation+size;
+    rt_baked_init(asset_hash,object_count);
     config=optional_file("U2E.VIS","rb");
     if(config) {
         unsigned long saved_hash=asset_hash,entries;fclose(config);
@@ -301,7 +316,7 @@ int main(int argc,char **argv) {
         extern unsigned char rt_color[64000];
         if(!route_data) fail("Audit requires matching route cache");
         if(!hashes) fail("Cannot create hash log");
-        use_route=verify_route=1;rt_video_init();
+        use_route=1;verify_route=!cache_audit;rt_video_init();
         while(!finished) {
             unsigned long h=2166136261UL;unsigned k;
             next_frame();if(finished) break;currframe+=2;render(0);
@@ -309,6 +324,7 @@ int main(int argc,char **argv) {
             fprintf(hashes,"%d %08lx\n",currframe,h);
         }
         fclose(hashes);
+        fprintf(trace,"BAKED hits=%lu bytes_read=%lu working_bytes=%lu\n",rt_baked_hits,rt_baked_reads,rt_baked_memory);
         fprintf(trace,"AUDIT PASS poses=%d\n",currframe/2);fclose(trace);return 0;
     }
     config=optional_file("U2E.PRS","rt");
@@ -348,5 +364,6 @@ int main(int argc,char **argv) {
     fprintf(trace,"END order=%u row=%u frame=%d\n",pos>>6,pos&63,currframe);
     fprintf(trace,"COUNTERS frames=%lu vertices=%lu triangles=%lu spans=%lu clipped=%lu ems_maps=0\n",
             rt_frames,rt_vertices,rt_triangles,rt_spans,rt_clipped);
+    fprintf(trace,"BAKED hits=%lu bytes_read=%lu working_bytes=%lu\n",rt_baked_hits,rt_baked_reads,rt_baked_memory);
     fclose(trace);rt_depth_end();return 0;
 }

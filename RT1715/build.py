@@ -222,6 +222,10 @@ def main():
         bake_route(dos)
         manifest.append({'file':'U2E.VIS','source':'RT1715/route_cache.py',
                          'sha256':hashlib.sha256((dos/'U2E.VIS').read_bytes()).hexdigest()})
+        from bake import bake as bake_drawing
+        bake_drawing(dos)
+        manifest.append({'file':'U2E.BKC','source':'Native host drawing bake (RT1715/bake.py)',
+                         'sha256':hashlib.sha256((dos/'U2E.BKC').read_bytes()).hexdigest()})
     else:
         (dos/'U2E.VIS').unlink(missing_ok=True)
     (build / "assets.json").write_text(json.dumps(manifest, indent=2) + "\n")

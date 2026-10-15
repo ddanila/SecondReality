@@ -19,20 +19,26 @@ def main():
     p.add_argument('--samples',type=int,default=1,help='Repeat the complete suite and aggregate timings')
     p.add_argument('--dos-dir',type=Path,default=build.HERE/'build/dos',help='Prepared runtime or archived pose benchmark')
     p.add_argument('--options',default='',help='Space-separated PM.OPT pairs, e.g. route 1 occlusion 1')
+    p.add_argument('--cache-audit',action='store_true',help='Hash every pose using projected replay')
     p.add_argument('--audit',action='store_true',help='Check cached lists against live culling at every pose')
     p.add_argument('--reference',type=Path,help='Compare frame hashes and timings with this result.json')
     args=p.parse_args()
+    if args.cache_audit:args.audit=True
     if args.cycles<=0:p.error('Cycles must be positive')
     if not 1<=args.samples<=20:p.error('Samples must be between 1 and 20')
     source=args.dos_dir
     out=build.HERE/'build/pose-benchmarks'/f'{datetime.now():%Y%m%d-%H%M%S}-{args.label}'
     out.mkdir(parents=True)
-    for asset in source.glob('U2E.*'):shutil.copyfile(asset,out/asset.name)
+    for asset in source.glob('U2E.*'):
+        if asset.suffix=='.BKC':
+            try:os.link(asset,out/asset.name)
+            except OSError:shutil.copyfile(asset,out/asset.name)
+        else:shutil.copyfile(asset,out/asset.name)
     (out/'PM.CFG').write_text('ram\n')
     (out/'PM.OPT').write_text(args.options+'\n')
     batch=['@echo off','config -get cpu cycles > CPU.TXT']
     for sample in range(args.samples):
-        batch += [f'U2E.EXE /{"audit" if args.audit else "bench"} > RUN{sample}.LOG','if errorlevel 1 goto fail',
+        batch += [f'U2E.EXE /{"cacheaudit" if args.cache_audit else "audit" if args.audit else "bench"} > RUN{sample}.LOG','if errorlevel 1 goto fail',
                   f'copy {"FLIGHT" if args.audit else "BENCH"}.LOG SAMPLE{sample}.LOG > NUL']
     batch += ['echo PASS > RESULT.TXT','goto done',':fail','echo FAIL > RESULT.TXT',':done','exit']
     (out/'BENCH.BAT').write_bytes(('\r\n'.join(batch)+'\r\n').encode())
@@ -73,8 +79,9 @@ def main():
         rows.append(row)
     scene=hashlib.sha256()
     for asset in sorted(out.glob('U2E.*')):
-        if asset.suffix.upper() not in ('.EXE','.VIS'):scene.update(asset.name.encode()+b'\0'+asset.read_bytes())
-    result={'options':args.options,'stage_logs':[line for line in log.splitlines() if line.startswith('STAGES ')],'label':args.label,'samples':args.samples,'cpu_cycles':(out/'CPU.TXT').read_text().strip(),
+        if asset.suffix.upper() not in ('.EXE','.VIS','.BKC'):scene.update(asset.name.encode()+b'\0'+asset.read_bytes())
+    result={'options':args.options,'stage_logs':[line for line in log.splitlines() if line.startswith(('STAGES ','BAKED '))],'label':args.label,'samples':args.samples,'cpu_cycles':(out/'CPU.TXT').read_text().strip(),
+            'cache_sha256':hashlib.sha256((source/'U2E.BKC').read_bytes()).hexdigest() if (source/'U2E.BKC').exists() else None,
             'scene_sha256':scene.hexdigest(),'renderer_sha256':hashlib.sha256((out/'U2E.EXE').read_bytes()).hexdigest(),'poses':rows}
     if result['cpu_cycles']!=f'fixed {args.cycles}':raise SystemExit('CPU setting differs')
     if args.reference:

@@ -56,7 +56,11 @@ def main():
         raise RuntimeError('Motion export needs at least 512 MiB free for temporary frames')
     out=HERE/'build/motion-regressions'/datetime.now().strftime('%Y%m%d-%H%M%S');out.mkdir(parents=True)
     frames=sorted({f for lo,hi in WINDOWS.values() for f in range(lo,hi+1,2)})
-    for p in args.dos_dir.glob('U2E.*'):shutil.copyfile(p,out/p.name)
+    for p in args.dos_dir.glob('U2E.*'):
+        if p.suffix=='.BKC':
+            try:os.link(p,out/p.name)
+            except OSError:shutil.copyfile(p,out/p.name)
+        else:shutil.copyfile(p,out/p.name)
     (out/'PM.CFG').write_text('ram\n');(out/'VISUAL.PTS').write_text('\n'.join(map(str,frames))+'\n')
     (out/'CHECK.BAT').write_bytes(b'@echo off\r\nU2E.EXE /visual > RUN.LOG\r\nif errorlevel 1 goto fail\r\necho PASS > RESULT.TXT\r\ngoto done\r\n:fail\r\necho FAIL > RESULT.TXT\r\n:done\r\nexit\r\n')
     print(out,flush=True)

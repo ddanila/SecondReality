@@ -9,11 +9,15 @@ and 21 technical cards synchronized to the original music. Later renderer
 experiments and retained defaults are documented at the end of this file.
 The finishing pass adds coverage-filtered markings, captured drive activity,
 a photo-derived front badge, visual baselines and a checked release packager.
-Validation details are in benchmarks/finishing.json.
+The current renderer bakes filtered markings, visible faces and projection on
+the native host. It keeps the original images and music timing while running
+at fixed 300000 DOSBox-X cycles (32 MiB). The previous profile used 600000.
+Current evidence is in benchmarks/substantial-rendering.json; the finishing
+checkpoint remains documented in benchmarks/finishing.json.
 
 Start with assets/robotron/EDITING.txt and assets/robotron/presentation.json for
 the current Robotron workflow. Validation evidence is tracked in
-benchmarks/finishing.json. The older generic city replacement workflow below
+benchmarks/substantial-rendering.json. The older generic city replacement workflow below
 remains available separately.
 
 Build outputs, source snapshots and video captures are local generated files,
@@ -1273,3 +1277,48 @@ Validation: 85 host tests pass; the reviewed continuous reference contains
 20261015-223541-452093 passes all music cues and 21 credit transitions. Close
 flyover cadence remains 32.61 ms mean (30.7 FPS), 57.07 ms p95, 71.34 ms maximum,
 with no holds above 100 ms. See benchmarks/lever-screen-return.json.
+
+Substantial renderer optimizations (2026-10-15)
+---------------------------------------------
+The host now prefilters lettering coverage, determines contributing faces, and
+bakes projected/shaded polygons for all 2031 poses. DOS still performs polygon
+rasterization, depth resolution, mask blending, VGA upload and music-driven
+presentation. The route, geometry, lettering coverage and all 21 cards retain
+their original output. Missing/stale/corrupt drawing caches render live.
+
+U2E.BKC adds about 52.5 MiB on disk and only 221 KiB of working memory. The
+32 MiB DOS profile is unchanged. Build.py prepares the cache on the host using
+a native C compiler and liblz4; pm_renderer.py refreshes it when its scene/math
+signature changes. Release packaging includes the cache. See OPTIMIZATIONS.txt
+for separate masks/faces/projection switches and reproduction commands.
+
+Broader monitor/drive mesh LOD was tried and rejected: it removes just 3.6/4.2
+percent of retained overview polygons while changing 219/218 pixels. The exact
+baked visibility and projection path provides the useful improvement, without
+risking the monitor seams or silhouettes again.
+
+All 2031 DOS cache-playback hashes match the native host renderer; all 1963
+existing continuous visual references match byte-for-byte. All 14 fixed visual
+comparisons pass without updating any reference image. 92 host tests and the
+protected-mode native kernel suite pass. Headless DOS tests also verify exact
+live-render fallback for missing, stale and corrupt cache files.
+
+Full playback at fixed 300000 cycles passes music cues and all 21 transitions:
+capture/20261015-231353-029110. Close-pass mean image hold is 31.04 ms (32.2 FPS),
+p95 42.8 ms and maximum 57.07 ms, with no holds above 100 ms. Previously, at
+600000 cycles, these were 32.61/57.07/71.34 ms (30.7 FPS). The complete flight
+renders 1972 authored frames, up from 1857. The new default is therefore fixed
+300000 cycles. These are DOSBox-X measurements, not real-hardware MHz claims.
+Three repeated samples at fixed 300000 cycles give these milliseconds/render
+(the masks+faces intermediate uses one sample; all six image hashes match):
+  Pose       Live        Masks       +Faces      +Projection
+   420       77.817      55.383       32.033        23.800
+   980       44.850      37.533       31.583        25.633
+  1840       22.883      22.428       16.017        11.900
+  2660       28.383      21.511       17.850        14.642
+  3200       34.333      33.411       26.092        18.308
+  3750       27.917      22.428       17.392        13.275
+Aggregate time drops 54.46 percent for equal render counts in these six poses.
+These uncapped kernel/scene timings include per-frame cache reading, decoding
+and validation. Full playback remains limited to the authored 35 Hz timeline.
+Measurements and validation identities: benchmarks/substantial-rendering.json.

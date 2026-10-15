@@ -39,6 +39,7 @@ def main():
     out.mkdir(parents=True)
     mapping=animation.mapping((dos/'U2E.00M').read_bytes())
     names=['RT1715.EXE','STARTMUS.EXE','U2E.EXE','CRED.EXE','REALITY.FC','U2E.00M','U2E.0AB','U2E.AA','U2E.PRS','U2E.VIS','CRED.IDX','CRED.SYN','CRED.CUE','CRED.TIM']
+    if (dos/'U2E.BKC').exists():names.append('U2E.BKC')
     names += [f'U2E.{slot:03}' for slot in sorted(set(mapping[1:]))]
     names += [line.split()[0] for line in (dos/'CRED.IDX').read_text().splitlines()[1:]]
     for name in names:shutil.copyfile(dos/name,out/name)
@@ -59,7 +60,7 @@ No guest compiler, model files, firmware or disk image is needed.
 Controls: Escape exits. Playback runs once, about 175 seconds, then returns.
 Sound is fixed to Sound Blaster Pro: port 220h, IRQ 7, DMA 1 (T4).
 Tested emulator profile: 486 dynamic core, VGA, 32 MB, XMS/EMS/UMB enabled,
-fixed 600000 cycles. Slower profiles work but reduce motion smoothness.
+fixed 300000 cycles. Slower profiles work but reduce motion smoothness.
 These are tested emulator settings, not a real-hardware minimum claim.
 The 32-bit renderer includes DOS/32A. Run the launcher, not U2E.EXE alone.
 

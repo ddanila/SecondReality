@@ -31,7 +31,11 @@ def main():
         if not expected or hashlib.sha256((args.dos_dir/name).read_bytes()).hexdigest()!=expected:
             raise ValueError('Credit capture does not match current runtime: '+name)
     out=HERE/'build/visual-regressions'/datetime.now().strftime('%Y%m%d-%H%M%S');out.mkdir(parents=True)
-    for p in args.dos_dir.glob('U2E.*'):shutil.copyfile(p,out/p.name)
+    for p in args.dos_dir.glob('U2E.*'):
+        if p.suffix=='.BKC':
+            try:os.link(p,out/p.name)
+            except OSError:shutil.copyfile(p,out/p.name)
+        else:shutil.copyfile(p,out/p.name)
     (out/'PM.CFG').write_text('ram\n');(out/'VISUAL.PTS').write_text('\n'.join(map(str,SHOTS.values()))+'\n')
     (out/'CHECK.BAT').write_bytes(b'@echo off\r\nU2E.EXE /visual > RUN.LOG\r\nif errorlevel 1 goto fail\r\necho PASS > RESULT.TXT\r\ngoto done\r\n:fail\r\necho FAIL > RESULT.TXT\r\n:done\r\nexit\r\n')
     command=[build.tool('dosbox-x'),'-conf',str(HERE/'dosbox-x.conf'),'-noautoexec','-fastlaunch',
@@ -49,6 +53,7 @@ def main():
     slots=animation.mapping((out/'U2E.00M').read_bytes())[1:]
     inputs=['U2E.00M','U2E.0AB','U2E.AA','U2E.PRS','U2E.VIS',
             'CRED.EXE','CARD01.CRD','CRED.IDX','CRED.SYN','CRED.CUE','CRED.TIM']
+    if (args.dos_dir/'U2E.BKC').exists():inputs.append('U2E.BKC')
     inputs += [f'U2E.{slot:03}' for slot in sorted(set(slots))]
     report['asset_sha256']={name:hashlib.sha256((args.dos_dir/name).read_bytes()).hexdigest() for name in inputs}
     sheet=Image.new('RGB',(960,240*((len(names)+2)//3)));draw=ImageDraw.Draw(sheet)

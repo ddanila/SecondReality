@@ -2,6 +2,9 @@
  * Deferred until opaque depth is complete: no draw-order-dependent blending.
  * Only touched pixels are reset/composited; ordinary geometry keeps ASM spans. */
 #if defined(RT_HOST_TEST) || defined(RT_PM)
+#ifdef RT_BAKE
+static unsigned bake_detail_owners[1024000];
+#endif
 static unsigned short *detail_z,*detail_touched,*detail_mask;
 static unsigned char *detail_color,*detail_alpha;
 static unsigned detail_opacity=255;
@@ -80,6 +83,9 @@ static void detail_triangle(rt_vertex a,rt_vertex b,rt_vertex c) {
         if(z<detail_z[k])continue;
         if(!detail_mask[p])detail_touched[detail_count++]=(unsigned short)p;
         detail_mask[p]|=1<<sample;detail_z[k]=(unsigned short)z;detail_color[k]=(unsigned char)color;detail_alpha[k]=(unsigned char)detail_opacity;
+#ifdef RT_BAKE
+        bake_detail_owners[k]=rt_bake_tag;
+#endif
       }
     }
 }
@@ -122,6 +128,45 @@ static void detail_flush(void) {
 #endif
     }
 }
+/* Host-filtered pose masks. Each record is pixel, coverage, depth, colour,
+ * alpha (8 bytes); groups are disjoint and sorted by destination pixel. */
+static unsigned mask_word(const unsigned char *p){return p[0]|((unsigned)p[1]<<8);}
+void rt_detail_masks(const unsigned char *data,unsigned count) {
+    unsigned p,k,bg,mask,z,col,alpha,bits,n,covered,common,same;
+    long r,g,b;unsigned short *depth=depth_memory();
+    if(!rt_detail_enabled())return;
+    while(count) {
+        p=mask_word(data);
+#ifdef RT_HOST_TEST
+        bg=test_color[p];
+#else
+        k=(p%320&3)*16000+p/320*80+(p%320>>2);bg=rt_color[k];
+#endif
+        r=(long)detail_palette[bg*3]*4096;g=(long)detail_palette[bg*3+1]*4096;b=(long)detail_palette[bg*3+2]*4096;
+        common=256;same=1;covered=0;
+        do {
+            mask=mask_word(data+2);z=mask_word(data+4);col=data[6];alpha=data[7];
+            data+=8;count--;if(z<depth[p])continue;
+            if(alpha==255)alpha=256;
+            bits=mask;bits=bits-((bits>>1)&0x5555);bits=(bits&0x3333)+((bits>>2)&0x3333);
+            bits=(bits+(bits>>4))&0x0f0f;n=(bits+(bits>>8))&31;
+            r+=(long)n*alpha*((int)detail_palette[col*3]-detail_palette[bg*3]);
+            g+=(long)n*alpha*((int)detail_palette[col*3+1]-detail_palette[bg*3+1]);
+            b+=(long)n*alpha*((int)detail_palette[col*3+2]-detail_palette[bg*3+2]);
+            if(common==256)common=col;else if(common!=col)same=0;
+            if(alpha!=256 && col!=bg)same=0;covered|=mask;
+        } while(count && mask_word(data)==p);
+        if(common==256)continue;
+        if(covered!=65535 && common!=bg)same=0;
+        col=same?common:detail_lookup[((r>>13)<<10)|((g>>13)<<5)|(b>>13)];
+#ifdef RT_HOST_TEST
+        test_color[p]=(unsigned char)col;
+#else
+        rt_color[k]=(unsigned char)col;
+#endif
+    }
+}
+
 #else
 void rt_detail_opacity(unsigned opacity) { }
 int rt_detail_enabled(void) { return 0; }
@@ -130,4 +175,27 @@ void rt_detail_raster(rt_vertex *v,int n) { }
 static void detail_begin(void) { }
 static void detail_end(void) { }
 static void detail_flush(void) { }
+#endif
+
+#ifdef RT_BAKE
+/* Export final coverage, not a flattened image: DOS still resolves opaque
+ * depth, palette blending, and every moving object against these masks. */
+#include <stdio.h>
+void bake_export(const char *path) {
+    FILE *f=fopen(path,"wb");unsigned p,j,k,tag;unsigned char v[12];
+    if(!f)exit(3);
+    fwrite(bake_owners,4,64000,f);
+    for(p=0;p<64000;p++)for(j=0;j<16;j++)if(detail_mask[p]&(1<<j)) {
+        k=p*16+j;if(detail_z[k]<test_depth[p])continue;
+        tag=bake_detail_owners[k];
+        v[0]=p;v[1]=p>>8;v[2]=j;v[3]=detail_color[k];
+        v[4]=detail_z[k];v[5]=detail_z[k]>>8;v[6]=detail_alpha[k];v[7]=0;
+        v[8]=tag;v[9]=tag>>8;v[10]=tag>>16;v[11]=tag>>24;fwrite(v,1,12,f);
+    }
+    fclose(f);
+}
+void bake_image(const char *path) {
+    FILE *f;detail_flush();f=fopen(path,"wb");if(!f)exit(3);
+    fwrite(test_color,1,64000,f);fclose(f);
+}
 #endif
