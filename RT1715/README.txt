@@ -1049,8 +1049,8 @@ label. The disk starts 90 mm withdrawn and disappears only after closure.
 The source hub at Z=92 intersects the moving jacket's Z=89..90.3 plane. The
 DOS adaptation raises the complete left lever 6 mm above its source pivot:
 the 6.5 mm hub radius then clears the label by 1.2 mm. The handle starts
-upright (+Z), remains there until seating, and rotates through +X to point
-vertically down (-Z). At closure the seated disk is behind the lever in Y.
+at 3 o'clock (+X), remains there until seating, and rotates 90 degrees
+clockwise to 6 o'clock (-Z). At closure the seated disk is behind the lever in Y.
 The right lever and sibling source repository remain unchanged. This small
 mechanical adjustment is for animation clearance, not a measured correction
 to the source computer. The drive LED flickers during the authored load.

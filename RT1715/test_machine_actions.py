@@ -33,7 +33,7 @@ class MachineActionTests(unittest.TestCase):
         np.testing.assert_allclose(r@[30,0,0],[0,0,-30],atol=.001)
         opened=machine.pose('src-drive-latch-0-0',self.base,26,self.settings,self.data)
         r=np.array(opened[3:]).reshape(3,3)/16384
-        np.testing.assert_allclose(r@[30,0,0],[0,0,30],atol=.001)
+        np.testing.assert_allclose(r@[30,0,0],[30,0,0],atol=.001)
         # Entire hub and raised handle stay above the highest disk label point.
         # Source hub radius 6.5 mm; finger outline reaches 6 mm either side.
         hub=np.array([[dx,0,dz] for dx,dz in [(6.5,0),(-6.5,0),(0,6.5),(0,-6.5)]])+pivot/64

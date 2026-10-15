@@ -58,9 +58,9 @@ def pose(label,base,time,settings,data):
     if label.startswith(f"src-drive-latch-{settings['drive']}-"):
         pivot=np.array(next(d for d in data['driveMotion'] if d['unit']==settings['drive'])['latchPivot'])*64
         # Source hub overlaps the insertion plane. Raise the complete lever
-        # above the slot, then swing its tip from +Z (open) to -Z (closed).
+        # above the slot; rotate from +X (3 o'clock) to -Z (6 o'clock).
         lift=np.array([0,0,settings['latch_lift_mm']*64])
-        angle=math.pi*(ease(time,settings['close'])-.5);c,s=math.cos(angle),math.sin(angle)
+        angle=math.pi/2*ease(time,settings['close']);c,s=math.cos(angle),math.sin(angle)
         rotation=np.array([[c,0,s],[0,1,0],[-s,0,c]])
         result[:3]=np.rint(pivot+lift-rotation@pivot).astype(int)
         result[3:]=np.rint(rotation.flatten()*16384).astype(int)
