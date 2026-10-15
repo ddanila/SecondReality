@@ -98,12 +98,12 @@ class RobotronTests(unittest.TestCase):
         for a,b in edges:
             edge=tuple(sorted((a,b)));counts[edge]=counts.get(edge,0)+1
         boundary={v for edge,count in counts.items() if count==1 for v in edge}
-        self.assertEqual(len(boundary),44)
+        self.assertEqual(len(boundary),32)
         for v in glass.vertices[list(boundary)]:
             distance=np.linalg.norm(rim.vertices-v,axis=1)
             self.assertLess(distance.min(),.35)
         self.assertTrue(np.all(glass.face_normals[:,1]<0))
-        self.assertTrue(np.all(rim.face_normals[:,1]<0))
+        self.assertTrue(np.all(rim.face_normals[:,1]<=1e-9))
 
     def test_monitor_joint_is_an_actual_gap_in_the_outer_skin(self):
         from robotron_lod import exterior
@@ -113,7 +113,9 @@ class RobotronTests(unittest.TestCase):
         sides=tri[np.all(tri[:,:,1]>-140,axis=1)]
         bridges=(sides[:,:,2].min(axis=1)<320)&(sides[:,:,2].max(axis=1)>320)
         self.assertFalse(np.any(bridges))
-        self.assertEqual(parts['monitor-joint'].bounds[:,2].tolist(),[319,321])
+        # The recessed lip overlaps the gap vertically to cover projection rounding.
+        self.assertEqual(parts['monitor-joint'].bounds[:,2].tolist(),[318,322])
+        self.assertLess(abs(parts['monitor-joint'].vertices[:,0]).max(),160)
 
     def test_keyboard_support_faces_stay_local_to_keycaps(self):
         from robotron_lod import exterior

@@ -1013,3 +1013,26 @@ key undersides are also omitted: all 2031 camera poses stay at least 14.19 mm
 above their bottom plane, and six reference images remain pixel-identical. This is not a
 claim that slow-playback frame holds have been eliminated. See the latest
 benchmarks/front-polish.json for final capture and validation evidence.
+
+Monitor profile fidelity
+------------------------
+monitor_geometry.py replaces the rectangular CRT and sharp housing LOD with
+source-derived profiles. The browser manifest's screen parameters drive the
+258 x 211 mm superelliptic outline (power 4.5), ellipsoid radii 700/650/600 mm,
+18 mm face depth and assembly position. Five radial rings / 32 perimeter
+samples retain the bowed face within 0.119 mm of 48 sampled source-STL points.
+Glass and dark gasket share their boundary; the tube has an opaque dark
+backing. Guard shades keep fixed-point Gouraud interpolation within the green
+CRT palette ramp instead of spilling into neighbouring beige paint colours.
+
+The bezel now retains the source rolled profiles and recessed inner return;
+its paint ramp is shaded down five steps to approximate the warm grey coating.
+The housing has 10 mm rounded corners, a physical 2 mm mid-height joint, and
+25 top vent marks at the source positions. Vents are inexpensive dark insets,
+not fully modelled slots. The pedestal is an open tapered circular stand with
+its separate dark base ring. Housing chunks stay within DOS object limits.
+
+The canonical SCAD bezel/housing dimensions are mirrored in monitor_geometry.py;
+only CRT profile parameters are read automatically from browser/model.json.
+Update those profiles if the source enclosure changes. Source comparisons,
+headless playback and timing evidence are in benchmarks/monitor-detail.json.

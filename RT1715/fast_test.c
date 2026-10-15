@@ -124,7 +124,7 @@ int main(void) {
     rt_light_begin();
     for(i=0;i<500;i++) {
         int value=rt_glass_shade_cached(light_normals,i);
-        if(value<0 || value>15) return fail("soft CRT reflection range",i);
+        if(value<2 || value>13) return fail("guarded CRT reflection range",i);
         if(rt_glass_shade_cached(light_normals,i)!=value) return fail("CRT lighting cache",i);
     }
     printf("PASS soft CRT reflection and cache\n");

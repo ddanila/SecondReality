@@ -137,3 +137,13 @@ per unit drone scale. Check camera continuity, key clearance and the captured
 climb after changes. The first credits.json camera matches the final rotated
 assembly: elevation 21.865 degrees, azimuth -57.653 degrees (OpenSCAD X angle
 68.135). Recompute it if the final camera or turntable angle changes.
+
+Monitor detail: RT1715/monitor_geometry.py follows the canonical rounded shell,
+rolled bezel and CRT profiles. CRT dimensions/position/outlinePower/depth/radii
+come from browser/model.json. Shell/bezel dimensions mirror model.scad and must
+be updated with source enclosure changes. Keep glass and gasket boundary rings
+shared; retain the opaque dark backing and the guarded CRT shade range. Screen uses
+smooth normals; bezel uses the paint palette with a five-step shade reduction.
+The original screen object name is required for CRT shading. Housing meshes
+are split into small objects without geometry simplification. Top vents are
+dark surface marks. The 2 mm horizontal housing gap remains actual geometry.

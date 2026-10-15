@@ -266,7 +266,13 @@ def prepare(root, build, command, presentation=None):
             cached[record['file']]=trimesh.load_mesh(path,process=True)
         return cached[record['file']].copy()
 
-    objects=[(label,mesh,color,'exterior') for label,mesh,color in exterior()]
+    from source_geometry import chunks
+    objects=[]
+    for label,mesh,color in exterior(data.get('screen')):
+        if label=='monitor':
+            objects.extend((f'monitor-{i}',part,color,'exterior')
+                           for i,part in enumerate(chunks(mesh,precision=(.001,.001,.001))))
+        else:objects.append((label,mesh,color,'exterior'))
     from source_geometry import front_parts
     objects.extend(front_parts(load,records))
     from front_markings import markings

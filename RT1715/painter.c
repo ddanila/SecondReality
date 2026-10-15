@@ -13,7 +13,7 @@ static vlist vertices[500];
 static pvlist projected[500];
 static nlist normals[500];
 static rt_vertex screen[500];
-static int glass,rounded_key,drone;
+static int glass,rounded_key,drone,bezel;
 static long mix(long a,long b,long numerator,long denominator) {
     return a+rt_muldiv(b-a,numerator,denominator);
 }
@@ -33,6 +33,10 @@ static void polygon(object *o,rt_face_word *face,int decal) {
     /* Most polygons never cross the near plane. Send projected vertices
      * straight to the rasterizer instead of constructing and copying a
      * second camera-space polygon for every key face and ink triangle. */
+    if(bezel && !(face[0]&F_GOURAUD)) {
+        int shade=flat_color-face[1];
+        flat_color=face[1]+(shade>5?shade-5:0);
+    }
     for(i=0;i<n;i++) if(vertices[face[i+3]].z<512) { all_inside=0;break; }
     if(all_inside) {
         for(i=0;i<n;i++) {
@@ -81,6 +85,7 @@ void rt_queue(object *o) {
     key=!strncmp(o->name,"\"key-",5);
     ink=!strncmp(o->name,"\"ink-",5);
     glass=!strcmp(o->name,"\"screen\"");
+    bezel=!strcmp(o->name,"\"bezel\"");
     rounded_key=!strncmp(o->name,"\"key-r-",7);
     drone=!strcmp(o->name,"\"s01\"");
     coarse_vertices=rounded_key?16:8;coarse_faces=rounded_key?14:6;

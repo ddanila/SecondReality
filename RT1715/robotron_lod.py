@@ -53,62 +53,17 @@ def slope_box(x0,x1,y0,y1,bottom,front,back,opening=None):
 
 
 
-def crt_surround():
-    """Curved glass and its surround meet along the complete curved perimeter."""
-    vertices=[];faces=[]
-    for j in range(11):
-        z=218.5+j*211/10
-        for i in range(13):
-            x=-129+i*258/12
-            y=-158+9*((x/129)**2+((z-324)/105.5)**2)
-            vertices.append((x,y,z))
-    for j in range(10):
-        for i in range(12):
-            a=j*13+i;faces.append((a,a+1,a+14,a+13))
-    # Four strips, subdivided to match the curved glass edge exactly. Extend
-    # the edge by 0.25 mm under the glass to avoid fixed-point rounding cracks.
-    rim_vertices=[];rim_faces=[]
-    edges=[list(range(13)),[j*13+12 for j in range(11)],
-           list(range(142,129,-1)),[j*13 for j in range(10,-1,-1)]]
-    corners=[(-151.5,-154,188),(151.5,-154,188),
-             (151.5,-154,452),(-151.5,-154,452)]
-    for k,edge in enumerate(edges):
-        begin=len(rim_vertices)
-        for j,index in enumerate(edge):
-            u=j/(len(edge)-1)
-            outer=(1-u)*np.array(corners[k])+u*np.array(corners[(k+1)%4])
-            point=np.array(vertices[index],float)
-            # Inset along the screen plane, leaving the lip behind the glass.
-            point[0]*=.998
-            point[2]=324+(point[2]-324)*.998
-            point[1]+=.05
-            rim_vertices.extend([outer,point])
-        for j in range(len(edge)-1):
-            a=begin+j*2;rim_faces.append((a,a+2,a+3,a+1))
-    return mesh(vertices,faces),mesh(rim_vertices,rim_faces)
+def crt_surround(profile=None):
+    from monitor_geometry import crt_surround as build
+    return build(profile)
 
 
-def exterior():
-    # Outer monitor skins omit the front surface: the bezel and CRT fill it.
-    v=[(-160,-142,180),(160,-142,180),(160,192,180),(-160,192,180),
-       (-160,-142,460),(160,-142,460),(160,192,460),(-160,192,460)]
-    skins=[]
-    for bottom,top in [(180,319),(321,460)]:
-        w=[(x,y,bottom if z==180 else top) for x,y,z in v]
-        quads=[(1,2,6,5),(2,3,7,6),(3,0,4,7)]
-        if bottom==180: quads.append((3,2,1,0))
-        if top==460: quads.append((4,5,6,7))
-        skins.append(mesh(w,quads))
-    monitor=trimesh.util.concatenate(skins)
-    joint=mesh([(-159,-141,319),(159,-141,319),(159,191,319),(-159,191,319),
-                (-159,-141,321),(159,-141,321),(159,191,321),(-159,191,321)],
-               [(1,2,6,5),(2,3,7,6),(3,0,4,7)])
-    # Close the housing front with a chamfer down to the bezel's outer edge.
-    outer=[(-160,-142,180),(160,-142,180),(160,-142,460),(-160,-142,460)]
-    inner=[(-151.5,-154,188),(151.5,-154,188),(151.5,-154,452),(-151.5,-154,452)]
-    lip=mesh(outer+inner,[(i,(i+1)%4,(i+1)%4+4,i+4) for i in range(4)])
-    monitor=trimesh.util.concatenate([monitor,lip])
-    screen,bezel=crt_surround()
+def exterior(profile=None):
+    from monitor_geometry import housing,bezel as source_bezel,details,tube_back,joint as source_joint
+    monitor=housing()
+    joint=source_joint()
+    screen,gasket=crt_surround(profile)
+    bezel=source_bezel()
     return [
         ('base',mesh([(-250,-200,0),(250,-200,0),(250,200,0),(-250,200,0),
                     (-250,-200,36),(250,-200,36),(250,200,36),(-250,200,36)],
@@ -116,14 +71,15 @@ def exterior():
         ('lid',mesh([(-250,-200,37),(250,-200,37),(250,200,37),(-250,200,37),
                     (-250,-200,130),(250,-200,130),(250,200,130),(-250,200,130)],
                    [(1,2,6,5),(2,3,7,6),(3,0,4,7),(4,5,6,7)]),'paint'),
-        ('stand',box([-85,-60,135],[85,110,180]),'paint'),
         ('monitor',monitor,'paint'),
         ('monitor-joint',joint,'black'),
-        ('bezel',bezel,'dark'),
+        ('bezel',bezel,'paint'),
         ('screen',screen,'pcb'),
+        ('crt-rim',gasket,'black'),
+        ('tube-back',tube_back(profile),'black'),
         ('keyboard',slope_box(-247,247,-455,-255,1.2,19,36,(-238,238,-445,-298)),'blue'),
         ('deck',slope_box(-238,238,-445,-298,17,19,32),'dark'),
-    ]
+    ]+details()
 
 
 def keycap(source, detailed=True):

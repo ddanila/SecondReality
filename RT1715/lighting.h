@@ -39,7 +39,10 @@ static int rt_glass_shade_cached(nlist *normals,unsigned index) {
         /* A broad quadratic reflection replaces the steep power-16 spot.
          * Sum before quantizing: no separate half-light threshold on glass. */
         power=(light*light)>>14;
-        value=(int)((light*7+power*8)>>14);
+        /* Leave guard shades at both ramp edges: fixed-point Gouraud
+         * interpolation on thin projected triangles can extrapolate by a
+         * shade. Index 63 belongs to beige paint, not the green CRT ramp. */
+        value=2+(int)((light*5+power*6)>>14);
         rt_light_values[index]=(unsigned char)value;rt_light_modes[index]=4;
         rt_light_stamps[index]=rt_light_epoch;
     }
