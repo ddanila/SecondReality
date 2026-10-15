@@ -46,3 +46,19 @@ class SourceKeyTests(unittest.TestCase):
                 clearance=z/64-keycaps.height(cap,x/64,y/64)
                 self.assertGreater(clearance,0)
                 self.assertLess(clearance,.06)
+
+    def test_rounded_coarse_prefix_matches_renderer_contract(self):
+        for stretch in (1,4):
+            cap=keycaps.detailed(self.cap(stretch))
+            coarse=keycaps.coarse_polygons(cap,64)
+            self.assertEqual(len(coarse),14)
+            data=scene.decode(scene.encode('"key-r-test"',coarse+robotron.polygons(cap),32,16,precomputed_orders=False))
+            prefix=data['faces'][:14]
+            self.assertEqual({i for f in prefix for i in f['indices']},set(range(16)))
+            self.assertTrue(all(len(f['indices'])==4 for f in prefix))
+            # The upper diagonal corners must follow the round body, rather
+            # than becoming square corners of a tapered bounding box.
+            top=np.array([p for f in coarse[3:6] for p in f])/64
+            radius=np.linalg.norm(top[:,:2]/[stretch,1],axis=1)
+            self.assertLess(max(radius),7.3)
+            self.assertGreater(min(radius),6.9)

@@ -91,3 +91,29 @@ def surface_legends(lines,mesh,scale):
         points=[(x,y,round((height(mesh,x/scale,y/scale)+.045)*scale)) for x,y,_ in face]
         projected.extend([points[:3],[points[0],points[2],points[3]]])
     return projected
+
+
+def coarse_polygons(source,scale):
+    """Fourteen faces / sixteen vertices: rounded body without dish or ink.
+
+    This ordered prefix is the key-r renderer contract. Both caps precede the
+    sides so all sixteen vertices are available for the distance/clip test.
+    """
+    lo,hi=source.bounds;center=(lo[:2]+hi[:2])/2;half=(hi[:2]-lo[:2])/2
+    rings=[]
+    for z in (lo[2]+.001,hi[2]-.5):
+        ring=[]
+        for angle in np.arange(8)*np.pi/4:
+            direction=np.array([np.cos(angle)*half[0],np.sin(angle)*half[1],0.])
+            direction/=np.linalg.norm(direction)
+            origin=np.array([*center,z]);distances=hits(source,origin,direction)
+            if not len(distances):raise ValueError('Coarse key sample misses silhouette')
+            point=origin+direction*max(distances)
+            point[2]=lo[2] if len(rings)==0 else hi[2]
+            ring.append(tuple(int(v) for v in np.rint(point*scale)))
+        rings.append(ring)
+    bottom,top=rings
+    faces=[[bottom[q[0]],*[bottom[i] for i in reversed(q[1:])]] for q in ((0,1,2,3),(0,3,4,5),(0,5,6,7))]
+    faces += [[top[i] for i in q] for q in ((0,1,2,3),(0,3,4,5),(0,5,6,7))]
+    faces += [[bottom[i],bottom[(i+1)%8],top[(i+1)%8],top[i]] for i in range(8)]
+    return faces

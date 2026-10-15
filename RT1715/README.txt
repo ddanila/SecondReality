@@ -934,3 +934,26 @@ Full headless playback at fixed 300000 cycles renders 1,828 flight frames;
 reveal/swoosh/end stay at 24:54 / 25:6 / 26:57, and credits at 28:0-43:29.
 All 21 credit entries have zero measured cue error. The opening black frame,
 key channel, climb and subsequent review shots were inspected in the capture.
+
+
+Key-channel readability and rounded distant keys (2026-10-15)
+-----------------------------------------------------------
+Black key plastic now uses a restricted charcoal range from the existing dark
+palette ramp, revealing shoulders and dishes in the close channel. Other scene
+materials keep their prior lighting. The original drone receives a small surface
+highlight boost, strongest on oblique surfaces and clamped inside each original
+material ramp. Its mesh, palette, scale and route are unchanged.
+
+Distant caps now use source-sampled octagonal outlines: 14 faces and 16 vertices,
+including flat tops instead of detailed dishes/ink. The generated key-r- name
+selects this prefix in both DOS renderers; old key- objects remain compatible
+with the original six-face/eight-vertex layout. Close source-derived caps remain
+unchanged, apart from their charcoal shading. No extra instances are introduced.
+
+57 host tests pass. Native lighting tests verify ramp limits and unchanged
+unrelated materials; the native kernel suite passes. Full playback and route
+validation evidence is recorded in benchmarks/readability.json.
+At fixed 300000 DOSBox-X cycles the full run still renders 1,828 flight frames,
+matching the preceding capture's count. Reveal/swoosh/end remain 24:54 / 25:6 /
+26:57, credits remain 28:0-43:29, and all 21 entries have zero measured cue error.
+The key channel, climb, overview and rotation were visually inspected.

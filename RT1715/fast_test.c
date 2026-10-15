@@ -109,6 +109,18 @@ int main(void) {
         light_normals[0].x=-light_normals[0].x/2;
     }
     printf("PASS lighting 6000 cases plus cache hits, mode changes and generation wrap\n");
+    for(i=0;i<500;i++) for(j=0;j<4;j++) {
+        int value=rt_shade(&light_normals[i],j<<10);
+        int bright=rt_readable_shade(value,&light_normals[i],j<<10,2);
+        if(rt_readable_shade(value,&light_normals[i],j<<10,0)!=value)
+            return fail("unmodified scene lighting",i);
+        if(j && (bright<value || bright>((1<<(j+2))-1)))
+            return fail("drone highlight escaped ramp",i);
+        if(!j && bright!=value) return fail("unshaded drone material",i);
+        value=rt_readable_shade(rt_shade(&light_normals[i],0x800),&light_normals[i],0x800,1);
+        if(value<1 || value>6) return fail("charcoal key range",i);
+    }
+    printf("PASS local key/drone shading, ramp limits and unchanged scene materials\n");
     begin=clock();
     for(k=0;k<500;k++) for(j=0;j<6;j++) for(i=0;i<500;i++)
         uncached_total+=rt_shade(&light_normals[i],0xc00);

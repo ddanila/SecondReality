@@ -45,4 +45,18 @@ static int rt_glass_shade_cached(nlist *normals,unsigned index) {
     return rt_light_values[index];
 }
 
+/* Local readability adjustments; never escape an object's original ramp.
+ * kind 1 is charcoal key plastic; kind 2 is the original drone. */
+static int rt_readable_shade(int value,nlist *normal,int flags,int kind) {
+    int mode=(flags&0x0c00)>>10,maximum;
+    if(!mode) return value;
+    if(kind==1) return 1+value*5/15;
+    if(kind==2) {
+        maximum=(1<<(mode+2))-1;
+        value+=1+(normal->z>-8000 && normal->z<8000?2:0);
+        if(value>maximum)value=maximum;
+    }
+    return value;
+}
+
 #endif

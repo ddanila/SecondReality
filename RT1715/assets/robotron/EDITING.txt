@@ -41,8 +41,10 @@ keycaps.py samples exterior sections and the dished top, preserving skirt steps
 and rounded bodies while omitting hidden cavities. It does not decimate thin
 shells. Black/red caps have pale ink; function keys use a silver face and a
 blue-grey rim as an opaque palette approximation of their clear shells. Ink is
-projected onto the rendered dish. The existing six-face distant LOD remains;
-close views use the source-derived geometry. Every variant must still fit the
+projected onto the rendered dish. Distant keys use a rounded 14-face/16-vertex prefix; close views use the full
+source-derived geometry. Generated names start with key-r-, which tells the
+renderer to select this new prefix; old key- names retain their six-face layout.
+Do not change the prefix counts without updating painter.c as well. Every variant must still fit the
 500-vertex/normal/polygon object limits.
 
 Motion and materials
@@ -67,6 +69,11 @@ above (+Z); the drone is excluded. The current 90-degree turn eases in after
 the drone disappears, from 48.5 to 57.2 seconds, before the final fade. Moving
 parts require regenerated animation and route-cache files; the host build does
 both automatically.
+
+Black runtime caps use the existing dark ramp with a restricted charcoal range
+in lighting.h, lifting shadow detail without brightening other black surfaces.
+The original drone receives a small view-dependent highlight boost, clamped to
+each original material's ramp. Mesh, palette and flight transforms are unchanged.
 
 materials.json controls the eight Robotron ramps. Their palette slots are fixed;
 the original drone colors are untouched. The screen is a smooth-normal surface

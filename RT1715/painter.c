@@ -13,7 +13,7 @@ static vlist vertices[500];
 static pvlist projected[500];
 static nlist normals[500];
 static rt_vertex screen[500];
-static int glass;
+static int glass,rounded_key,drone;
 static long mix(long a,long b,long numerator,long denominator) {
     return a+rt_muldiv(b-a,numerator,denominator);
 }
@@ -26,13 +26,14 @@ static void polygon(object *o,rt_face_word *face,int decal) {
     rt_vertex a[16],b[16],v,w,t,lo,hi;
     int n=face[0]&255,i,m=0,inside,previous,index,all_inside=1,flat_color;
     long d,num;
+    int readable=drone?2:(rounded_key && face[1]==32?1:0);
     if(n>8) exit(3);
     flat_color=face[1];
-    if(!(face[0]&F_GOURAUD)) flat_color+=rt_shade(&normals[face[2]],face[0]);
+    if(!(face[0]&F_GOURAUD)) flat_color+=rt_readable_shade(rt_shade(&normals[face[2]],face[0]),&normals[face[2]],face[0],readable);
     for(i=0;i<n;i++) {
         index=face[i+3];a[i].x=vertices[index].x;a[i].y=vertices[index].y;a[i].z=vertices[index].z;
         if(a[i].z<512) all_inside=0;
-        a[i].c=(face[0]&F_GOURAUD)?face[1]+(glass?rt_glass_shade_cached(normals,o->v0[index].normal):rt_shade_cached(normals,o->v0[index].normal,face[0])):flat_color;
+        a[i].c=(face[0]&F_GOURAUD)?face[1]+(glass?rt_glass_shade_cached(normals,o->v0[index].normal):rt_readable_shade(rt_shade_cached(normals,o->v0[index].normal,face[0]),&normals[o->v0[index].normal],face[0],readable)):flat_color;
     }
     if(all_inside) {
         for(i=0;i<n;i++) { b[i]=screen[face[i+3]];b[i].c=a[i].c; }
@@ -64,7 +65,7 @@ void rt_begin(void) {
 }
 void rt_flush(void) { }
 void rt_queue(object *o) {
-    int i,j,n,offset,clip,key,coarse=0;
+    int i,j,n,offset,clip,key,coarse=0,coarse_vertices,coarse_faces;
     rt_face_word *face;
     vlist *v;nlist *normal;
     long nearest=0x7fffffffL,facing;
@@ -73,9 +74,12 @@ void rt_queue(object *o) {
     o->v=vertices;o->pv=projected;o->n=normals;
     key=!strncmp(o->name,"\"key-",5);
     glass=!strcmp(o->name,"\"screen\"");
+    rounded_key=!strncmp(o->name,"\"key-r-",7);
+    drone=!strcmp(o->name,"\"s01\"");
+    coarse_vertices=rounded_key?16:8;coarse_faces=rounded_key?14:6;
     if(key) {
-        calc_rotate(8,vertices,o->v0,o->r);
-        for(i=0;i<8;i++) if(vertices[i].z<nearest) nearest=vertices[i].z;
+        calc_rotate(coarse_vertices,vertices,o->v0,o->r);
+        for(i=0;i<coarse_vertices;i++) if(vertices[i].z<nearest) nearest=vertices[i].z;
         coarse=nearest>240L*64L;
 #ifdef RT_PM
         /* One-millimetre dish detail must be subpixel. Per-object hysteresis
@@ -91,17 +95,17 @@ void rt_queue(object *o) {
     }
 #ifdef RT_PM
     if(coarse) {
-        if(rt_project(8,projected,screen,vertices)) return;
+        if(rt_project(coarse_vertices,projected,screen,vertices)) return;
     } else {
         rt_vertices+=o->vnum;
         if(rt_transform_project(o->vnum,vertices,o->v0,o->r,projected,screen)) return;
     }
-    calc_nrotate(coarse?6:o->nnum,normals,o->n0,o->r);
+    calc_nrotate(coarse?coarse_faces:o->nnum,normals,o->n0,o->r);
 #else
     if(!coarse) calc_rotate(o->vnum,vertices,o->v0,o->r);
-    calc_nrotate(coarse?6:o->nnum,normals,o->n0,o->r);
-    if(calc_project(coarse?8:o->vnum,projected,vertices)) return;
-    for(i=0;i<(coarse?8:o->vnum);i++) if(vertices[i].z>=512) {
+    calc_nrotate(coarse?coarse_faces:o->nnum,normals,o->n0,o->r);
+    if(calc_project(coarse?coarse_vertices:o->vnum,projected,vertices)) return;
+    for(i=0;i<(coarse?coarse_vertices:o->vnum);i++) if(vertices[i].z>=512) {
         screen[i].x=rt_muldiv(vertices[i].x,projmulx,vertices[i].z)+projaddx;
         screen[i].y=rt_muldiv(vertices[i].y,projmuly,vertices[i].z)+projaddy;
         screen[i].z=33553920L/vertices[i].z;
@@ -109,7 +113,7 @@ void rt_queue(object *o) {
 #endif
     rt_light_begin();
     n=o->pl[0][0]-3;
-    for(i=key && !coarse?6:0;i<(coarse?6:n);i++) {
+    for(i=key && !coarse?coarse_faces:0;i<(coarse?coarse_faces:n);i++) {
         offset=o->pl[0][i+2];face=(rt_face_word *)(o->pd+offset);
         clip=31;
         for(j=0;j<(face[0]&255);j++) clip&=projected[face[j+3]].vf;

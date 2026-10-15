@@ -13,7 +13,7 @@ import numpy as np
 import trimesh
 import scene
 import keycaps
-from robotron_lod import exterior, keycap
+from robotron_lod import exterior
 from PIL import Image, ImageOps
 from prepare import openscad
 
@@ -299,7 +299,7 @@ def prepare(root, build, command, presentation=None):
                     if key.get(field):pieces.append(load(keymesh[key[field]]))
                 cap_geometry[key['mesh']]=keycaps.detailed(trimesh.util.concatenate(pieces))
             cap=cap_geometry[key['mesh']]
-            material={0:'black',1:'metal',2:'red'}[key['style']]
+            material={0:'dark',1:'metal',2:'red'}[key['style']]
             objects.append((name,cap,material,'keycap'))
             key_styles[name]=key['style']
             key_legends[name]=keycaps.surface_legends(key['legend'],cap,SCALE)
@@ -317,16 +317,16 @@ def prepare(root, build, command, presentation=None):
     for slot,(label,mesh,color,kind) in zip(slots,objects):
         triangles=polygons(mesh)
         if kind=='keycap':
-            # Six coarse faces come first; the native player selects one LOD.
-            triangles=polygons(keycap(mesh,detailed=False))+triangles
+            # Rounded coarse prefix: 14 faces and 16 vertices, then detail.
+            triangles=keycaps.coarse_polygons(mesh,SCALE)+triangles
         print(f'Robotron {slot:02}: {label}: {len(triangles)} polygons',flush=True)
-        render_name=label
+        render_name=label.replace("key-","key-r-",1) if kind=="keycap" else label
         ink=key_legends.get(label,[])
         face_colors=[colors[color][0]]*len(triangles)
         if kind=='keycap' and key_styles[label]==1:
             # The opaque DOS palette approximates the clear function-key shell
             # with a blue-grey rim around its silver insert.
-            for i,face in enumerate(triangles[6:],6):
+            for i,face in enumerate(triangles[14:],14):
                 if min(p[2] for p in face)/SCALE < mesh.bounds[1,2]-1:
                     face_colors[i]=colors['blue'][0]
         ink_color='white' if kind=='keycap' and key_styles[label]!=1 else 'black'
