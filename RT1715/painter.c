@@ -77,6 +77,17 @@ void rt_queue(object *o) {
         calc_rotate(8,vertices,o->v0,o->r);
         for(i=0;i<8;i++) if(vertices[i].z<nearest) nearest=vertices[i].z;
         coarse=nearest>240L*64L;
+#ifdef RT_PM
+        /* One-millimetre dish detail must be subpixel. Per-object hysteresis
+         * prevents switching back and forth during slow camera motion. */
+        if(rt_screen_lod) {
+            long limit=projmuly*64L*100L;
+            if(nearest<=512) o->lod=0;
+            else if(o->lod) { if(nearest*125L<limit) o->lod=0; }
+            else if(nearest*100L>limit) o->lod=1;
+            coarse=o->lod;
+        }
+#endif
     }
 #ifdef RT_PM
     if(coarse) {

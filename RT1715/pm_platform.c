@@ -16,6 +16,8 @@ int rt_ram_color=1;
 static int color_top=-1,color_bottom=-1;
 static int page_top[4]={-1,-1,-1,-1},page_bottom[4]={-1,-1,-1,-1};
 int rt_triangle_kernel=1,rt_bounds_culling=1;
+int rt_screen_lod=0,rt_profile=0;
+unsigned long rt_pixels,rt_pixels_passed;
 unsigned long rt_objects_tested,rt_objects_rejected;
 unsigned long rt_frames,rt_triangles,rt_spans,rt_vertices,rt_clipped;
 #pragma pack(push,1)

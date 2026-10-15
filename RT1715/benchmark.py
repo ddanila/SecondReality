@@ -18,6 +18,8 @@ def main():
     p.add_argument('--cycles',type=int,default=300000)
     p.add_argument('--samples',type=int,default=1,help='Repeat the complete suite and aggregate timings')
     p.add_argument('--dos-dir',type=Path,default=build.HERE/'build/dos',help='Prepared runtime or archived pose benchmark')
+    p.add_argument('--options',default='',help='Space-separated PM.OPT pairs, e.g. route 1 occlusion 1')
+    p.add_argument('--audit',action='store_true',help='Check cached lists against live culling at every pose')
     p.add_argument('--reference',type=Path,help='Compare frame hashes and timings with this result.json')
     args=p.parse_args()
     if args.cycles<=0:p.error('Cycles must be positive')
@@ -27,10 +29,11 @@ def main():
     out.mkdir(parents=True)
     for asset in source.glob('U2E.*'):shutil.copyfile(asset,out/asset.name)
     (out/'PM.CFG').write_text('ram\n')
+    (out/'PM.OPT').write_text(args.options+'\n')
     batch=['@echo off','config -get cpu cycles > CPU.TXT']
     for sample in range(args.samples):
-        batch += [f'U2E.EXE /bench > RUN{sample}.LOG','if errorlevel 1 goto fail',
-                  f'copy BENCH.LOG SAMPLE{sample}.LOG > NUL']
+        batch += [f'U2E.EXE /{"audit" if args.audit else "bench"} > RUN{sample}.LOG','if errorlevel 1 goto fail',
+                  f'copy {"FLIGHT" if args.audit else "BENCH"}.LOG SAMPLE{sample}.LOG > NUL']
     batch += ['echo PASS > RESULT.TXT','goto done',':fail','echo FAIL > RESULT.TXT',':done','exit']
     (out/'BENCH.BAT').write_bytes(('\r\n'.join(batch)+'\r\n').encode())
     command=[build.tool('dosbox-x'),'-conf',str(build.HERE/'dosbox-x.conf'),'-noautoexec','-fastlaunch',
@@ -42,6 +45,10 @@ def main():
         except BaseException:proc.kill();proc.wait();raise
     if proc.returncode or not (out/'RESULT.TXT').exists() or (out/'RESULT.TXT').read_text().strip()!='PASS':
         raise SystemExit('Benchmark failed; inspect '+str(out))
+    if args.audit:
+        log=(out/'SAMPLE0.LOG').read_text()
+        if 'AUDIT PASS poses=' not in log:raise SystemExit('Route audit failed')
+        print(log);return
     samples=[]
     for sample in range(args.samples):
         log=(out/f'SAMPLE{sample}.LOG').read_text()
@@ -66,8 +73,8 @@ def main():
         rows.append(row)
     scene=hashlib.sha256()
     for asset in sorted(out.glob('U2E.*')):
-        if asset.suffix.upper()!='.EXE':scene.update(asset.name.encode()+b'\0'+asset.read_bytes())
-    result={'label':args.label,'samples':args.samples,'cpu_cycles':(out/'CPU.TXT').read_text().strip(),
+        if asset.suffix.upper() not in ('.EXE','.VIS'):scene.update(asset.name.encode()+b'\0'+asset.read_bytes())
+    result={'options':args.options,'stage_logs':[line for line in log.splitlines() if line.startswith('STAGES ')],'label':args.label,'samples':args.samples,'cpu_cycles':(out/'CPU.TXT').read_text().strip(),
             'scene_sha256':scene.hexdigest(),'renderer_sha256':hashlib.sha256((out/'U2E.EXE').read_bytes()).hexdigest(),'poses':rows}
     if result['cpu_cycles']!=f'fixed {args.cycles}':raise SystemExit('CPU setting differs')
     if args.reference:

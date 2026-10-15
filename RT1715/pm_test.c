@@ -149,12 +149,15 @@ int main(void) {
     }
     puts("PASS 258 uploads, alignment, byte tails and guards");
     rt_depth_window(0,320,25,175);
-    for(n=0;n<2;n++) {
-    rt_triangle_kernel=n;
+    for(n=0;n<10;n++) {
+    rt_triangle_kernel=n!=0;
+    rt_occlusion=n>=2 && ((n-2)&1);
+    rt_tiles=n>=2 && ((n-2)&2);
+    rt_visible_spans=n>=2 && ((n-2)&4);
     for(i=0;i<sizeof(raster_cases)/sizeof(raster_cases[0]);i++) {
         unsigned long hash=2166136261UL;int x,y;
         rt_depth_begin();rt_color_begin();
-        rt_raster(raster_cases[i].v,3,raster_cases[i].decal);
+        rt_raster(raster_cases[i].v,3,raster_cases[i].decal);rt_depth_flush();
         for(y=0;y<200;y++) for(x=0;x<320;x++) {
             hash=(hash^rt_depth_at(x,y))*16777619UL;
             hash=(hash^rt_color_at(x,y))*16777619UL;
@@ -162,8 +165,8 @@ int main(void) {
         check(hash==raster_cases[i].hash,"complete clipped raster/row setup");
     }
     }
-    rt_triangle_kernel=1;
-    puts("PASS 160 complete raster images in C and assembly against portable host reference");
+    rt_triangle_kernel=1;rt_occlusion=rt_tiles=rt_visible_spans=0;
+    puts("PASS 160 complete raster images across C, assembly and eight experimental combinations");
     {
         rt_vertex triangle[3]={{0,0,1000,32},{100,0,1000,32},{0,20,1000,32}};
         projclipy[0]=0;projclipy[1]=199;rt_depth_window(0,320,0,200);

@@ -217,6 +217,13 @@ def main():
         for name in ["CRED.IDX", *(["CRED.CUE","CRED.TIM"] if args.robotron else []), *[card["file"] for card in report["credits"]]]:
             manifest.append({"file":name,"source":str(args.project),
                              "sha256":hashlib.sha256((dos/name).read_bytes()).hexdigest()})
+    if args.robotron and args.renderer=='protected':
+        from route_cache import build as bake_route
+        bake_route(dos)
+        manifest.append({'file':'U2E.VIS','source':'RT1715/route_cache.py',
+                         'sha256':hashlib.sha256((dos/'U2E.VIS').read_bytes()).hexdigest()})
+    else:
+        (dos/'U2E.VIS').unlink(missing_ok=True)
     (build / "assets.json").write_text(json.dumps(manifest, indent=2) + "\n")
     print(f"Built {dos / 'RT1715.EXE'} ({'custom assets' if args.project else 'original assets'} + MUSIC0)")
 

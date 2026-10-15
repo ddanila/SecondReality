@@ -40,16 +40,93 @@ static unsigned short far *page(unsigned logical) {
     return (unsigned short far *)MK_FP(frame_seg+physical*1024,0);
 }
 #endif
+#if defined(RT_HOST_TEST) || defined(RT_PM)
+/* Optional experiments; the assembly scanline path remains the reference. */
+int rt_occlusion=0,rt_tiles=0,rt_visible_spans=0;
+unsigned long rt_occluded,rt_occlusion_queries;
+static unsigned short coarse_depth[40*25];
+static int band_top=0,band_bottom=200,flushing=0;
+#define QUEUE_LIMIT 8192
+typedef struct { rt_vertex v[3];int decal; } queued_triangle;
+static queued_triangle *triangle_queue;
+static unsigned queued;
+static unsigned short *owners;
+typedef struct { long x,y,origin; } surface_gradient;
+static surface_gradient *surfaces;
+static unsigned surface_count,current_surface;
+static void flush_surfaces(void);
+static unsigned short *depth_memory(void) {
+#ifdef RT_HOST_TEST
+    return test_depth;
+#elif defined(RT_PM)
+    return flat_depth;
+#else
+    return 0;
+#endif
+}
+/* Cached minima may be old, but depth only increases within a frame. Refresh
+ * a tile only when its old lower bound cannot prove complete occlusion. */
+static int hidden_box(int left,int right,int top,int bottom,long maximum) {
+    unsigned short *depth=depth_memory();int tx,ty,x,y;unsigned minimum,value;
+    if(!depth || maximum<0 || maximum>=65535 || left>=right || top>=bottom) return 0;
+    rt_occlusion_queries++;
+    for(ty=top/8;ty<=(bottom-1)/8;ty++) for(tx=left/8;tx<=(right-1)/8;tx++) {
+        minimum=coarse_depth[ty*40+tx];
+        if(minimum<=maximum) {
+            minimum=65535;
+            for(y=ty*8;y<ty*8+8;y++) for(x=tx*8;x<tx*8+8;x++) {
+                value=depth[y*320+x];if(value<minimum) minimum=value;
+            }
+            coarse_depth[ty*40+tx]=(unsigned short)minimum;
+            if(minimum<=maximum) return 0;
+        }
+    }
+    rt_occluded++;return 1;
+}
+static int hidden_triangle(const rt_vertex *a,const rt_vertex *b,const rt_vertex *c,long qx,long qy,int miny,int maxy,int decal) {
+        long left=a->x,right=a->x;long long qlo,qhi,base;
+        if(b->x<left) left=b->x;if(c->x<left) left=c->x;
+        if(b->x>right) right=b->x;if(c->x>right) right=c->x;
+        /* Bound the actual fixed-point depth plane over the entire box,
+         * including half-pixel evaluation. Wrapped/extrapolated values are
+         * deliberately not culled. Strict comparison preserves equal ties. */
+        base=(long long)a->z*64-(long long)qx*a->x+(long long)qy*(miny-a->y)+(qx+qy)/2;
+        qlo=base+(long long)qx*(qx<0?right:left)+(long long)qy*(qy<0?maxy-miny:0);
+        qhi=base+(long long)qx*(qx<0?left:right)+(long long)qy*(qy<0?0:maxy-miny);
+        if(qlo>=0 && qhi<4194240 && hidden_box((int)left,(int)right,miny,maxy,(long)(qhi>>6)+decal)) return 1;
+    return 0;
+}
+#ifdef RT_PM
+int __cdecl rt_triangle_hidden(const rt_triangle_args *args) {
+    const rt_vertex *v=(const rt_vertex *)args->vertices;
+    return hidden_triangle(v,v+1,v+2,args->qx,args->qy,args->top,args->bottom,args->decal);
+}
+#endif
+#endif
 static long lx[200],rx[200],qstart[200],cstart[200];
 static int clip_left=0,clip_right=320,clip_top=0,clip_bottom=200;
 void rt_depth_window(int left,int right,int top,int bottom) {
     clip_left=left;clip_right=right;clip_top=top;clip_bottom=bottom;
 }
 void rt_depth_begin(void) {
+#ifdef RT_PM
+    static int old_top=-1,old_bottom=-1;
+#endif
+#if defined(RT_HOST_TEST) || defined(RT_PM)
+    if(rt_tiles && !triangle_queue) {
+        triangle_queue=malloc(QUEUE_LIMIT*sizeof(*triangle_queue));if(!triangle_queue) exit(3);
+    }
+    if(rt_visible_spans && !owners) {
+        owners=malloc(64000*sizeof(*owners));surfaces=malloc((QUEUE_LIMIT+1)*sizeof(*surfaces));
+        if(!owners || !surfaces) exit(3);
+    }
+    queued=surface_count=0;band_top=0;band_bottom=200;
+    if(rt_occlusion) memset(coarse_depth,0,sizeof(coarse_depth));
+    if(rt_visible_spans) memset(owners,0,64000*sizeof(*owners));
+#endif
 #ifdef RT_HOST_TEST
     memset(test_depth,0,sizeof(test_depth));memset(test_color,255,sizeof(test_color));
 #elif defined(RT_PM)
-    static int old_top=-1,old_bottom=-1;
     if(old_top!=clip_top || old_bottom!=clip_bottom) {
         memset(flat_depth,0,sizeof(flat_depth));old_top=clip_top;old_bottom=clip_bottom;
     } else memset(flat_depth+clip_top*320,0,(clip_bottom-clip_top)*640);
@@ -64,6 +141,10 @@ void rt_depth_begin(void) {
 #endif
 }
 void rt_depth_end(void) {
+#if defined(RT_HOST_TEST) || defined(RT_PM)
+    free(triangle_queue);free(owners);free(surfaces);
+    triangle_queue=0;owners=0;surfaces=0;
+#endif
 #if !defined(RT_HOST_TEST) && !defined(RT_PM)
     if(active) { ems(0x4500,0,handle);active=0; }
 #endif
@@ -94,6 +175,22 @@ static int clip(rt_vertex *in,rt_vertex *out,int n,int axis,long bound,int upper
 static void span(int y,int left,int right,long z,long dz,long c,long dc,int decal,int plane) {
 #ifdef RT_PM
     int first=left+((plane-left)&3);
+    if(rt_profile || rt_visible_spans) {
+        int x;unsigned value,index;long q=z+dz*(first-left),shade=c+dc*(first-left);
+        for(x=first;x<right;x+=4,q=(long)((unsigned long)q+dz*4),shade=(long)((unsigned long)shade+dc*4)) {
+            index=y*320+x;value=((unsigned long)q>>6)&65535;
+            if(decal && value<65535) value++;
+            if(rt_profile) rt_pixels++;
+            if(value>=flat_depth[index]) {
+                if(rt_profile) rt_pixels_passed++;
+                flat_depth[index]=(unsigned short)value;
+                if(rt_visible_spans) owners[index]=(unsigned short)current_surface;
+                else if(rt_ram_color) rt_color[plane*16000+y*80+(x>>2)]=(unsigned char)(shade>>6);
+                else rt_video[y*80+(x>>2)]=(unsigned char)(shade>>6);
+            }
+        }
+        return;
+    }
     if(first<right) {
         unsigned index=y*320+first,offset=y*80+(first>>2);
         unsigned char *dest=rt_ram_color?rt_color+plane*16000:rt_video;
@@ -133,7 +230,9 @@ static void span(int y,int left,int right,long z,long dz,long c,long dc,int deca
                 if(decal && depth<65535) depth++;
                 index=(unsigned long)y*320+x;
                 if(depth>=test_depth[index]) {
-                    test_depth[index]=depth;test_color[index]=(unsigned char)(shade>>6);
+                    test_depth[index]=depth;
+                    if(rt_visible_spans) owners[index]=(unsigned short)current_surface;
+                    else test_color[index]=(unsigned char)(shade>>6);
                 }
             }
 #endif
@@ -146,6 +245,13 @@ static void triangle(rt_vertex *a,rt_vertex *b,rt_vertex *c,int decal) {
     rt_vertex vertices[3],v,w,t;
     int i,y,plane,miny=200,maxy=0,left,right;
     long area,qx,qy,cx=0,cy=0,x,dx,dy,z,shade;
+#if defined(RT_HOST_TEST) || defined(RT_PM)
+    if(rt_tiles && !flushing) {
+        if(queued==QUEUE_LIMIT) rt_depth_flush();
+        triangle_queue[queued].v[0]=*a;triangle_queue[queued].v[1]=*b;triangle_queue[queued].v[2]=*c;
+        triangle_queue[queued++].decal=decal;return;
+    }
+#endif
     area=(b->x-a->x)*(c->y-a->y)-(c->x-a->x)*(b->y-a->y);
     if(!area) return;
 #ifdef RT_PM
@@ -153,9 +259,12 @@ static void triangle(rt_vertex *a,rt_vertex *b,rt_vertex *c,int decal) {
 #endif
     vertices[0]=*a;vertices[1]=*b;vertices[2]=*c;
     for(i=0;i<3;i++) { if(vertices[i].y<miny) miny=(int)vertices[i].y;if(vertices[i].y>maxy) maxy=(int)vertices[i].y; }
+#if defined(RT_HOST_TEST) || defined(RT_PM)
+    if(miny<band_top) miny=band_top;if(maxy>band_bottom) maxy=band_bottom;
+#endif
     if(miny>=maxy) return;
 #ifdef RT_PM
-    if(rt_triangle_kernel) {
+    if(rt_triangle_kernel && !rt_profile && !rt_visible_spans) {
         rt_triangle_args args;
         args.vertices=vertices;args.depth=flat_depth;
         args.color=rt_ram_color?rt_color:rt_video;
@@ -171,6 +280,15 @@ static void triangle(rt_vertex *a,rt_vertex *b,rt_vertex *c,int decal) {
         cx=rt_muldiv((b->c-a->c)*(c->y-a->y)-(c->c-a->c)*(b->y-a->y),64,area);
         cy=rt_muldiv((b->x-a->x)*(c->c-a->c)-(c->x-a->x)*(b->c-a->c),64,area);
     }
+#if defined(RT_HOST_TEST) || defined(RT_PM)
+    if(rt_occlusion && hidden_triangle(a,b,c,qx,qy,miny,maxy,decal)) return;
+    if(rt_visible_spans) {
+        if(surface_count==QUEUE_LIMIT) flush_surfaces();
+        current_surface=++surface_count;
+        surfaces[current_surface].x=cx;surfaces[current_surface].y=cy;
+        surfaces[current_surface].origin=(long)((unsigned long)a->c*64-(unsigned long)cx*a->x-(unsigned long)cy*a->y+(cx+cy)/2);
+    }
+#endif
 #if !defined(RT_HOST_TEST) && !defined(RT_PM)
     rt_edges386(vertices,lx,rx,miny,maxy);
 #else
@@ -215,6 +333,43 @@ static void triangle(rt_vertex *a,rt_vertex *b,rt_vertex *c,int decal) {
             if(lx[y]<rx[y]) span(y,(int)lx[y],(int)rx[y],qstart[y],qx,cstart[y],cx,decal,plane);
     }
 }
+#if defined(RT_HOST_TEST) || defined(RT_PM)
+static void flush_surfaces(void) {
+    int y,x,end,plane;unsigned id,index;long shade,step;
+    for(y=clip_top;y<clip_bottom;y++) for(x=clip_left;x<clip_right;) {
+        id=owners[y*320+x];if(!id) { x++;continue; }
+        end=x+1;while(end<clip_right && owners[y*320+end]==id) end++;
+        step=surfaces[id].x;
+        shade=(long)((unsigned long)surfaces[id].origin+(unsigned long)step*x+(unsigned long)surfaces[id].y*y);
+        for(;x<end;x++,shade=(long)((unsigned long)shade+step)) {
+#ifdef RT_HOST_TEST
+            test_color[y*320+x]=(unsigned char)(shade>>6);
+#elif defined(RT_PM)
+            plane=x&3;index=y*80+(x>>2);
+            if(rt_ram_color) rt_color[plane*16000+index]=(unsigned char)(shade>>6);
+            else { outpw(0x3c4,2|(0x100<<plane));rt_video[index]=(unsigned char)(shade>>6); }
+#endif
+        }
+    }
+    memset(owners,0,64000*sizeof(*owners));surface_count=0;
+}
+void rt_depth_flush(void) {
+    unsigned i;int top;
+    if(queued) {
+        flushing=1;
+        /* Horizontal tiles retain triangle submission order (including equal
+         * depth ties), and reuse original edge equations without reclipping. */
+        for(top=clip_top;top<clip_bottom;top+=16) {
+            band_top=top;band_bottom=top+16;if(band_bottom>clip_bottom) band_bottom=clip_bottom;
+            for(i=0;i<queued;i++) triangle(&triangle_queue[i].v[0],&triangle_queue[i].v[1],&triangle_queue[i].v[2],triangle_queue[i].decal);
+        }
+        queued=0;flushing=0;band_top=0;band_bottom=200;
+    }
+    if(rt_visible_spans && surface_count) flush_surfaces();
+}
+#else
+void rt_depth_flush(void) { }
+#endif
 void rt_raster(rt_vertex *vertices,int count,int decal) {
     rt_vertex a[16],b[16];
     int n=count,i,inside=1;

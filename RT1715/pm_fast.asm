@@ -121,6 +121,8 @@ _rt_upload32 endp
 ; EBP locals: args -4, edge -8, plane -12, y -16, q -20, c -24,
 ; depth row -28, color row -32, dz -36, dc -40, spans -44, kernel -48.
 ; Setup deltas: dx1 -52, dy1 -56, dx2 -60, dy2 -64.
+extrn _rt_occlusion:dword
+extrn _rt_triangle_hidden:near
 public _rt_triangle32
 ; Exact signed gradients: retain 64-bit numerator scaling and IDIV truncation.
 TR_GRADIENT macro component,gradient
@@ -204,6 +206,14 @@ tr_origins:
     TR_ORIGIN 8,28,44
     TR_ORIGIN 12,36,48
     mov dword ptr [ebp-44],0
+    cmp dword ptr [_rt_occlusion],0
+    je tr_visible
+    push esi
+    call _rt_triangle_hidden
+    add esp,4
+    test eax,eax
+    jnz tr_done
+tr_visible:
     mov ebx,[esi+20]
     mov ecx,[esi+24]
     sub ecx,ebx

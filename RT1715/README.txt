@@ -5,8 +5,9 @@ Current checkpoint (2026-10-15, branch rt1715)
 --------------------------------------------
 The Robotron presentation includes the protected-mode renderer, scenic close-up
 flight, tangent-facing banked drone, differentiated materials and CRT shading,
-and 21 technical cards synchronized to the original music. Implementation:
-8b3e756. All 43 host tests, both native suites and full headless DOSBox-X playback
+and 21 technical cards synchronized to the original music. Later renderer
+experiments and retained defaults are documented at the end of this file.
+All 49 host tests, both native suites and full headless DOSBox-X playback
 passed; all card entrances matched their scheduled tracker rows.
 
 Start with assets/robotron/EDITING.txt and assets/robotron/presentation.json for
@@ -819,3 +820,53 @@ error; overview 24:54, swoosh 25:6 and credits 28:0-43:29 remain intact.
 Playback exits normally without confirmation. Original drone data, protected
 palette slots and music payload remain byte-exact. The final review contact
 sheet was visually inspected. Results: benchmarks/presentation.json.
+
+Later software-rendering techniques
+----------------------------------
+See OPTIMIZATIONS.txt for design, sources, PM.OPT switches and reproduction.
+The host now bakes conservative visibility and stable draw order for every
+encoded animation pose into U2E.VIS. DOS validates source fingerprints and falls
+back to live selection when the cache is stale or absent. Optional files are
+checked through DOS attributes before opening to avoid the resident loader's
+fatal missing-file lookup. Identical local
+transforms also share their camera composition within a frame.
+
+The retained default is about 3.3% faster in aggregate than live selection in
+the same executable, and about 2.4% faster than the starting renderer. This is
+an equally weighted six-pose comparison, not an end-to-end demo FPS claim.
+Five-sample cached/live timings at fixed 300000 DOSBox-X cycles (ms/render):
+
+  Pose          Live bounds/sort        Cached draw list
+   420                    27.463                  27.005
+   980                    18.765                  18.308
+  1840                    14.188                  14.188
+  2660                     4.120                   4.120
+  3200                    16.478                  15.103
+  3750                    16.020                  15.103
+
+The single-sample fixed-100000 comparison improves about 2.1% in aggregate
+against the starting renderer, with identical six-pose images. Small timing
+changes remain limited by the roughly 55 ms DOS timer granularity.
+
+Screen-space keyboard LOD with hysteresis is available as a quality option.
+Coarse 8x8 occlusion, 16-row raster tiles and deferred visible-span shading were
+implemented and measured, but cost more than they save on this scene. They
+remain disabled by default, with buffers allocated only when selected.
+Diagnostic stage timers and exact pixel-test/pass counters support further
+experiments; instrumented timings are not comparable to the assembly fast path.
+
+All 2,031 cached draw lists match live DOS culling/sorting. Occlusion, tiling and
+deferred shading each produce the same 2,031 frame hashes as the default path.
+49 host tests pass, including queue overflow, mixed layers and all experiment
+combinations. Both native suites and the legacy renderer host build pass.
+Full measurements, renderer/scene hashes and audit digests are recorded in
+benchmarks/later-techniques.json.
+
+Full headless playback passes at fixed 300000 and 100000 cycles, with normal
+DOS exit and no confirmation dialog. Captures: 20261015-115315-974546 and
+20261015-115617-996382. All 21 card entries have zero measured tracker-row
+error in both runs. The swoosh remains 25:6 and credits remain 28:0-43:29.
+At 300000 cycles, overview/end remain 24:54/26:57 and 1905 flight frames render.
+At 100000 cycles, overview/end are 24:55/26:58 (within cue tolerances); 1195
+frames render as the player skips overdue poses to keep up with the music.
+The normal-speed review contact sheet was visually inspected.

@@ -51,6 +51,7 @@ def main():
         q=abs(a*b)//abs(d)*(-1 if (a*b<0)!=(d<0) else 1)
         if -2147483648<=q<=2147483647:cases.append((a,b,d,q))
     (out/'pm_vectors.h').write_text('static const long vectors[][4]={'+','.join('{'+','.join(str(v)+'L' for v in row)+'}' for row in cases)+'};\n')
+    shutil.copyfile(build.HERE/"depth.h",out/"depth.h")
     raster_fixtures(out)
     for name in ('pm.h','pm_fast.h','pm_platform.c','pm_fast.asm','depth.h','depth.c','pm_tangent.h'):
         shutil.copyfile(source/name,out/name)

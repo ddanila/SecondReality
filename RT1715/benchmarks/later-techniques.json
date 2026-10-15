@@ -1,0 +1,1973 @@
+{
+  "default": "route cache and identical-transform reuse; existing keyboard LOD and assembly rasterizer",
+  "optional": "screen-space keyboard LOD, coarse occlusion, horizontal tiling, deferred visible-span shading, diagnostic profiling",
+  "host_tests": 49,
+  "native_suites": "protected and legacy PASS; legacy renderer host build PASS",
+  "route_cache": {
+    "version": 1,
+    "fingerprint": "23f5776b",
+    "poses": 2031,
+    "objects": 152,
+    "active_object_poses": 167108,
+    "retained_object_poses": 142637,
+    "bytes": 150781,
+    "method": "exact encoded poses; conservative integer AABB frustum rejection; stable front-to-back order"
+  },
+  "aggregate_change_percent_vs_live": -3.3,
+  "aggregate_change_percent_vs_start": -2.38,
+  "slow_aggregate_change_percent_vs_start": -2.05,
+  "notes": [
+    "Five samples for final cached/live timings at fixed 300000 cycles. Starting renderer: three samples.",
+    "Slow comparison: one sample at fixed 100000 cycles; small differences are timer-limited.",
+    "Experiments are measured prototypes, disabled by default because they did not consistently improve performance.",
+    "Profile uses instrumented C pixel loops, not production assembly timings; clock granularity is about 55ms.",
+    "Runtime caches use every exact animation pose. No occlusion is inferred from sampled images.",
+    "DOSBox timings do not establish real-hardware cache behavior."
+  ],
+  "audits": {
+    "final-audit": {
+      "artifact": "build/pose-benchmarks/20261015-113808-final-audit/HASH.LOG",
+      "frames": 2031,
+      "sha256": "4bf3287e520fd3df25c8cbb382296a7ef8a66efca9a1d6c81ff29130b75c7321"
+    },
+    "occlusion-audit": {
+      "artifact": "build/pose-benchmarks/20261015-113843-occlusion-audit/HASH.LOG",
+      "frames": 2031,
+      "sha256": "4bf3287e520fd3df25c8cbb382296a7ef8a66efca9a1d6c81ff29130b75c7321"
+    },
+    "tiles-audit": {
+      "artifact": "build/pose-benchmarks/20261015-113930-tiles-audit/HASH.LOG",
+      "frames": 2031,
+      "sha256": "4bf3287e520fd3df25c8cbb382296a7ef8a66efca9a1d6c81ff29130b75c7321"
+    },
+    "spans-audit": {
+      "artifact": "build/pose-benchmarks/20261015-114023-spans-audit/HASH.LOG",
+      "frames": 2031,
+      "sha256": "4bf3287e520fd3df25c8cbb382296a7ef8a66efca9a1d6c81ff29130b75c7321"
+    },
+    "release-audit": {
+      "artifact": "build/pose-benchmarks/20261015-120137-release-audit/HASH.LOG",
+      "frames": 2031,
+      "sha256": "4bf3287e520fd3df25c8cbb382296a7ef8a66efca9a1d6c81ff29130b75c7321"
+    }
+  },
+  "benchmarks": {
+    "pre-later-techniques": {
+      "artifact": "build/pose-benchmarks/20261015-112250-pre-later-techniques/result.json",
+      "result": {
+        "label": "pre-later-techniques",
+        "samples": 3,
+        "cpu_cycles": "fixed 300000",
+        "scene_sha256": "90d3a473b9c919cf9a1436cbd7ee67a96bbf8fbc3cc2a69f7f653236b8588017",
+        "renderer_sha256": "39fc24b88731db8a012c853de52ad33a7c096b9a016ebaf519996a38d231d2f6",
+        "poses": [
+          {
+            "frame": 420,
+            "iterations": 360,
+            "ticks": 9885,
+            "hz": 1000,
+            "color": "cd574729",
+            "vertices": 1971816,
+            "triangles": 743787,
+            "spans": 19170393,
+            "sample_ticks": [
+              3295,
+              3295,
+              3295
+            ],
+            "milliseconds_per_render": 27.458
+          },
+          {
+            "frame": 980,
+            "iterations": 360,
+            "ticks": 6591,
+            "hz": 1000,
+            "color": "fbc4d2be",
+            "vertices": 1395009,
+            "triangles": 525261,
+            "spans": 11847594,
+            "sample_ticks": [
+              2197,
+              2197,
+              2197
+            ],
+            "milliseconds_per_render": 18.308
+          },
+          {
+            "frame": 1840,
+            "iterations": 360,
+            "ticks": 5109,
+            "hz": 1000,
+            "color": "94d13785",
+            "vertices": 1052700,
+            "triangles": 332871,
+            "spans": 7201194,
+            "sample_ticks": [
+              1703,
+              1703,
+              1703
+            ],
+            "milliseconds_per_render": 14.192
+          },
+          {
+            "frame": 2660,
+            "iterations": 360,
+            "ticks": 1647,
+            "hz": 1000,
+            "color": "acfd2dcf",
+            "vertices": 102003,
+            "triangles": 26499,
+            "spans": 3210735,
+            "sample_ticks": [
+              549,
+              549,
+              549
+            ],
+            "milliseconds_per_render": 4.575
+          },
+          {
+            "frame": 3200,
+            "iterations": 360,
+            "ticks": 5766,
+            "hz": 1000,
+            "color": "a8f4cf0b",
+            "vertices": 1969638,
+            "triangles": 724911,
+            "spans": 3556311,
+            "sample_ticks": [
+              1922,
+              1922,
+              1922
+            ],
+            "milliseconds_per_render": 16.017
+          },
+          {
+            "frame": 3750,
+            "iterations": 360,
+            "ticks": 5604,
+            "hz": 1000,
+            "color": "19790536",
+            "vertices": 1911921,
+            "triangles": 722370,
+            "spans": 3499320,
+            "sample_ticks": [
+              1868,
+              1868,
+              1868
+            ],
+            "milliseconds_per_render": 15.567
+          }
+        ]
+      }
+    },
+    "final-route": {
+      "artifact": "build/pose-benchmarks/20261015-113554-final-route/result.json",
+      "result": {
+        "options": "",
+        "stage_logs": [
+          "STAGES clear=0 objects=0 draw=0 upload=0 hz=1000 pixels=0 passed=0 occluded=0 queries=0 route_skipped=51667"
+        ],
+        "label": "final-route",
+        "samples": 5,
+        "cpu_cycles": "fixed 300000",
+        "scene_sha256": "90d3a473b9c919cf9a1436cbd7ee67a96bbf8fbc3cc2a69f7f653236b8588017",
+        "renderer_sha256": "22695c883ad132ae044834ef3ebe772b869ce7e93d27224b9fd16061a7010b24",
+        "poses": [
+          {
+            "frame": 420,
+            "iterations": 600,
+            "ticks": 16203,
+            "hz": 1000,
+            "color": "cd574729",
+            "vertices": 3286360,
+            "triangles": 1239645,
+            "spans": 31950655,
+            "sample_ticks": [
+              3241,
+              3241,
+              3240,
+              3240,
+              3241
+            ],
+            "milliseconds_per_render": 27.005,
+            "time_change_percent": -1.65
+          },
+          {
+            "frame": 980,
+            "iterations": 600,
+            "ticks": 10985,
+            "hz": 1000,
+            "color": "fbc4d2be",
+            "vertices": 2325015,
+            "triangles": 875435,
+            "spans": 19745990,
+            "sample_ticks": [
+              2197,
+              2197,
+              2197,
+              2197,
+              2197
+            ],
+            "milliseconds_per_render": 18.308,
+            "time_change_percent": 0.0
+          },
+          {
+            "frame": 1840,
+            "iterations": 600,
+            "ticks": 8514,
+            "hz": 1000,
+            "color": "94d13785",
+            "vertices": 1754500,
+            "triangles": 554785,
+            "spans": 12001990,
+            "sample_ticks": [
+              1702,
+              1703,
+              1703,
+              1703,
+              1703
+            ],
+            "milliseconds_per_render": 14.19,
+            "time_change_percent": -0.01
+          },
+          {
+            "frame": 2660,
+            "iterations": 600,
+            "ticks": 2471,
+            "hz": 1000,
+            "color": "acfd2dcf",
+            "vertices": 170005,
+            "triangles": 44165,
+            "spans": 5351225,
+            "sample_ticks": [
+              495,
+              494,
+              494,
+              494,
+              494
+            ],
+            "milliseconds_per_render": 4.118,
+            "time_change_percent": -9.98
+          },
+          {
+            "frame": 3200,
+            "iterations": 600,
+            "ticks": 9063,
+            "hz": 1000,
+            "color": "a8f4cf0b",
+            "vertices": 3282730,
+            "triangles": 1208185,
+            "spans": 5927185,
+            "sample_ticks": [
+              1813,
+              1813,
+              1813,
+              1812,
+              1812
+            ],
+            "milliseconds_per_render": 15.105,
+            "time_change_percent": -5.69
+          },
+          {
+            "frame": 3750,
+            "iterations": 600,
+            "ticks": 9063,
+            "hz": 1000,
+            "color": "19790536",
+            "vertices": 3186535,
+            "triangles": 1203950,
+            "spans": 5832200,
+            "sample_ticks": [
+              1812,
+              1812,
+              1813,
+              1813,
+              1813
+            ],
+            "milliseconds_per_render": 15.105,
+            "time_change_percent": -2.97
+          }
+        ]
+      }
+    },
+    "final-live": {
+      "artifact": "build/pose-benchmarks/20261015-113654-final-live/result.json",
+      "result": {
+        "options": "route 0",
+        "stage_logs": [
+          "STAGES clear=0 objects=0 draw=0 upload=0 hz=1000 pixels=0 passed=0 occluded=0 queries=0 route_skipped=0"
+        ],
+        "label": "final-live",
+        "samples": 5,
+        "cpu_cycles": "fixed 300000",
+        "scene_sha256": "90d3a473b9c919cf9a1436cbd7ee67a96bbf8fbc3cc2a69f7f653236b8588017",
+        "renderer_sha256": "22695c883ad132ae044834ef3ebe772b869ce7e93d27224b9fd16061a7010b24",
+        "poses": [
+          {
+            "frame": 420,
+            "iterations": 600,
+            "ticks": 16478,
+            "hz": 1000,
+            "color": "cd574729",
+            "vertices": 3286360,
+            "triangles": 1239645,
+            "spans": 31950655,
+            "sample_ticks": [
+              3295,
+              3296,
+              3296,
+              3295,
+              3296
+            ],
+            "milliseconds_per_render": 27.463,
+            "time_change_percent": 0.02
+          },
+          {
+            "frame": 980,
+            "iterations": 600,
+            "ticks": 11259,
+            "hz": 1000,
+            "color": "fbc4d2be",
+            "vertices": 2325015,
+            "triangles": 875435,
+            "spans": 19745990,
+            "sample_ticks": [
+              2252,
+              2251,
+              2252,
+              2252,
+              2252
+            ],
+            "milliseconds_per_render": 18.765,
+            "time_change_percent": 2.49
+          },
+          {
+            "frame": 1840,
+            "iterations": 600,
+            "ticks": 8513,
+            "hz": 1000,
+            "color": "94d13785",
+            "vertices": 1754500,
+            "triangles": 554785,
+            "spans": 12001990,
+            "sample_ticks": [
+              1703,
+              1703,
+              1702,
+              1703,
+              1702
+            ],
+            "milliseconds_per_render": 14.188,
+            "time_change_percent": -0.02
+          },
+          {
+            "frame": 2660,
+            "iterations": 600,
+            "ticks": 2471,
+            "hz": 1000,
+            "color": "acfd2dcf",
+            "vertices": 170005,
+            "triangles": 44165,
+            "spans": 5351225,
+            "sample_ticks": [
+              494,
+              494,
+              495,
+              494,
+              494
+            ],
+            "milliseconds_per_render": 4.118,
+            "time_change_percent": -9.98
+          },
+          {
+            "frame": 3200,
+            "iterations": 600,
+            "ticks": 9887,
+            "hz": 1000,
+            "color": "a8f4cf0b",
+            "vertices": 3282730,
+            "triangles": 1208185,
+            "spans": 5927185,
+            "sample_ticks": [
+              1977,
+              1978,
+              1977,
+              1977,
+              1978
+            ],
+            "milliseconds_per_render": 16.478,
+            "time_change_percent": 2.88
+          },
+          {
+            "frame": 3750,
+            "iterations": 600,
+            "ticks": 9612,
+            "hz": 1000,
+            "color": "19790536",
+            "vertices": 3186535,
+            "triangles": 1203950,
+            "spans": 5832200,
+            "sample_ticks": [
+              1922,
+              1923,
+              1922,
+              1923,
+              1922
+            ],
+            "milliseconds_per_render": 16.02,
+            "time_change_percent": 2.91
+          }
+        ]
+      }
+    },
+    "occlusion": {
+      "artifact": "build/pose-benchmarks/20261015-113047-occlusion/result.json",
+      "result": {
+        "options": "occlusion 1",
+        "stage_logs": [
+          "STAGES clear=0 objects=0 draw=0 upload=0 hz=1000 pixels=0 passed=0 occluded=10527 queries=1025233 route_skipped=51667"
+        ],
+        "label": "occlusion",
+        "samples": 1,
+        "cpu_cycles": "fixed 300000",
+        "scene_sha256": "90d3a473b9c919cf9a1436cbd7ee67a96bbf8fbc3cc2a69f7f653236b8588017",
+        "renderer_sha256": "45bd493589a4e58357d168951f30f22fc5b18967e4aeae914a471a41a0932be0",
+        "poses": [
+          {
+            "frame": 420,
+            "iterations": 120,
+            "ticks": 4284,
+            "hz": 1000,
+            "color": "cd574729",
+            "vertices": 657272,
+            "triangles": 247929,
+            "spans": 6328905,
+            "sample_ticks": [
+              4284
+            ],
+            "milliseconds_per_render": 35.7,
+            "time_change_percent": 30.02
+          },
+          {
+            "frame": 980,
+            "iterations": 120,
+            "ticks": 2911,
+            "hz": 1000,
+            "color": "fbc4d2be",
+            "vertices": 465003,
+            "triangles": 175087,
+            "spans": 3922336,
+            "sample_ticks": [
+              2911
+            ],
+            "milliseconds_per_render": 24.258,
+            "time_change_percent": 32.5
+          },
+          {
+            "frame": 1840,
+            "iterations": 120,
+            "ticks": 2142,
+            "hz": 1000,
+            "color": "94d13785",
+            "vertices": 350900,
+            "triangles": 110957,
+            "spans": 2397615,
+            "sample_ticks": [
+              2142
+            ],
+            "milliseconds_per_render": 17.85,
+            "time_change_percent": 25.78
+          },
+          {
+            "frame": 2660,
+            "iterations": 120,
+            "ticks": 604,
+            "hz": 1000,
+            "color": "acfd2dcf",
+            "vertices": 34001,
+            "triangles": 8833,
+            "spans": 1070245,
+            "sample_ticks": [
+              604
+            ],
+            "milliseconds_per_render": 5.033,
+            "time_change_percent": 10.02
+          },
+          {
+            "frame": 3200,
+            "iterations": 120,
+            "ticks": 2856,
+            "hz": 1000,
+            "color": "a8f4cf0b",
+            "vertices": 656546,
+            "triangles": 241637,
+            "spans": 1182049,
+            "sample_ticks": [
+              2856
+            ],
+            "milliseconds_per_render": 23.8,
+            "time_change_percent": 48.6
+          },
+          {
+            "frame": 3750,
+            "iterations": 120,
+            "ticks": 2801,
+            "hz": 1000,
+            "color": "19790536",
+            "vertices": 637307,
+            "triangles": 240790,
+            "spans": 1163052,
+            "sample_ticks": [
+              2801
+            ],
+            "milliseconds_per_render": 23.342,
+            "time_change_percent": 49.95
+          }
+        ]
+      }
+    },
+    "tiles": {
+      "artifact": "build/pose-benchmarks/20261015-113103-tiles/result.json",
+      "result": {
+        "options": "tiles 1",
+        "stage_logs": [
+          "STAGES clear=0 objects=0 draw=0 upload=0 hz=1000 pixels=0 passed=0 occluded=0 queries=0 route_skipped=51667"
+        ],
+        "label": "tiles",
+        "samples": 1,
+        "cpu_cycles": "fixed 300000",
+        "scene_sha256": "90d3a473b9c919cf9a1436cbd7ee67a96bbf8fbc3cc2a69f7f653236b8588017",
+        "renderer_sha256": "45bd493589a4e58357d168951f30f22fc5b18967e4aeae914a471a41a0932be0",
+        "poses": [
+          {
+            "frame": 420,
+            "iterations": 120,
+            "ticks": 4724,
+            "hz": 1000,
+            "color": "cd574729",
+            "vertices": 657272,
+            "triangles": 2479290,
+            "spans": 6390131,
+            "sample_ticks": [
+              4724
+            ],
+            "milliseconds_per_render": 39.367,
+            "time_change_percent": 43.37
+          },
+          {
+            "frame": 980,
+            "iterations": 120,
+            "ticks": 3185,
+            "hz": 1000,
+            "color": "fbc4d2be",
+            "vertices": 465003,
+            "triangles": 1750870,
+            "spans": 3949198,
+            "sample_ticks": [
+              3185
+            ],
+            "milliseconds_per_render": 26.542,
+            "time_change_percent": 44.97
+          },
+          {
+            "frame": 1840,
+            "iterations": 120,
+            "ticks": 2582,
+            "hz": 1000,
+            "color": "94d13785",
+            "vertices": 350900,
+            "triangles": 1109570,
+            "spans": 2400398,
+            "sample_ticks": [
+              2582
+            ],
+            "milliseconds_per_render": 21.517,
+            "time_change_percent": 51.61
+          },
+          {
+            "frame": 2660,
+            "iterations": 120,
+            "ticks": 604,
+            "hz": 1000,
+            "color": "acfd2dcf",
+            "vertices": 34001,
+            "triangles": 88330,
+            "spans": 1070245,
+            "sample_ticks": [
+              604
+            ],
+            "milliseconds_per_render": 5.033,
+            "time_change_percent": 10.02
+          },
+          {
+            "frame": 3200,
+            "iterations": 120,
+            "ticks": 3460,
+            "hz": 1000,
+            "color": "a8f4cf0b",
+            "vertices": 656546,
+            "triangles": 2416370,
+            "spans": 1185437,
+            "sample_ticks": [
+              3460
+            ],
+            "milliseconds_per_render": 28.833,
+            "time_change_percent": 80.02
+          },
+          {
+            "frame": 3750,
+            "iterations": 120,
+            "ticks": 3405,
+            "hz": 1000,
+            "color": "19790536",
+            "vertices": 637307,
+            "triangles": 2407900,
+            "spans": 1166440,
+            "sample_ticks": [
+              3405
+            ],
+            "milliseconds_per_render": 28.375,
+            "time_change_percent": 82.28
+          }
+        ]
+      }
+    },
+    "spans": {
+      "artifact": "build/pose-benchmarks/20261015-113122-spans/result.json",
+      "result": {
+        "options": "spans 1",
+        "stage_logs": [
+          "STAGES clear=0 objects=0 draw=0 upload=0 hz=1000 pixels=0 passed=0 occluded=0 queries=0 route_skipped=51667"
+        ],
+        "label": "spans",
+        "samples": 1,
+        "cpu_cycles": "fixed 300000",
+        "scene_sha256": "90d3a473b9c919cf9a1436cbd7ee67a96bbf8fbc3cc2a69f7f653236b8588017",
+        "renderer_sha256": "45bd493589a4e58357d168951f30f22fc5b18967e4aeae914a471a41a0932be0",
+        "poses": [
+          {
+            "frame": 420,
+            "iterations": 120,
+            "ticks": 5493,
+            "hz": 1000,
+            "color": "cd574729",
+            "vertices": 657272,
+            "triangles": 247929,
+            "spans": 0,
+            "sample_ticks": [
+              5493
+            ],
+            "milliseconds_per_render": 45.775,
+            "time_change_percent": 66.71
+          },
+          {
+            "frame": 980,
+            "iterations": 120,
+            "ticks": 3845,
+            "hz": 1000,
+            "color": "fbc4d2be",
+            "vertices": 465003,
+            "triangles": 175087,
+            "spans": 0,
+            "sample_ticks": [
+              3845
+            ],
+            "milliseconds_per_render": 32.042,
+            "time_change_percent": 75.01
+          },
+          {
+            "frame": 1840,
+            "iterations": 120,
+            "ticks": 3075,
+            "hz": 1000,
+            "color": "94d13785",
+            "vertices": 350900,
+            "triangles": 110957,
+            "spans": 0,
+            "sample_ticks": [
+              3075
+            ],
+            "milliseconds_per_render": 25.625,
+            "time_change_percent": 80.56
+          },
+          {
+            "frame": 2660,
+            "iterations": 120,
+            "ticks": 1703,
+            "hz": 1000,
+            "color": "acfd2dcf",
+            "vertices": 34001,
+            "triangles": 8833,
+            "spans": 0,
+            "sample_ticks": [
+              1703
+            ],
+            "milliseconds_per_render": 14.192,
+            "time_change_percent": 210.2
+          },
+          {
+            "frame": 3200,
+            "iterations": 120,
+            "ticks": 2472,
+            "hz": 1000,
+            "color": "a8f4cf0b",
+            "vertices": 656546,
+            "triangles": 241637,
+            "spans": 0,
+            "sample_ticks": [
+              2472
+            ],
+            "milliseconds_per_render": 20.6,
+            "time_change_percent": 28.62
+          },
+          {
+            "frame": 3750,
+            "iterations": 120,
+            "ticks": 2471,
+            "hz": 1000,
+            "color": "19790536",
+            "vertices": 637307,
+            "triangles": 240790,
+            "spans": 0,
+            "sample_ticks": [
+              2471
+            ],
+            "milliseconds_per_render": 20.592,
+            "time_change_percent": 32.28
+          }
+        ]
+      }
+    },
+    "screen-lod": {
+      "artifact": "build/pose-benchmarks/20261015-113141-screen-lod/result.json",
+      "result": {
+        "options": "lod 1",
+        "stage_logs": [
+          "STAGES clear=0 objects=0 draw=0 upload=0 hz=1000 pixels=0 passed=0 occluded=0 queries=0 route_skipped=51667"
+        ],
+        "label": "screen-lod",
+        "samples": 1,
+        "cpu_cycles": "fixed 300000",
+        "scene_sha256": "90d3a473b9c919cf9a1436cbd7ee67a96bbf8fbc3cc2a69f7f653236b8588017",
+        "renderer_sha256": "45bd493589a4e58357d168951f30f22fc5b18967e4aeae914a471a41a0932be0",
+        "poses": [
+          {
+            "frame": 420,
+            "iterations": 120,
+            "ticks": 3406,
+            "hz": 1000,
+            "color": "132f9bfd",
+            "vertices": 751047,
+            "triangles": 265353,
+            "spans": 6431271,
+            "sample_ticks": [
+              3406
+            ],
+            "milliseconds_per_render": 28.383
+          },
+          {
+            "frame": 980,
+            "iterations": 120,
+            "ticks": 2197,
+            "hz": 1000,
+            "color": "fbc4d2be",
+            "vertices": 465003,
+            "triangles": 175087,
+            "spans": 3949198,
+            "sample_ticks": [
+              2197
+            ],
+            "milliseconds_per_render": 18.308
+          },
+          {
+            "frame": 1840,
+            "iterations": 120,
+            "ticks": 1703,
+            "hz": 1000,
+            "color": "94d13785",
+            "vertices": 350900,
+            "triangles": 110957,
+            "spans": 2400398,
+            "sample_ticks": [
+              1703
+            ],
+            "milliseconds_per_render": 14.192
+          },
+          {
+            "frame": 2660,
+            "iterations": 120,
+            "ticks": 549,
+            "hz": 1000,
+            "color": "acfd2dcf",
+            "vertices": 34001,
+            "triangles": 8833,
+            "spans": 1070245,
+            "sample_ticks": [
+              549
+            ],
+            "milliseconds_per_render": 4.575
+          },
+          {
+            "frame": 3200,
+            "iterations": 120,
+            "ticks": 1867,
+            "hz": 1000,
+            "color": "a8f4cf0b",
+            "vertices": 656546,
+            "triangles": 241637,
+            "spans": 1185437,
+            "sample_ticks": [
+              1867
+            ],
+            "milliseconds_per_render": 15.558
+          },
+          {
+            "frame": 3750,
+            "iterations": 120,
+            "ticks": 1813,
+            "hz": 1000,
+            "color": "19790536",
+            "vertices": 637307,
+            "triangles": 240790,
+            "spans": 1166440,
+            "sample_ticks": [
+              1813
+            ],
+            "milliseconds_per_render": 15.108
+          }
+        ]
+      },
+      "settings": "Initial 0.65/0.85 pixel thresholds; superseded by the one-pixel quality option."
+    },
+    "lod-one-pixel": {
+      "artifact": "build/pose-benchmarks/20261015-113309-lod-one-pixel/result.json",
+      "result": {
+        "options": "lod 1",
+        "stage_logs": [
+          "STAGES clear=0 objects=0 draw=0 upload=0 hz=1000 pixels=0 passed=0 occluded=0 queries=0 route_skipped=51667"
+        ],
+        "label": "lod-one-pixel",
+        "samples": 3,
+        "cpu_cycles": "fixed 300000",
+        "scene_sha256": "90d3a473b9c919cf9a1436cbd7ee67a96bbf8fbc3cc2a69f7f653236b8588017",
+        "renderer_sha256": "dfd22bbe35414fa7537a16a2aac881ae8b56270abd1e1dc5d413f0fe273dc2fe",
+        "poses": [
+          {
+            "frame": 420,
+            "iterations": 360,
+            "ticks": 9723,
+            "hz": 1000,
+            "color": "107a6322",
+            "vertices": 2017554,
+            "triangles": 755403,
+            "spans": 19205241,
+            "sample_ticks": [
+              3241,
+              3241,
+              3241
+            ],
+            "milliseconds_per_render": 27.008
+          },
+          {
+            "frame": 980,
+            "iterations": 360,
+            "ticks": 6591,
+            "hz": 1000,
+            "color": "fbc4d2be",
+            "vertices": 1395009,
+            "triangles": 525261,
+            "spans": 11847594,
+            "sample_ticks": [
+              2197,
+              2197,
+              2197
+            ],
+            "milliseconds_per_render": 18.308
+          },
+          {
+            "frame": 1840,
+            "iterations": 360,
+            "ticks": 5107,
+            "hz": 1000,
+            "color": "94d13785",
+            "vertices": 1052700,
+            "triangles": 332871,
+            "spans": 7201194,
+            "sample_ticks": [
+              1702,
+              1702,
+              1703
+            ],
+            "milliseconds_per_render": 14.186
+          },
+          {
+            "frame": 2660,
+            "iterations": 360,
+            "ticks": 1649,
+            "hz": 1000,
+            "color": "acfd2dcf",
+            "vertices": 102003,
+            "triangles": 26499,
+            "spans": 3210735,
+            "sample_ticks": [
+              550,
+              550,
+              549
+            ],
+            "milliseconds_per_render": 4.581
+          },
+          {
+            "frame": 3200,
+            "iterations": 360,
+            "ticks": 5601,
+            "hz": 1000,
+            "color": "a8f4cf0b",
+            "vertices": 1969638,
+            "triangles": 724911,
+            "spans": 3556311,
+            "sample_ticks": [
+              1867,
+              1867,
+              1867
+            ],
+            "milliseconds_per_render": 15.558
+          },
+          {
+            "frame": 3750,
+            "iterations": 360,
+            "ticks": 5439,
+            "hz": 1000,
+            "color": "19790536",
+            "vertices": 1911921,
+            "triangles": 722370,
+            "spans": 3499320,
+            "sample_ticks": [
+              1813,
+              1813,
+              1813
+            ],
+            "milliseconds_per_render": 15.108
+          }
+        ]
+      },
+      "settings": "1.0/1.25 pixel thresholds, retained as an optional quality setting."
+    },
+    "profile": {
+      "artifact": "build/pose-benchmarks/20261015-113153-profile/result.json",
+      "result": {
+        "options": "profile 1",
+        "stage_logs": [
+          "STAGES clear=110 objects=55 draw=15983 upload=0 hz=1000 pixels=40435659 passed=27629866 occluded=0 queries=0 route_skipped=51667"
+        ],
+        "label": "profile",
+        "samples": 1,
+        "cpu_cycles": "fixed 300000",
+        "scene_sha256": "90d3a473b9c919cf9a1436cbd7ee67a96bbf8fbc3cc2a69f7f653236b8588017",
+        "renderer_sha256": "45bd493589a4e58357d168951f30f22fc5b18967e4aeae914a471a41a0932be0",
+        "poses": [
+          {
+            "frame": 420,
+            "iterations": 120,
+            "ticks": 4833,
+            "hz": 1000,
+            "color": "cd574729",
+            "vertices": 657272,
+            "triangles": 247929,
+            "spans": 0,
+            "sample_ticks": [
+              4833
+            ],
+            "milliseconds_per_render": 40.275,
+            "time_change_percent": 46.68
+          },
+          {
+            "frame": 980,
+            "iterations": 120,
+            "ticks": 3351,
+            "hz": 1000,
+            "color": "fbc4d2be",
+            "vertices": 465003,
+            "triangles": 175087,
+            "spans": 0,
+            "sample_ticks": [
+              3351
+            ],
+            "milliseconds_per_render": 27.925,
+            "time_change_percent": 52.53
+          },
+          {
+            "frame": 1840,
+            "iterations": 120,
+            "ticks": 2526,
+            "hz": 1000,
+            "color": "94d13785",
+            "vertices": 350900,
+            "triangles": 110957,
+            "spans": 0,
+            "sample_ticks": [
+              2526
+            ],
+            "milliseconds_per_render": 21.05,
+            "time_change_percent": 48.33
+          },
+          {
+            "frame": 2660,
+            "iterations": 120,
+            "ticks": 1154,
+            "hz": 1000,
+            "color": "acfd2dcf",
+            "vertices": 34001,
+            "triangles": 8833,
+            "spans": 0,
+            "sample_ticks": [
+              1154
+            ],
+            "milliseconds_per_render": 9.617,
+            "time_change_percent": 110.2
+          },
+          {
+            "frame": 3200,
+            "iterations": 120,
+            "ticks": 2142,
+            "hz": 1000,
+            "color": "a8f4cf0b",
+            "vertices": 656546,
+            "triangles": 241637,
+            "spans": 0,
+            "sample_ticks": [
+              2142
+            ],
+            "milliseconds_per_render": 17.85,
+            "time_change_percent": 11.45
+          },
+          {
+            "frame": 3750,
+            "iterations": 120,
+            "ticks": 2032,
+            "hz": 1000,
+            "color": "19790536",
+            "vertices": 637307,
+            "triangles": 240790,
+            "spans": 0,
+            "sample_ticks": [
+              2032
+            ],
+            "milliseconds_per_render": 16.933,
+            "time_change_percent": 8.78
+          }
+        ]
+      }
+    },
+    "slow-baseline": {
+      "artifact": "build/pose-benchmarks/20261015-114142-slow-baseline/result.json",
+      "result": {
+        "options": "",
+        "stage_logs": [],
+        "label": "slow-baseline",
+        "samples": 1,
+        "cpu_cycles": "fixed 100000",
+        "scene_sha256": "90d3a473b9c919cf9a1436cbd7ee67a96bbf8fbc3cc2a69f7f653236b8588017",
+        "renderer_sha256": "39fc24b88731db8a012c853de52ad33a7c096b9a016ebaf519996a38d231d2f6",
+        "poses": [
+          {
+            "frame": 420,
+            "iterations": 120,
+            "ticks": 9887,
+            "hz": 1000,
+            "color": "cd574729",
+            "vertices": 657272,
+            "triangles": 247929,
+            "spans": 6390131,
+            "sample_ticks": [
+              9887
+            ],
+            "milliseconds_per_render": 82.392
+          },
+          {
+            "frame": 980,
+            "iterations": 120,
+            "ticks": 6646,
+            "hz": 1000,
+            "color": "fbc4d2be",
+            "vertices": 465003,
+            "triangles": 175087,
+            "spans": 3949198,
+            "sample_ticks": [
+              6646
+            ],
+            "milliseconds_per_render": 55.383
+          },
+          {
+            "frame": 1840,
+            "iterations": 120,
+            "ticks": 5163,
+            "hz": 1000,
+            "color": "94d13785",
+            "vertices": 350900,
+            "triangles": 110957,
+            "spans": 2400398,
+            "sample_ticks": [
+              5163
+            ],
+            "milliseconds_per_render": 43.025
+          },
+          {
+            "frame": 2660,
+            "iterations": 120,
+            "ticks": 1538,
+            "hz": 1000,
+            "color": "acfd2dcf",
+            "vertices": 34001,
+            "triangles": 8833,
+            "spans": 1070245,
+            "sample_ticks": [
+              1538
+            ],
+            "milliseconds_per_render": 12.817
+          },
+          {
+            "frame": 3200,
+            "iterations": 120,
+            "ticks": 5822,
+            "hz": 1000,
+            "color": "a8f4cf0b",
+            "vertices": 656546,
+            "triangles": 241637,
+            "spans": 1185437,
+            "sample_ticks": [
+              5822
+            ],
+            "milliseconds_per_render": 48.517
+          },
+          {
+            "frame": 3750,
+            "iterations": 120,
+            "ticks": 5712,
+            "hz": 1000,
+            "color": "19790536",
+            "vertices": 637307,
+            "triangles": 240790,
+            "spans": 1166440,
+            "sample_ticks": [
+              5712
+            ],
+            "milliseconds_per_render": 47.6
+          }
+        ]
+      }
+    },
+    "slow-final": {
+      "artifact": "build/pose-benchmarks/20261015-114217-slow-final/result.json",
+      "result": {
+        "options": "",
+        "stage_logs": [
+          "STAGES clear=0 objects=0 draw=0 upload=0 hz=1000 pixels=0 passed=0 occluded=0 queries=0 route_skipped=51667"
+        ],
+        "label": "slow-final",
+        "samples": 1,
+        "cpu_cycles": "fixed 100000",
+        "scene_sha256": "90d3a473b9c919cf9a1436cbd7ee67a96bbf8fbc3cc2a69f7f653236b8588017",
+        "renderer_sha256": "22695c883ad132ae044834ef3ebe772b869ce7e93d27224b9fd16061a7010b24",
+        "poses": [
+          {
+            "frame": 420,
+            "iterations": 120,
+            "ticks": 9777,
+            "hz": 1000,
+            "color": "cd574729",
+            "vertices": 657272,
+            "triangles": 247929,
+            "spans": 6390131,
+            "sample_ticks": [
+              9777
+            ],
+            "milliseconds_per_render": 81.475,
+            "time_change_percent": -1.11
+          },
+          {
+            "frame": 980,
+            "iterations": 120,
+            "ticks": 6592,
+            "hz": 1000,
+            "color": "fbc4d2be",
+            "vertices": 465003,
+            "triangles": 175087,
+            "spans": 3949198,
+            "sample_ticks": [
+              6592
+            ],
+            "milliseconds_per_render": 54.933,
+            "time_change_percent": -0.81
+          },
+          {
+            "frame": 1840,
+            "iterations": 120,
+            "ticks": 5108,
+            "hz": 1000,
+            "color": "94d13785",
+            "vertices": 350900,
+            "triangles": 110957,
+            "spans": 2400398,
+            "sample_ticks": [
+              5108
+            ],
+            "milliseconds_per_render": 42.567,
+            "time_change_percent": -1.07
+          },
+          {
+            "frame": 2660,
+            "iterations": 120,
+            "ticks": 1538,
+            "hz": 1000,
+            "color": "acfd2dcf",
+            "vertices": 34001,
+            "triangles": 8833,
+            "spans": 1070245,
+            "sample_ticks": [
+              1538
+            ],
+            "milliseconds_per_render": 12.817,
+            "time_change_percent": 0.0
+          },
+          {
+            "frame": 3200,
+            "iterations": 120,
+            "ticks": 5602,
+            "hz": 1000,
+            "color": "a8f4cf0b",
+            "vertices": 656546,
+            "triangles": 241637,
+            "spans": 1185437,
+            "sample_ticks": [
+              5602
+            ],
+            "milliseconds_per_render": 46.683,
+            "time_change_percent": -3.78
+          },
+          {
+            "frame": 3750,
+            "iterations": 120,
+            "ticks": 5438,
+            "hz": 1000,
+            "color": "19790536",
+            "vertices": 637307,
+            "triangles": 240790,
+            "spans": 1166440,
+            "sample_ticks": [
+              5438
+            ],
+            "milliseconds_per_render": 45.317,
+            "time_change_percent": -4.8
+          }
+        ]
+      }
+    },
+    "stale-fallback": {
+      "artifact": "build/pose-benchmarks/20261015-114351-stale-fallback/result.json",
+      "result": {
+        "options": "",
+        "stage_logs": [
+          "STAGES clear=0 objects=0 draw=0 upload=0 hz=1000 pixels=0 passed=0 occluded=0 queries=0 route_skipped=0"
+        ],
+        "label": "stale-fallback",
+        "samples": 1,
+        "cpu_cycles": "fixed 300000",
+        "scene_sha256": "90d3a473b9c919cf9a1436cbd7ee67a96bbf8fbc3cc2a69f7f653236b8588017",
+        "renderer_sha256": "22695c883ad132ae044834ef3ebe772b869ce7e93d27224b9fd16061a7010b24",
+        "poses": [
+          {
+            "frame": 420,
+            "iterations": 120,
+            "ticks": 3350,
+            "hz": 1000,
+            "color": "cd574729",
+            "vertices": 657272,
+            "triangles": 247929,
+            "spans": 6390131,
+            "sample_ticks": [
+              3350
+            ],
+            "milliseconds_per_render": 27.917,
+            "time_change_percent": 3.38
+          },
+          {
+            "frame": 980,
+            "iterations": 120,
+            "ticks": 2252,
+            "hz": 1000,
+            "color": "fbc4d2be",
+            "vertices": 465003,
+            "triangles": 175087,
+            "spans": 3949198,
+            "sample_ticks": [
+              2252
+            ],
+            "milliseconds_per_render": 18.767,
+            "time_change_percent": 2.5
+          },
+          {
+            "frame": 1840,
+            "iterations": 120,
+            "ticks": 1703,
+            "hz": 1000,
+            "color": "94d13785",
+            "vertices": 350900,
+            "triangles": 110957,
+            "spans": 2400398,
+            "sample_ticks": [
+              1703
+            ],
+            "milliseconds_per_render": 14.192,
+            "time_change_percent": 0.01
+          },
+          {
+            "frame": 2660,
+            "iterations": 120,
+            "ticks": 549,
+            "hz": 1000,
+            "color": "acfd2dcf",
+            "vertices": 34001,
+            "triangles": 8833,
+            "spans": 1070245,
+            "sample_ticks": [
+              549
+            ],
+            "milliseconds_per_render": 4.575,
+            "time_change_percent": 11.09
+          },
+          {
+            "frame": 3200,
+            "iterations": 120,
+            "ticks": 1977,
+            "hz": 1000,
+            "color": "a8f4cf0b",
+            "vertices": 656546,
+            "triangles": 241637,
+            "spans": 1185437,
+            "sample_ticks": [
+              1977
+            ],
+            "milliseconds_per_render": 16.475,
+            "time_change_percent": 9.07
+          },
+          {
+            "frame": 3750,
+            "iterations": 120,
+            "ticks": 1923,
+            "hz": 1000,
+            "color": "19790536",
+            "vertices": 637307,
+            "triangles": 240790,
+            "spans": 1166440,
+            "sample_ticks": [
+              1923
+            ],
+            "milliseconds_per_render": 16.025,
+            "time_change_percent": 6.09
+          }
+        ]
+      }
+    },
+    "release-route": {
+      "artifact": "build/pose-benchmarks/20261015-115936-release-route/result.json",
+      "result": {
+        "options": "",
+        "stage_logs": [
+          "STAGES clear=0 objects=0 draw=0 upload=0 hz=1000 pixels=0 passed=0 occluded=0 queries=0 route_skipped=51667"
+        ],
+        "label": "release-route",
+        "samples": 5,
+        "cpu_cycles": "fixed 300000",
+        "scene_sha256": "90d3a473b9c919cf9a1436cbd7ee67a96bbf8fbc3cc2a69f7f653236b8588017",
+        "renderer_sha256": "47d3a410197977edd2a29e0fc144dc22c4d1ba12dea7181c6978fa9ccc0c4e44",
+        "poses": [
+          {
+            "frame": 420,
+            "iterations": 600,
+            "ticks": 16203,
+            "hz": 1000,
+            "color": "cd574729",
+            "vertices": 3286360,
+            "triangles": 1239645,
+            "spans": 31950655,
+            "sample_ticks": [
+              3240,
+              3240,
+              3241,
+              3241,
+              3241
+            ],
+            "milliseconds_per_render": 27.005,
+            "time_change_percent": -1.65
+          },
+          {
+            "frame": 980,
+            "iterations": 600,
+            "ticks": 10985,
+            "hz": 1000,
+            "color": "fbc4d2be",
+            "vertices": 2325015,
+            "triangles": 875435,
+            "spans": 19745990,
+            "sample_ticks": [
+              2197,
+              2197,
+              2197,
+              2197,
+              2197
+            ],
+            "milliseconds_per_render": 18.308,
+            "time_change_percent": 0.0
+          },
+          {
+            "frame": 1840,
+            "iterations": 600,
+            "ticks": 8513,
+            "hz": 1000,
+            "color": "94d13785",
+            "vertices": 1754500,
+            "triangles": 554785,
+            "spans": 12001990,
+            "sample_ticks": [
+              1703,
+              1703,
+              1702,
+              1702,
+              1703
+            ],
+            "milliseconds_per_render": 14.188,
+            "time_change_percent": -0.02
+          },
+          {
+            "frame": 2660,
+            "iterations": 600,
+            "ticks": 2472,
+            "hz": 1000,
+            "color": "acfd2dcf",
+            "vertices": 170005,
+            "triangles": 44165,
+            "spans": 5351225,
+            "sample_ticks": [
+              494,
+              494,
+              495,
+              495,
+              494
+            ],
+            "milliseconds_per_render": 4.12,
+            "time_change_percent": -9.95
+          },
+          {
+            "frame": 3200,
+            "iterations": 600,
+            "ticks": 9062,
+            "hz": 1000,
+            "color": "a8f4cf0b",
+            "vertices": 3282730,
+            "triangles": 1208185,
+            "spans": 5927185,
+            "sample_ticks": [
+              1812,
+              1812,
+              1812,
+              1813,
+              1813
+            ],
+            "milliseconds_per_render": 15.103,
+            "time_change_percent": -5.7
+          },
+          {
+            "frame": 3750,
+            "iterations": 600,
+            "ticks": 9062,
+            "hz": 1000,
+            "color": "19790536",
+            "vertices": 3186535,
+            "triangles": 1203950,
+            "spans": 5832200,
+            "sample_ticks": [
+              1813,
+              1813,
+              1812,
+              1812,
+              1812
+            ],
+            "milliseconds_per_render": 15.103,
+            "time_change_percent": -2.98
+          }
+        ]
+      }
+    },
+    "release-live": {
+      "artifact": "build/pose-benchmarks/20261015-120036-release-live/result.json",
+      "result": {
+        "options": "route 0",
+        "stage_logs": [
+          "STAGES clear=0 objects=0 draw=0 upload=0 hz=1000 pixels=0 passed=0 occluded=0 queries=0 route_skipped=0"
+        ],
+        "label": "release-live",
+        "samples": 5,
+        "cpu_cycles": "fixed 300000",
+        "scene_sha256": "90d3a473b9c919cf9a1436cbd7ee67a96bbf8fbc3cc2a69f7f653236b8588017",
+        "renderer_sha256": "47d3a410197977edd2a29e0fc144dc22c4d1ba12dea7181c6978fa9ccc0c4e44",
+        "poses": [
+          {
+            "frame": 420,
+            "iterations": 600,
+            "ticks": 16478,
+            "hz": 1000,
+            "color": "cd574729",
+            "vertices": 3286360,
+            "triangles": 1239645,
+            "spans": 31950655,
+            "sample_ticks": [
+              3296,
+              3295,
+              3296,
+              3296,
+              3295
+            ],
+            "milliseconds_per_render": 27.463,
+            "time_change_percent": 0.02
+          },
+          {
+            "frame": 980,
+            "iterations": 600,
+            "ticks": 11259,
+            "hz": 1000,
+            "color": "fbc4d2be",
+            "vertices": 2325015,
+            "triangles": 875435,
+            "spans": 19745990,
+            "sample_ticks": [
+              2252,
+              2252,
+              2251,
+              2252,
+              2252
+            ],
+            "milliseconds_per_render": 18.765,
+            "time_change_percent": 2.49
+          },
+          {
+            "frame": 1840,
+            "iterations": 600,
+            "ticks": 8513,
+            "hz": 1000,
+            "color": "94d13785",
+            "vertices": 1754500,
+            "triangles": 554785,
+            "spans": 12001990,
+            "sample_ticks": [
+              1702,
+              1703,
+              1703,
+              1702,
+              1703
+            ],
+            "milliseconds_per_render": 14.188,
+            "time_change_percent": -0.02
+          },
+          {
+            "frame": 2660,
+            "iterations": 600,
+            "ticks": 2472,
+            "hz": 1000,
+            "color": "acfd2dcf",
+            "vertices": 170005,
+            "triangles": 44165,
+            "spans": 5351225,
+            "sample_ticks": [
+              495,
+              494,
+              494,
+              495,
+              494
+            ],
+            "milliseconds_per_render": 4.12,
+            "time_change_percent": -9.95
+          },
+          {
+            "frame": 3200,
+            "iterations": 600,
+            "ticks": 9887,
+            "hz": 1000,
+            "color": "a8f4cf0b",
+            "vertices": 3282730,
+            "triangles": 1208185,
+            "spans": 5927185,
+            "sample_ticks": [
+              1978,
+              1977,
+              1978,
+              1977,
+              1977
+            ],
+            "milliseconds_per_render": 16.478,
+            "time_change_percent": 2.88
+          },
+          {
+            "frame": 3750,
+            "iterations": 600,
+            "ticks": 9612,
+            "hz": 1000,
+            "color": "19790536",
+            "vertices": 3186535,
+            "triangles": 1203950,
+            "spans": 5832200,
+            "sample_ticks": [
+              1922,
+              1922,
+              1923,
+              1922,
+              1923
+            ],
+            "milliseconds_per_render": 16.02,
+            "time_change_percent": 2.91
+          }
+        ]
+      }
+    }
+  },
+  "stale_cache_fallback": "PASS: deliberately changed source fingerprint, live rendering matches all six reference poses",
+  "playback_300000": {
+    "dos_exit": "PASS",
+    "headless": true,
+    "wall_seconds": 175.15,
+    "cpu_cycles": "fixed 300000",
+    "color_backend": "ram",
+    "renderer_sha256": "47d3a410197977edd2a29e0fc144dc22c4d1ba12dea7181c6978fa9ccc0c4e44",
+    "scene_sha256": "382b37b80c99ec585bf1b8a0734253de92e583da7969ae9e654c8a47ab0573e2",
+    "video_files": [
+      "rt1715_000.avi",
+      "rt1715_001.avi",
+      "rt1715_002.avi"
+    ],
+    "audio": [
+      {
+        "file": "rt1715_000.wav",
+        "seconds": 174.858,
+        "nonzero_samples": true
+      }
+    ],
+    "renderer_mode": "protected",
+    "render_counters": {
+      "frames": 1905,
+      "vertices": 6599145,
+      "triangles": 2425950,
+      "spans": 40714093,
+      "clipped": 180080,
+      "ems_maps": 0
+    },
+    "music_cues": {
+      "swoosh": [
+        25,
+        6
+      ],
+      "overview": [
+        24,
+        54
+      ],
+      "flight_end": [
+        26,
+        57
+      ],
+      "credits_start": [
+        28,
+        0
+      ],
+      "credits_end": [
+        43,
+        29
+      ]
+    },
+    "credit_schedule": {
+      "cards": 21,
+      "positions": [
+        [
+          28,
+          0
+        ],
+        [
+          28,
+          40
+        ],
+        [
+          29,
+          16
+        ],
+        [
+          29,
+          56
+        ],
+        [
+          30,
+          40
+        ],
+        [
+          31,
+          16
+        ],
+        [
+          31,
+          56
+        ],
+        [
+          32,
+          32
+        ],
+        [
+          33,
+          8
+        ],
+        [
+          33,
+          48
+        ],
+        [
+          34,
+          32
+        ],
+        [
+          35,
+          8
+        ],
+        [
+          35,
+          48
+        ],
+        [
+          36,
+          24
+        ],
+        [
+          37,
+          0
+        ],
+        [
+          38,
+          8
+        ],
+        [
+          39,
+          24
+        ],
+        [
+          41,
+          0
+        ],
+        [
+          41,
+          40
+        ],
+        [
+          42,
+          16
+        ],
+        [
+          42,
+          56
+        ]
+      ],
+      "entry_error_cs": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "end": [
+        43,
+        29
+      ]
+    },
+    "capture": "20261015-115315-974546"
+  },
+  "optional_file_handling": "DOS attributes checked before fopen to avoid fatal resident packed-file lookup on absent optional files.",
+  "playback_100000": {
+    "dos_exit": "PASS",
+    "headless": true,
+    "wall_seconds": 175.09,
+    "cpu_cycles": "fixed 100000",
+    "color_backend": "ram",
+    "renderer_sha256": "47d3a410197977edd2a29e0fc144dc22c4d1ba12dea7181c6978fa9ccc0c4e44",
+    "scene_sha256": "382b37b80c99ec585bf1b8a0734253de92e583da7969ae9e654c8a47ab0573e2",
+    "video_files": [
+      "rt1715_000.avi",
+      "rt1715_001.avi",
+      "rt1715_002.avi"
+    ],
+    "audio": [
+      {
+        "file": "rt1715_000.wav",
+        "seconds": 174.858,
+        "nonzero_samples": true
+      }
+    ],
+    "renderer_mode": "protected",
+    "render_counters": {
+      "frames": 1195,
+      "vertices": 3413733,
+      "triangles": 1247770,
+      "spans": 22222195,
+      "clipped": 100090,
+      "ems_maps": 0
+    },
+    "music_cues": {
+      "swoosh": [
+        25,
+        6
+      ],
+      "overview": [
+        24,
+        55
+      ],
+      "flight_end": [
+        26,
+        58
+      ],
+      "credits_start": [
+        28,
+        0
+      ],
+      "credits_end": [
+        43,
+        29
+      ]
+    },
+    "credit_schedule": {
+      "cards": 21,
+      "positions": [
+        [
+          28,
+          0
+        ],
+        [
+          28,
+          40
+        ],
+        [
+          29,
+          16
+        ],
+        [
+          29,
+          56
+        ],
+        [
+          30,
+          40
+        ],
+        [
+          31,
+          16
+        ],
+        [
+          31,
+          56
+        ],
+        [
+          32,
+          32
+        ],
+        [
+          33,
+          8
+        ],
+        [
+          33,
+          48
+        ],
+        [
+          34,
+          32
+        ],
+        [
+          35,
+          8
+        ],
+        [
+          35,
+          48
+        ],
+        [
+          36,
+          24
+        ],
+        [
+          37,
+          0
+        ],
+        [
+          38,
+          8
+        ],
+        [
+          39,
+          24
+        ],
+        [
+          41,
+          0
+        ],
+        [
+          41,
+          40
+        ],
+        [
+          42,
+          16
+        ],
+        [
+          42,
+          56
+        ]
+      ],
+      "entry_error_cs": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "end": [
+        43,
+        29
+      ]
+    },
+    "capture": "20261015-115617-996382"
+  },
+  "final_renderer_sha256": "47d3a410197977edd2a29e0fc144dc22c4d1ba12dea7181c6978fa9ccc0c4e44"
+}

@@ -16,5 +16,8 @@ typedef struct { long x,y,z,c; } rt_vertex;
 void rt_depth_begin(void);
 void rt_depth_window(int left,int right,int top,int bottom);
 void rt_depth_end(void);
+void rt_depth_flush(void);
+extern int rt_occlusion,rt_tiles,rt_visible_spans;
+extern unsigned long rt_occluded,rt_occlusion_queries;
 void rt_raster(rt_vertex *vertices,int count,int decal);
 #endif

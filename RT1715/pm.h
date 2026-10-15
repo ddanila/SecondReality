@@ -9,7 +9,7 @@ typedef struct { long x,y,z; short normal,reserved; } vlist;
 typedef struct { short x,y,z,reserved; } nlist;
 typedef struct { long x,y; unsigned vf; } pvlist;
 typedef struct object {
-    int flags,vnum,nnum,nnum1;
+    int flags,vnum,nnum,nnum1,lod;
     rmatrix *r,*r0;
     unsigned char *pd;
     unsigned short *pl[16];
@@ -27,6 +27,8 @@ extern long projmulx,projmuly,projaddx,projaddy;
 extern unsigned char *rt_video;
 extern int rt_ram_color;
 extern int rt_triangle_kernel,rt_bounds_culling;
+extern int rt_screen_lod,rt_profile;
+extern unsigned long rt_pixels,rt_pixels_passed;
 extern unsigned long rt_objects_tested,rt_objects_rejected;
 void rt_bounds_init(object *);
 int rt_bounds_outside(const object *);

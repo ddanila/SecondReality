@@ -1,0 +1,132 @@
+Later software-rendering techniques (2026-10-15)
+==============================================
+
+The protected-mode renderer now includes measurable experiments inspired by
+post-1993 visibility, LOD and software-rasterizer work. Only the conservative
+route cache and identical-transform reuse are enabled by default. The existing
+scanline assembly renderer and depth buffer remain the production path.
+
+Host-prepared draw lists
+-----------------------
+route_cache.py decodes EVERY encoded animation pose and reproduces DOS integer
+matrix composition, conservative AABB frustum rejection and stable object sort.
+It emits U2E.VIS (about 147 KiB for this presentation). This is a frustum/order
+cache, not sampled occlusion data: objects hidden by other objects still use
+normal depth testing. No interpolation or sampled-image visibility assumption
+can make keys disappear between camera samples. The moving drone is included
+at each exact pose.
+
+The loader fingerprints the material mapping, each distinct geometry asset in
+load order, and the animation. A stale cache is ignored, and a missing cache
+falls back to live bounds tests and sorting. A matching but malformed cache is
+rejected. RV01 assumes the current fixed projection/viewport rules; change the
+format version if those integer rules change. FNV is an accidental-staleness
+check, not a security signature. Build.py generates the cache after installing
+Robotron assets. It does not generate it for the original/legacy city player.
+
+Within each render, objects with identical local matrices reuse their composed
+camera matrix. The cache resets each frame and compares the entire matrix,
+including translation; there is no approximate equality or inter-frame reuse.
+
+Runtime experiments
+-------------------
+Optional PM.OPT in the DOS runtime accepts whitespace-separated pairs:
+
+    route 1
+    lod 0
+    occlusion 0
+    tiles 0
+    spans 0
+    profile 0
+
+Values are 0 or 1. Omitted options retain these defaults. PM.CFG still selects
+RAM versus direct VGA. Optional file opens first query DOS file attributes:
+the resident Second Reality file hook treats an absent ordinary read-only open
+as a fatal packed-asset lookup, so blindly calling fopen is not a safe probe. benchmark.py writes PM.OPT only in its isolated runtime.
+
+lod: Replace the keyboard's fixed-distance threshold with projected detail size.
+The one-millimetre dish/corner detail selects the simple closed keycap below one
+pixel and restores detailed geometry above 1.25 pixels. This hysteresis prevents
+threshold chatter. The near-plane crossing always keeps detailed geometry.
+Other parts retain their authored geometry: monitor/bezel seam correspondence,
+drive openings and silhouettes are not automatically decimated. This is a small
+screen-space LOD adaptation, not a full progressive-mesh implementation. It can
+retain MORE detail when the camera magnifies it, so is not a universal speedup.
+
+occlusion: Cache conservative minimum depths in 8x8 tiles. Query the maximum of
+the actual triangle depth plane over its pixel bounding box, including raster
+rounding. Uncovered tiles, equality, wrapped/extrapolated depth and uncertain
+bounds always fall back to drawing. Minima can become stale only in the safe
+direction as depth increases. The assembly path invokes the query after its
+normal gradient setup. Fully covered, strictly hidden triangles skip edge/span
+work. Tiles reset every frame; there is no previous-frame visibility reuse.
+
+tiles: Queue clipped triangles and rasterize horizontal 16-row tiles. Preserve
+submission order within every tile, including depth ties and decals. Reuse the
+original edge equations rather than clipping geometry again at tile boundaries.
+The bounded queue flushes on overflow instead of dropping triangles. The intent
+is to improve depth/color locality; extra traversal and triangle setup can cost
+more than this saves at 320x200. About 416 KiB is allocated only when enabled.
+
+spans: Deferred visible-span shading experiment. Resolve depth and surface
+ownership first, then coalesce final visible runs on each scanline and shade
+only those runs. Depth ties and decals retain normal submission semantics.
+This borrows Quake's shade-visible-spans principle; it does NOT replace depth
+resolution with Quake's BSP/active-edge surface stack. An owner buffer and
+surface gradients cost about 221 KiB, allocated only when enabled. Overflow
+flushes resolved colors while retaining depth. Our very cheap palette shading
+makes this extra bookkeeping particularly hard to amortize.
+
+profile: Diagnostic C pixel loop counts attempted and accepted depth tests.
+BENCH.LOG also reports clear, object-selection, draw and upload clock totals.
+It changes the raster execution path and adds timing calls; NEVER compare its
+elapsed time with assembly production timings. DOS clock granularity is coarse
+(roughly 55 ms despite CLOCKS_PER_SEC=1000); zero for a small stage does not mean
+zero cost. Pixel counts are exact and include untimed warm-up frames.
+
+Validation and reproduction
+---------------------------
+Build all code on the host as usual, then use headless DOSBox-X:
+
+    python3 RT1715/benchmark.py --label reference --samples 5 --options 'route 0'
+    python3 RT1715/benchmark.py --label route --samples 5 --reference PATH/result.json
+    python3 RT1715/benchmark.py --label occlusion --options 'occlusion 1' --reference PATH/result.json
+    python3 RT1715/benchmark.py --label tiles --options 'tiles 1' --reference PATH/result.json
+    python3 RT1715/benchmark.py --label spans --options 'spans 1' --reference PATH/result.json
+    python3 RT1715/benchmark.py --label lod --options 'lod 1'
+    python3 RT1715/benchmark.py --label counters --options 'profile 1'
+    python3 RT1715/benchmark.py --label audit --audit
+
+Each pose benchmark writes six PPM images outside timed rendering. LOD changes
+pixels intentionally; use its images rather than expecting reference hashes.
+Audit verifies every cached order against live culling and writes HASH.LOG for
+all 2,031 poses. Compare audit hashes across exact rendering backends. The
+benchmark scene digest excludes U2E.VIS so cached and uncached runs can compare
+identical source assets; executable and source-scene hashes remain recorded.
+
+Host tests cover mixed layers, holes, equality, decals, clipped edges and full
+16-bit depth across all eight experiment combinations. Native tests compare 160
+complete images across C, assembly and the eight combinations against a portable
+host reference. Experimental buffers are never allocated by the default path.
+
+Sources and scope
+-----------------
+Quake-era PVS and visible spans (1996), Michael Abrash:
+https://www.bluesnews.com/abrash/abrash.pdf
+
+Progressive meshes (1996) and view-dependent refinement (1997), Hugues Hoppe:
+https://hhoppe.com/proj/pm/
+https://hhoppe.com/proj/vdrpm/
+
+Hierarchical occlusion maps (1997), Zhang et al.:
+https://doi.org/10.1145/258734.258781
+Hierarchical Z itself predates this request's cutoff: Greene et al., 1993.
+
+Later software rasterizer tradeoffs (2013), Fabian Giesen:
+https://fgiesen.wordpress.com/2013/03/10/optimizing-software-occlusion-culling-the-reckoning/
+
+These are adaptations to scalar DOS CPUs, not ports of SSE/multicore code.
+Headless DOSBox-X results establish behavior and relative emulated timings;
+they do not establish the same cache-sensitive speedups on physical hardware.
+Measured results and the retained/default decision are in
+benchmarks/later-techniques.json and the README checkpoint.
