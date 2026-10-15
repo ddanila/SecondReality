@@ -3,6 +3,7 @@
 /* Included after the renderer's nlist definition. The generation changes for
  * every transformed object; normal indices must not leak across objects. */
 #include <string.h>
+static unsigned rt_crt_brightness=255;
 static unsigned rt_light_epoch,rt_light_stamps[500];
 static unsigned char rt_light_modes[500],rt_light_values[500];
 static void rt_light_begin(void) {
@@ -28,6 +29,13 @@ static int rt_shade_cached(nlist *normals,unsigned index,int flags) {
     return rt_light_values[index];
 }
 
+/* Keep the painted bezel's smooth interpolation inside its own ramp. */
+static int rt_bezel_shade_cached(nlist *normals,unsigned index,int flags) {
+    int value=rt_shade_cached(normals,index,flags)-5;
+    if(value<2)value=2;if(value>13)value=13;
+    return value;
+}
+
 /* Broad view-dependent sheen on curved CRT glass. The glow floor and small
  * highlight stay in the screen's own 16-color ramp; no drone colors change. */
 static int rt_glass_shade_cached(nlist *normals,unsigned index) {
@@ -42,7 +50,7 @@ static int rt_glass_shade_cached(nlist *normals,unsigned index) {
         /* Leave guard shades at both ramp edges: fixed-point Gouraud
          * interpolation on thin projected triangles can extrapolate by a
          * shade. Index 63 belongs to beige paint, not the green CRT ramp. */
-        value=2+(int)((light*5+power*6)>>14);
+        value=2+(int)(((light*5+power*6)>>14)*rt_crt_brightness/255);
         rt_light_values[index]=(unsigned char)value;rt_light_modes[index]=4;
         rt_light_stamps[index]=rt_light_epoch;
     }

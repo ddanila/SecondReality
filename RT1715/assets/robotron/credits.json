@@ -35,7 +35,7 @@
   {
     "image": "cpu",
     "lines": [
-      "The processing core",
+      "Main processor",
       "UA880 / Z80-compatible",
       "Executes the system software"
     ],

@@ -154,8 +154,14 @@ def encode(name, triangles, color=64, shades=32, face_colors=None, precomputed_o
     if smooth:
         sums=[[0.,0.,0.] for _ in vertices]
         for face,ni in zip(faces,normal_ids):
-            for index in face:
-                for axis in range(3):sums[index][axis]+=normals[ni][axis]
+            for corner,index in enumerate(face):
+                weight=1.
+                if smooth=='angle':
+                    u=[vertices[face[corner-1]][axis]-vertices[index][axis] for axis in range(3)]
+                    v=[vertices[face[(corner+1)%len(face)]][axis]-vertices[index][axis] for axis in range(3)]
+                    length=math.sqrt(sum(x*x for x in u)*sum(x*x for x in v))
+                    weight=math.acos(max(-1.,min(1.,sum(a*b for a,b in zip(u,v))/length))) if length else 0.
+                for axis in range(3):sums[index][axis]+=normals[ni][axis]*weight
         for index,total in enumerate(sums):
             length=math.sqrt(sum(v*v for v in total))
             if not length:continue

@@ -100,17 +100,18 @@ def make_card(image_path, lines, output, preview):
     for n, line in enumerate(lines):
         # Pillow's bundled scalable font covers printable ASCII. Rasterize at
         # final resolution into 16 grayscale entries: no host font dependency.
-        for size in range((26,22,18,16)[n],5,-1):
+        for size in range((26,20,16,16)[n],5,-1):
             font = ImageFont.load_default(size=size)
             bbox = font.getbbox(line or " ")
             if bbox[2]-bbox[0] <= 312 and bbox[3]-bbox[1] <= 32:
                 break
         bbox = font.getbbox(line or " ")
         glyph = Image.new("L", (max(1,bbox[2]-bbox[0]),max(1,bbox[3]-bbox[1])))
-        ImageDraw.Draw(glyph).text((-bbox[0],-bbox[1]), line, font=font, fill=255)
+        ImageDraw.Draw(glyph).text((-bbox[0],-bbox[1]), line, font=font, fill=(255,238,187,187)[n])
         if glyph.width > 312:
             raise ValueError("Credit line does not fit the 320-pixel text panel")
-        text.paste(glyph, ((320-glyph.width)//2, 16+n*42))
+        text.paste(glyph, ((320-glyph.width)//2, (12,66,110,150)[n]))
+    ImageDraw.Draw(text).line((112,49,207,49),fill=85,width=1)
     caption = bytes(round(v*15/255) for v in text.tobytes())
     output.write_bytes(b"CRD1" + bytes(round(v*63/255) for v in rgb) + caption + pixels)
     # Readable host preview of the stable composition; animation stays in DOS.

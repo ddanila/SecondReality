@@ -20,6 +20,14 @@ def ease(time,interval):
     return u*u*u*(10-15*u+6*u*u)
 
 
+def insertion(time,settings):
+    seat=settings.get('seat')
+    if not seat:return ease(time,settings['insert'])
+    fraction=settings['seat_fraction']
+    return (fraction*ease(time,[settings['insert'][0],seat[0]])+
+            (1-fraction)*ease(time,[seat[1],seat[2]]))
+
+
 def bitmap_mesh(bitmap,x,z,glass,pixel_size):
     vertices=[];faces=[]
     for x0,y0,x1,y1 in rectangles(bitmap):
@@ -56,13 +64,14 @@ def objects(load,records,data,settings):
 def pose(label,base,time,settings,data):
     result=list(base)
     if label.startswith('disk-'):
-        result[1]-=round((1-ease(time,settings['insert']))*settings['withdraw_mm']*64)
+        result[1]-=round((1-insertion(time,settings))*settings['withdraw_mm']*64)
     if label.startswith(f"src-drive-latch-{settings['drive']}-"):
         pivot=np.array(next(d for d in data['driveMotion'] if d['unit']==settings['drive'])['latchPivot'])*64
         # Source hub overlaps the insertion plane. Raise the complete lever
         # above the slot; rotate from +X (3 o'clock) to -Z (6 o'clock).
         lift=np.array([0,0,settings['latch_lift_mm']*64])
-        angle=math.pi/2*ease(time,settings['close']);c,s=math.cos(angle),math.sin(angle)
+        interval=[settings['close'][0]+settings.get('lever_settle_seconds',0),settings['close'][1]]
+        angle=math.pi/2*ease(time,interval);c,s=math.cos(angle),math.sin(angle)
         rotation=np.array([[c,0,s],[0,1,0],[-s,0,c]])
         result[:3]=np.rint(pivot+lift-rotation@pivot).astype(int)
         result[3:]=np.rint(rotation.flatten()*16384).astype(int)

@@ -135,6 +135,7 @@ static void render(unsigned page) {
     int i,j,n=0,index;long distance;object *o;clock_t stamp=0,now;
     unsigned row=currframe>=2?(currframe/2-1):0,start=0,end=0;
     int cached=use_route && route_data && row<route_frames;
+    rt_presentation_frame(currframe);
     last_matrix_valid=0;
     if(rt_profile) stamp=clock();
     rt_draw_page(page);rt_color_begin();rt_camera(fov);rt_begin();
@@ -173,14 +174,14 @@ static void render(unsigned page) {
 /* No music/retrace waits here: identical decoded poses, timed render work only.
  * Uploads remain inside render(); hashing is outside the timed interval. */
 static int benchmark(int visual) {
-    int poses[32]={420,980,1840,2660,3200,3750},count=6,iterations=visual?1:120;
+    int poses[2048]={420,980,1840,2660,3200,3750},count=6,iterations=visual?1:120;
     unsigned i,j;clock_t start,elapsed;unsigned long hash;FILE *f;
     extern unsigned char rt_color[64000];
     if(visual) {
         int value;FILE *points=fopen("VISUAL.PTS","rt");
         if(!points)fail("Missing visual poses");count=0;
         while(fscanf(points,"%d",&value)==1) {
-            if(count==32 || value<2 || value>4062 || (value&1) || (count && value<=poses[count-1]))fail("Invalid visual pose");
+            if(count==2048 || value<2 || value>4062 || (value&1) || (count && value<=poses[count-1]))fail("Invalid visual pose");
             poses[count++]=value;
         }
         fclose(points);if(!count)fail("Empty visual pose list");

@@ -1096,7 +1096,7 @@ between whole pixels. Top-left edge ownership prevents double coverage at
 shared edges. A host-generated RGB555 lookup chooses an existing palette entry;
 no original drone palette entries are modified. Only touched pixels are reset
 and resolved; ordinary polygons still use the assembly scanline renderer.
-The extra buffers/table use 3,360,768 bytes of protected-mode memory. This is
+The extra buffers/table use 4,384,768 bytes of protected-mode memory. This is
 selective coverage filtering, not full-scene anti-aliasing; details narrower
 than the sample spacing can still alias. It trades some speed for stability.
 The legacy/direct-VGA path remains unfiltered. U2E.AA enables the RAM path.
@@ -1197,3 +1197,49 @@ Validation: 79 host tests, protected-mode tests, 14 visual reference images and
 full headless playback pass. Mean close-pass image hold is 32.61 ms (about
 30.7 FPS), p95 57.07 ms and maximum 71.34 ms, with no holds above 100 ms.
 Music cues and all 21 credit-card transitions remain synchronized.
+
+Presentation polish and continuous motion checks
+------------------------------------------------
+The monitor bezel now uses angle-weighted shared vertex normals and smooth shading with
+palette guard shades. Its closed outer collar and the horizontal case split
+remain intact. The CRT ramps from its dark glass floor to its normal sheen
+from 31.4 to 32.1 seconds; captured loader text fades up over 31.6..32.3 seconds.
+The existing captured block cursor continues its one-second blink cycle. These
+small ramps are authored in painter.c at 70 Hz; boot masks and OS text do not
+change. Moving the loader cue in flight.json requires retiming these ramps.
+
+Credits keep their 21 images, technical facts and tracker schedule. Names use
+the largest bright text, specifications a smaller bright line, and supporting
+notes a smaller grey line. A short separator and consistent vertical spacing
+make those levels easier to distinguish. The first CPU heading now explicitly
+names the main processor.
+
+Disk motion retains the 24..26 second insertion and 26.25..27.25 lever interval.
+It advances to 94 percent by 25.55 seconds, pauses for alignment until 25.70,
+then seats the last 5.4 mm by 26.0. The open lever gets a further 0.10 second
+settling pause before its existing clockwise quarter turn. There is no reverse
+travel or lever overshoot. The boot clock and music cues remain unchanged.
+
+motion_regression.py exports every authored frame of the keyboard pass
+(0..24 s), drive action (24..28 s), monitor approach (29..45 s), and swoosh
+(46..49.29 s). /visual accepts up to 2048 ascending poses. Each run writes
+35 FPS films, contact sheets and per-frame hashes in build/motion-regressions.
+Raw PPMs are packed into a CRC-verified frames.zip after film generation;
+acceptance verifies every frame hash directly from this archive. A run needs
+at least 512 MiB free for its temporary frames. This avoids accumulating
+hundreds of MiB per review and starving DOSBox-X video capture of disk space.
+Normal runs fail on missing/changed references; they never accept them silently:
+  python3 RT1715/motion_regression.py
+After reviewing the films and sheets, explicitly accept the archived run:
+  python3 RT1715/motion_regression.py --accept-from RT1715/build/motion-regressions/<run>
+Acceptance verifies complete coverage, every exported frame and current asset
+hashes. Continuous checks complement the fixed-pose and music/credit tests;
+they do not claim that pixel hashes alone prove subjective motion quality.
+Validation: 82 host tests and both native DOS kernel suites pass. The reviewed
+motion baseline contains 1657 frames; stale-runtime and single-pixel corruption
+controls are rejected, including an altered frame inside a valid ZIP. All 14
+fixed visual references pass. Final full headless playback keeps every music
+cue and 21-card transition. Close-pass cadence remains 32.61 ms mean (30.7 FPS),
+57.07 ms p95 and 71.34 ms maximum, matching the preceding build. Evidence is in
+benchmarks/presentation-polish.json. Temporary frame archives also prevent review exports
+from filling the host disk during subsequent AVI capture.

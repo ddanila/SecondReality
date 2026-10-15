@@ -374,7 +374,7 @@ def prepare(root, build, command, presentation=None):
         if kind=='machine-led':face_colors=[127]*len(triangles)
         if kind=='marking' and color=='white':face_colors=[159]*len(triangles)
         binary=scene.encode('"'+render_name[:20]+'"',triangles,colors[color][0],shades,
-                            face_colors=face_colors,precomputed_orders=False,sort_center=sort_center,smooth=(label=='screen'))
+                            face_colors=face_colors,precomputed_orders=False,sort_center=sort_center,smooth=('angle' if label=='bezel' else label=='screen'))
         (output/f'U2E.{slot:03}').write_bytes(binary)
         report['objects'].append({'slot':slot,'name':label,'kind':kind,'polygons':len(triangles)})
     # New scene mapping: only our generated slots plus the byte-exact drone.

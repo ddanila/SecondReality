@@ -23,6 +23,18 @@ class MachineActionTests(unittest.TestCase):
         self.assertEqual(values[-1],0)
         self.assertTrue(np.all(np.diff(values)>=0))
 
+    def test_disk_alignment_pause_and_final_seating(self):
+        s=self.settings;a,b,c=s['seat']
+        self.assertAlmostEqual(machine.insertion(a,s),s['seat_fraction'])
+        self.assertEqual(machine.insertion(a,s),machine.insertion(b,s))
+        self.assertAlmostEqual(machine.insertion(c,s),1)
+        values=[machine.insertion(t,s) for t in np.linspace(24,27,1001)]
+        self.assertTrue(np.all(np.diff(values)>=-1e-12))
+        # Lever is still open during the post-insertion settling pause.
+        opened=machine.pose('src-drive-latch-0-0',self.base,s['close'][0],s,self.data)
+        settled=machine.pose('src-drive-latch-0-0',self.base,s['close'][0]+s['lever_settle_seconds'],s,self.data)
+        self.assertEqual(opened,settled)
+
     def test_latch_keeps_its_raised_pivot_and_turns_down(self):
         pivot=np.array([-113,-211,92])*64
         for t in np.linspace(0,30,80):

@@ -42,6 +42,15 @@ class MonitorGeometryTests(unittest.TestCase):
         self.assertTrue(np.allclose(bezel.vertices[edges][:,:,1],-142))
         self.assertEqual(len(edges),36)
 
+    def test_smooth_bezel_fits_dos_vertex_and_normal_limits(self):
+        encoded=scene.encode('bezel',robotron.polygons(monitor.bezel()),48,16,
+                             precomputed_orders=False,smooth='angle')
+        decoded=scene.decode(encoded)
+        self.assertLess(len(decoded['vertices']),500)
+        import struct
+        normals=dict(scene.blocks(encoded))[b'NORM']
+        self.assertLessEqual(struct.unpack_from('<H',normals)[0],500)
+
     def test_shell_has_rounded_corners_and_source_envelope(self):
         shell=monitor.housing()
         np.testing.assert_allclose(shell.bounds,[[-160,-142,180],[160,192,460]],atol=.01)

@@ -498,6 +498,13 @@
         39,
         100
       ]
-    ]
+    ],
+    "seat": [
+      25.55,
+      25.7,
+      26
+    ],
+    "seat_fraction": 0.94,
+    "lever_settle_seconds": 0.1
   }
 }

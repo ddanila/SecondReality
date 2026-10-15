@@ -47,6 +47,12 @@ def load(path=DEFAULT, source=None):
         if not 0<=start<end<=close_start<close_end<machine['ready']<45.5:
             raise ValueError('Disk must seat before lever closure and boot completion')
         if not 5<=machine['latch_lift_mm']<=8:raise ValueError('Lever hub must clear the disk slot')
+        if 'seat' in machine:
+            a,b,c=machine['seat']
+            if not start<a<b<c==end or not 0<machine['seat_fraction']<1:
+                raise ValueError('Invalid disk seating intervals')
+        if not 0<=machine.get('lever_settle_seconds',0)<close_end-close_start:
+            raise ValueError('Lever settle must fit before closure')
         clock=machine['boot_clock']
         if clock[0]!=[close_end,0] or clock[-1]!=[machine['ready'],100] or any(a[0]>=b[0] or a[1]>=b[1] for a,b in zip(clock,clock[1:])):
             raise ValueError('Boot clock must map captured progress monotonically from closure to ready')

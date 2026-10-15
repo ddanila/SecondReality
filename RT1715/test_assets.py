@@ -34,6 +34,16 @@ class SceneTests(unittest.TestCase):
                 self.assertEqual({a,b},{2,14})
                 self.assertLess(probe,len(mesh["vertices"]))
 
+    def test_angle_normals_do_not_depend_on_quad_triangulation(self):
+        quad=[(0,0,0),(100,0,0),(100,100,0),(0,100,0)]
+        wall=[(0,0,0),(0,0,100),(100,0,0)]
+        normals=[]
+        for faces in ([quad,wall],[quad[:3],[quad[0],quad[2],quad[3]],wall]):
+            blocks=dict(scene.blocks(scene.encode('weighted',faces,smooth='angle',precomputed_orders=False)))
+            normal_index=struct.unpack_from('<h',blocks[b'VERT'],4+12)[0]
+            normals.append(struct.unpack_from('<hhh',blocks[b'NORM'],4+normal_index*8))
+        self.assertEqual(normals[0],normals[1])
+
     def test_uniform_fit_keeps_aspect_and_ground(self):
         faces = [[(0,0,0),(2,0,0),(0,1,4)]]
         fitted = scene.fit_mesh(faces,[[10,20],[30,40],[50,70]])

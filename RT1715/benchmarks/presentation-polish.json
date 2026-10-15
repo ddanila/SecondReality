@@ -1,0 +1,279 @@
+{
+  "changes_in_order": [
+    "angle-weighted smooth monitor bezel shading",
+    "continuous keyboard, drive, monitor and swoosh regression sequences",
+    "credit heading/specification/supporting-text hierarchy",
+    "visible CRT glass and phosphor warm-up, captured cursor retained",
+    "two-stage disk insertion with alignment and lever settling pauses"
+  ],
+  "host_tests": 82,
+  "native16": [
+    "PASS arithmetic 2000 cases",
+    "PASS bulk operations, alignment, tails, guards and forward overlap",
+    "PASS spans 200 cases, both shade slopes, decals and page edges",
+    "PASS lighting 6000 cases plus cache hits, mode changes and generation wrap",
+    "PASS local key/drone shading, ramp limits and unchanged scene materials",
+    "PASS soft CRT reflection, warm-up, bezel guards and cache",
+    "PASS edges 400 triangles, negative slopes, horizontal edges and guards",
+    "PASS native kernels"
+  ],
+  "native32": [
+    "PASS 2000 signed 64-bit intermediate multiply/divides",
+    "PASS 2000 wide dot products, negative shifts and overflow truncation",
+    "PASS 800 spans: flat/smooth, decals, empty spans, wrap and guards",
+    "PASS transforms, 128 matrix/normal cases and single-pass full-width projection",
+    "PASS 40000 fused vertices versus separate pipeline; 2000 conservative bounds",
+    "PASS 258 uploads, alignment, byte tails and guards",
+    "PASS 160 complete raster images across C, assembly and eight experimental combinations",
+    "PASS protected-mode subpixel coverage and deferred occlusion",
+    "PASS four VGA pages, repeated clears, viewport changes, RAM/direct and 8 direct raster images",
+    "PASS protected-mode kernels"
+  ],
+  "motion": {
+    "archive": "20261015-214628",
+    "frames": 1657,
+    "accepted_after_review": true,
+    "negative_controls": [
+      "PASS: stale renderer rejected before accepting motion references",
+      "PASS: one changed pixel rejected before accepting motion references",
+      "PASS: altered archived pixel rejected despite valid ZIP CRC"
+    ],
+    "archive_bytes": 6527565
+  },
+  "preserved": [
+    "camera and drone tracks",
+    "original drone mesh and protected palette",
+    "21 credit cards and tracker schedule",
+    "captured OS masks and cursor",
+    "disk insertion/closure endpoints and boot clock"
+  ],
+  "playback": {
+    "capture": "20261015-215416-409541",
+    "dos_exit": "PASS",
+    "cpu_cycles": "fixed 600000",
+    "renderer_sha256": "7a8c0e9f9cfea83aa6ccd84692836cd098b14fc1905672469882a8135d32201a",
+    "scene_sha256": "5c1c5a45dbfecbc7e8e85f71fcfa50aae0b74e6505ec992b0e9203f7782372ed",
+    "music_cues": {
+      "swoosh": [
+        25,
+        6
+      ],
+      "overview": [
+        24,
+        54
+      ],
+      "flight_end": [
+        26,
+        58
+      ],
+      "credits_start": [
+        28,
+        0
+      ],
+      "credits_end": [
+        43,
+        29
+      ]
+    },
+    "credit_schedule": {
+      "cards": 21,
+      "positions": [
+        [
+          28,
+          0
+        ],
+        [
+          28,
+          40
+        ],
+        [
+          29,
+          16
+        ],
+        [
+          29,
+          56
+        ],
+        [
+          30,
+          40
+        ],
+        [
+          31,
+          16
+        ],
+        [
+          31,
+          56
+        ],
+        [
+          32,
+          32
+        ],
+        [
+          33,
+          8
+        ],
+        [
+          33,
+          48
+        ],
+        [
+          34,
+          32
+        ],
+        [
+          35,
+          8
+        ],
+        [
+          35,
+          48
+        ],
+        [
+          36,
+          24
+        ],
+        [
+          37,
+          0
+        ],
+        [
+          38,
+          8
+        ],
+        [
+          39,
+          24
+        ],
+        [
+          41,
+          0
+        ],
+        [
+          41,
+          40
+        ],
+        [
+          42,
+          16
+        ],
+        [
+          42,
+          56
+        ]
+      ],
+      "entry_error_cs": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "end": [
+        43,
+        29
+      ]
+    },
+    "render_counters": {
+      "frames": 1856,
+      "vertices": 11711834,
+      "triangles": 3868957,
+      "spans": 46239722,
+      "clipped": 244499,
+      "ems_maps": 0
+    }
+  },
+  "cadence": {
+    "window_seconds": [
+      8,
+      46
+    ],
+    "cpu_cycles": "fixed 600000",
+    "captured_frames": 2663,
+    "unique_image_runs": 1165,
+    "mean_image_hold_ms": 32.61,
+    "p95_image_hold_ms": 57.07,
+    "max_image_hold_ms": 71.34,
+    "holds_over_100_ms": 0
+  },
+  "visual": {
+    "archive": "20261015-215822",
+    "passed": true,
+    "images": {
+      "key-close-650": {
+        "changed_pixels": 0,
+        "sha256": "43c1a97ec9fbb20674ea187cac6a2677c6e4bf5946433599f3c768f0c4e2f4fb"
+      },
+      "key-close-660": {
+        "changed_pixels": 0,
+        "sha256": "79083cc5664de25d9aeea0982785f32d5445ad7f9083a29d24b5f797b678ef1a"
+      },
+      "key-close-670": {
+        "changed_pixels": 0,
+        "sha256": "7aef89e6c4d7b9f86fdf192d35657bc82f69ab72b2487493c495b88b88e962ee"
+      },
+      "key-close-680": {
+        "changed_pixels": 0,
+        "sha256": "4d951eb56b81721592b8cf2937099bb91dc66bf292d0bc00f85d7eb03f44b80a"
+      },
+      "key-channel": {
+        "changed_pixels": 0,
+        "sha256": "01119be1281e883e5c826ca67a8cf2ec51a4effc2f03355503f6c690e094436d"
+      },
+      "disk-inserting": {
+        "changed_pixels": 0,
+        "sha256": "1d6270b0dbe3e645cccedf35daa1e95ac8037bd6d1fc4319deb8c521bcd920a9"
+      },
+      "disk-seated": {
+        "changed_pixels": 0,
+        "sha256": "050a0be1d9edbf9b499fbab1d7bfc94085771499cff849fc40030f664e7e20ea"
+      },
+      "lever-closed": {
+        "changed_pixels": 0,
+        "sha256": "48021b06e56239484f38304758d55295c895cbca5db2f51760bec1ad58d27480"
+      },
+      "boot-loader": {
+        "changed_pixels": 0,
+        "sha256": "34fa2ebd75be5c6aa01ff3b49f02658db607a982c8557ca1902db5bb3a8b1f99"
+      },
+      "boot-startup": {
+        "changed_pixels": 0,
+        "sha256": "4a0c852ba2d4a3d7eda0b773a3ce8fd871fb0a002f744276d42476978872f0f8"
+      },
+      "boot-prompt": {
+        "changed_pixels": 0,
+        "sha256": "8dc271461a9357ca72c26234edb96f861be6763b1f65347a7a8826a924916671"
+      },
+      "swoosh": {
+        "changed_pixels": 0,
+        "sha256": "4b92556a961681c0eb9d6093ede52db9831b288ab9c7e148f1cc07452b894c32"
+      },
+      "handoff": {
+        "changed_pixels": 0,
+        "sha256": "f3bc10db7f108a397f21bcfefebe359f1054f89b5e1ba1ec1b3bf44e0c075319"
+      },
+      "credit-handoff": {
+        "changed_pixels": 0,
+        "sha256": "b479490eb6d266044cea55ca770348069805432ca890c7fdeab397a58687c7a1"
+      }
+    }
+  },
+  "capture_storage_fix": "An initial AVI recording exhausted host space. Superseded raw exports were removed or compressed; the final 1657-frame set is preserved in a verified ZIP. Final full playback passed."
+}

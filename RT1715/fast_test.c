@@ -127,7 +127,20 @@ int main(void) {
         if(value<2 || value>13) return fail("guarded CRT reflection range",i);
         if(rt_glass_shade_cached(light_normals,i)!=value) return fail("CRT lighting cache",i);
     }
-    printf("PASS soft CRT reflection and cache\n");
+    for(i=0;i<500;i++) {
+        int previous=0;
+        for(j=0;j<=255;j+=17) {
+            int value;rt_crt_brightness=j;rt_light_begin();
+            value=rt_glass_shade_cached(light_normals,i);
+            if(value<previous || value<2 || value>13 || (!j && value!=2))
+                return fail("monotonic CRT warm-up",i);
+            previous=value;
+            value=rt_bezel_shade_cached(light_normals,i,0x800);
+            if(value<2 || value>13)return fail("bezel ramp guard",i);
+        }
+    }
+    rt_crt_brightness=255;rt_light_begin();
+    printf("PASS soft CRT reflection, warm-up, bezel guards and cache\n");
     begin=clock();
     for(k=0;k<500;k++) for(j=0;j<6;j++) for(i=0;i<500;i++)
         uncached_total+=rt_shade(&light_normals[i],0xc00);

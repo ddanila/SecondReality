@@ -1,6 +1,6 @@
 {
   "accepted": true,
-  "capture": "20261015-203709-217046",
+  "capture": "20261015-215416-409541",
   "poses": {
     "key-close-650": 650,
     "key-close-660": 660,
@@ -39,7 +39,7 @@
     },
     "disk-inserting": {
       "changed_pixels": 0,
-      "sha256": "a82a911174e170df2cb99abb38605d70838d686084403ece6c9c7ca6457381a5"
+      "sha256": "1d6270b0dbe3e645cccedf35daa1e95ac8037bd6d1fc4319deb8c521bcd920a9"
     },
     "disk-seated": {
       "changed_pixels": 0,
@@ -51,38 +51,38 @@
     },
     "boot-loader": {
       "changed_pixels": 0,
-      "sha256": "82cdc6d03f1a997d0da50095cbd91769d13cb0f723803e2eb8b20b29089401b6"
+      "sha256": "34fa2ebd75be5c6aa01ff3b49f02658db607a982c8557ca1902db5bb3a8b1f99"
     },
     "boot-startup": {
       "changed_pixels": 0,
-      "sha256": "10ce63b2230e4abdcea3d8d0c5455f39c4498953bc1daca5d43dcbe293de0e4a"
+      "sha256": "4a0c852ba2d4a3d7eda0b773a3ce8fd871fb0a002f744276d42476978872f0f8"
     },
     "boot-prompt": {
       "changed_pixels": 0,
-      "sha256": "5ded092524148b78b7fa9e2792f3984e70c0cb809ed69e4a13b58a84251131d5"
+      "sha256": "8dc271461a9357ca72c26234edb96f861be6763b1f65347a7a8826a924916671"
     },
     "swoosh": {
       "changed_pixels": 0,
-      "sha256": "3e5da81adb825ca0d36d3244fb49932c68a05451e7b540a06c4a70589152a319"
+      "sha256": "4b92556a961681c0eb9d6093ede52db9831b288ab9c7e148f1cc07452b894c32"
     },
     "handoff": {
       "changed_pixels": 0,
-      "sha256": "66a127876f822c53dcaa4eb03b28d4b1ad02a7a04122a97fcf8bb03ff8474524"
+      "sha256": "f3bc10db7f108a397f21bcfefebe359f1054f89b5e1ba1ec1b3bf44e0c075319"
     },
     "credit-handoff": {
       "changed_pixels": 0,
-      "sha256": "c65d49f4d8fabfb9bf61bac10fbecf2572a0dab600cc2c32741d1c5a5ea78064"
+      "sha256": "b479490eb6d266044cea55ca770348069805432ca890c7fdeab397a58687c7a1"
     }
   },
-  "runtime_sha256": "54f05c6d35e2e899be92f0cf8282bc039300f756e89b6979f764e5361e88344c",
+  "runtime_sha256": "7a8c0e9f9cfea83aa6ccd84692836cd098b14fc1905672469882a8135d32201a",
   "asset_sha256": {
     "U2E.00M": "c0dacadd58a2b4250be12afce56a9b658e09e3b0346c92a039015685ce85f926",
-    "U2E.0AB": "6f8294580b0b23c09bf3f94c5750eaa3e95c6a64f83ce554b176e58e50f658d8",
+    "U2E.0AB": "189b26759dfea37f93d7a8f4a8d145fd354cf3430e80ed4b0dfc36e69275bbaf",
     "U2E.AA": "ac41e3184fe425ef9d52757a31e9c74819ee93eac2790bb35552b51edee87bdc",
     "U2E.PRS": "dc7c89cfc7c886ea26c6da4676d5f6f357d3283bc714c7b1c690a8cf5c00eb63",
-    "U2E.VIS": "556bcd6f1ebc371c96c03c2d84a18e89e56a7087fb941177bb3d6a72c55f5f49",
+    "U2E.VIS": "549390687f0703fea20a6de632bd37ca695b7e657a7023ca573f7c62e2307bff",
     "CRED.EXE": "ab4623e49ff44f567462fd08049c0c46a7aec506aa20a1f3c57f1e654e145c8f",
-    "CARD01.CRD": "e81a21c8b7b2dbb855905e6908e92130a1f8fce2c36bf16f7bcb67f683689277",
+    "CARD01.CRD": "4434d6db7f9913740474401dd609f552ef5d9f2a46319d820c997b7019098ae7",
     "CRED.IDX": "d48374773e0b464e91c1313b28762ecb9b48e820b77fcaa397435b08c37e4aca",
     "CRED.SYN": "8a1a27df4c7cf2a9a48496e31ded06047a34ef3e80279f645948fe514bcc3cfb",
     "CRED.CUE": "16c7be3d8029ae3548bb2f4922b7f92cb379aaa5f5151edca696791ad3f85fa7",
@@ -95,7 +95,7 @@
     "U2E.006": "01bc37762c7a1a9d421465855802fc9823d5e646a1f9f76180ba0559396c7f64",
     "U2E.007": "e36672f6bc391ff7526eb4e0a7dfd773fab199ae5616ad5d2bf3c885bf280e72",
     "U2E.008": "21f2e9bc056df358f6bd19f110dc892c29f14cae60453d288867beb9b048a910",
-    "U2E.009": "ce5800518d38f0e28cf9719a17b9b8f0f5455fe45eadf42aeade1b2280d654f4",
+    "U2E.009": "5e9cc41305622cc980c8c8d885e03ac7451541a17ca82a1cf69d0f56d009e516",
     "U2E.010": "84feee584d5827c57bcd345f58ddb4ba0d591552ddc23025316c12d58b429c54",
     "U2E.011": "4a35a04167060743d260d2d5e025571a036e5a4a0907d28ce1b9350d86c59500",
     "U2E.012": "3450f1bbf8ca05eb7a96f7b7fad7f0da503014a0841f11ccbd93253351d1ff40",

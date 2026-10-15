@@ -13,8 +13,14 @@ static vlist vertices[500];
 static pvlist projected[500];
 static nlist normals[500];
 static rt_vertex screen[500];
-static unsigned key_opacity;
-static int glass,rounded_key,drone,bezel,detail;
+static unsigned key_opacity,boot_opacity=255;
+/* Authored 70 Hz timeline: glass warms as the camera first reaches the CRT
+ * at 31.4..32.1 s; loader phosphor rises over 31.6..32.3 s. */
+void rt_presentation_frame(int frame) {
+    rt_crt_brightness=frame<=2198?0:(frame>=2247?255:(frame-2198)*255/49);
+    boot_opacity=frame<=2212?0:(frame>=2261?255:(frame-2212)*255/49);
+}
+static int boot,glass,rounded_key,drone,bezel,detail;
 static long mix(long a,long b,long numerator,long denominator) {
     return a+rt_muldiv(b-a,numerator,denominator);
 }
@@ -29,7 +35,7 @@ static void polygon(object *o,rt_face_word *face,int decal) {
     long d,num;
     int filtered=(decal || detail) && rt_detail_enabled();
     int readable=drone?2:(rounded_key && face[1]==32?1:0);
-    if(filtered) rt_detail_opacity(rounded_key?key_opacity:255);
+    if(filtered) rt_detail_opacity(rounded_key?key_opacity:(boot?boot_opacity:255));
     if(n>8) exit(3);
     flat_color=face[1];
     if(!(face[0]&F_GOURAUD)) flat_color+=rt_readable_shade(rt_shade(&normals[face[2]],face[0]),&normals[face[2]],face[0],readable);
@@ -49,13 +55,13 @@ static void polygon(object *o,rt_face_word *face,int decal) {
                 b[i].x=rt_muldiv(vertices[index].x,projmulx*16,vertices[index].z)+projaddx*16;
                 b[i].y=rt_muldiv(vertices[index].y,projmuly*16,vertices[index].z)+projaddy*16;
             }
-            b[i].c=(face[0]&F_GOURAUD)?face[1]+(glass?rt_glass_shade_cached(normals,o->v0[index].normal):rt_readable_shade(rt_shade_cached(normals,o->v0[index].normal,face[0]),&normals[o->v0[index].normal],face[0],readable)):flat_color;
+            b[i].c=(face[0]&F_GOURAUD)?face[1]+(glass?rt_glass_shade_cached(normals,o->v0[index].normal):bezel?rt_bezel_shade_cached(normals,o->v0[index].normal,face[0]):rt_readable_shade(rt_shade_cached(normals,o->v0[index].normal,face[0]),&normals[o->v0[index].normal],face[0],readable)):flat_color;
         }
         if(filtered)rt_detail_raster(b,n);else rt_raster(b,n,decal);return;
     }
     for(i=0;i<n;i++) {
         index=face[i+3];a[i].x=vertices[index].x;a[i].y=vertices[index].y;a[i].z=vertices[index].z;
-        a[i].c=(face[0]&F_GOURAUD)?face[1]+(glass?rt_glass_shade_cached(normals,o->v0[index].normal):rt_readable_shade(rt_shade_cached(normals,o->v0[index].normal,face[0]),&normals[o->v0[index].normal],face[0],readable)):flat_color;
+        a[i].c=(face[0]&F_GOURAUD)?face[1]+(glass?rt_glass_shade_cached(normals,o->v0[index].normal):bezel?rt_bezel_shade_cached(normals,o->v0[index].normal,face[0]):rt_readable_shade(rt_shade_cached(normals,o->v0[index].normal,face[0]),&normals[o->v0[index].normal],face[0],readable)):flat_color;
     }
     v=a[n-1];previous=v.z>=512;
     for(i=0;i<n;i++) {
@@ -93,6 +99,7 @@ void rt_queue(object *o) {
     key=!strncmp(o->name,"\"key-",5);
     ink=!strncmp(o->name,"\"ink-",5);
     detail=!strncmp(o->name,"\"monitor-vents",14);
+    boot=!strncmp(o->name,"\"ink-boot-",10);
     glass=!strcmp(o->name,"\"screen\"");
     bezel=!strcmp(o->name,"\"bezel\"");
     rounded_key=!strncmp(o->name,"\"key-r-",7);
