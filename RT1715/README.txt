@@ -1,6 +1,27 @@
 Second Reality: RT1715 extraction
 ================================
 
+Current checkpoint (2026-10-15, branch rt1715)
+--------------------------------------------
+The Robotron presentation includes the protected-mode renderer, scenic close-up
+flight, tangent-facing banked drone, differentiated materials and CRT shading,
+and 21 technical cards synchronized to the original music. Implementation:
+8b3e756. All 43 host tests, both native suites and full headless DOSBox-X playback
+passed; all card entrances matched their scheduled tracker rows.
+
+Start with assets/robotron/EDITING.txt and assets/robotron/presentation.json for
+the current Robotron workflow. Validation evidence is tracked in
+benchmarks/presentation.json. The older generic city replacement workflow below
+remains available separately.
+
+Build outputs, source snapshots and video captures are local generated files,
+not included in Git. Rebuilding needs the sibling 3d-models source assembly
+selected by presentation.json, plus the host tools documented below. The tested
+snapshot includes local model edits; source hashes are recorded in the generated
+report and snapshot manifest. Pushing this branch does not publish those sibling
+repository edits. All compilation/rendering runs on the host; DOSBox-X testing
+runs headlessly and exits without confirmation dialogs.
+
 The Robotron build is documented under "Robotron 1715M fly-through" below.
 It replaces the city and goes directly to component/spec cards.
 Robotron now defaults to the 32-bit protected-mode renderer. See "Protected-mode
