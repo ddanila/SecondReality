@@ -67,15 +67,15 @@ def rectangles(im):
     return result
 
 
-def polygons(lines,bounds,scale):
+def polygons(lines,bounds,scale,stroke=0,max_unit=1.05):
     im=bitmap(lines);lo,hi=bounds
     # Entire legend sits on the flat part of the key's dished top.
-    unit=min(1.05,(hi[0]-lo[0]-6)/im.width,(hi[1]-lo[1]-9)/im.height)
+    unit=min(max_unit,(hi[0]-lo[0]-6)/im.width,(hi[1]-lo[1]-9)/im.height)
     cx=(hi[0]+lo[0])/2;cy=(hi[1]+lo[1])/2;z=hi[2]-1+.16
     faces=[]
     for x0,y0,x1,y1 in rectangles(im):
-        left=cx+(x0-im.width/2)*unit;right=cx+(x1-im.width/2)*unit
-        top=cy+(im.height/2-y0)*unit;bottom=cy+(im.height/2-y1)*unit
+        left=cx+(x0-im.width/2-stroke)*unit;right=cx+(x1-im.width/2+stroke)*unit
+        top=cy+(im.height/2-y0+stroke)*unit;bottom=cy+(im.height/2-y1-stroke)*unit
         faces.append([(round(x*scale),round(y*scale),round(z*scale))
                       for x,y in [(left,bottom),(right,bottom),(right,top),(left,top)]])
     return faces

@@ -42,3 +42,10 @@ class CameraMotionTests(unittest.TestCase):
         expected=robotron.sample(self.flight,45.5)
         for t in np.linspace(45.5,58,80):
             for actual,want in zip(robotron.sample(self.flight,t),expected):np.testing.assert_allclose(actual,want,atol=1e-9)
+
+    def test_climb_pitch_changes_gently(self):
+        pitches=[]
+        for t in np.linspace(8,16,801):
+            eye,target=robotron.sample(self.flight,t);v=target-eye
+            pitches.append(np.degrees(np.arctan2(v[2],np.linalg.norm(v[:2]))))
+        self.assertLess(max(abs(np.diff(pitches)))/.01,3)

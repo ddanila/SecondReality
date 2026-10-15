@@ -49,30 +49,30 @@
     {
       "time": 10,
       "eye": [
-        0,
-        -383.12076,
-        59.4683
+        -8,
+        -390,
+        65
       ],
       "target": [
-        35,
-        -382.50678,
-        52.49528
+        40,
+        -380,
+        57
       ],
-      "subject": "Pursue the miniature drone through the key-row channel"
+      "subject": "Ease upward and back out of the key channel"
     },
     {
       "time": 14,
       "eye": [
-        80,
+        65,
         -410,
-        85
+        92
       ],
       "target": [
-        170,
-        -340,
-        40
+        160,
+        -355,
+        68
       ],
-      "subject": "Bank over the numeric keypad"
+      "subject": "Let the keyboard open up beneath the drone"
     },
     {
       "time": 19,

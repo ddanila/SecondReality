@@ -121,6 +121,13 @@ int main(void) {
         if(value<1 || value>6) return fail("charcoal key range",i);
     }
     printf("PASS local key/drone shading, ramp limits and unchanged scene materials\n");
+    rt_light_begin();
+    for(i=0;i<500;i++) {
+        int value=rt_glass_shade_cached(light_normals,i);
+        if(value<0 || value>15) return fail("soft CRT reflection range",i);
+        if(rt_glass_shade_cached(light_normals,i)!=value) return fail("CRT lighting cache",i);
+    }
+    printf("PASS soft CRT reflection and cache\n");
     begin=clock();
     for(k=0;k<500;k++) for(j=0;j<6;j++) for(i=0;i<500;i++)
         uncached_total+=rt_shade(&light_normals[i],0xc00);

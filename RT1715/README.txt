@@ -957,3 +957,35 @@ At fixed 300000 DOSBox-X cycles the full run still renders 1,828 flight frames,
 matching the preceding capture's count. Reveal/swoosh/end remain 24:54 / 25:6 /
 26:57, credits remain 28:0-43:29, and all 21 entries have zero measured cue error.
 The key channel, climb, overview and rotation were visually inspected.
+
+
+Legend, climb and CRT polish (2026-10-15)
+---------------------------------------
+Key legends have slightly larger cells and 24% thicker one-cell strokes. Both
+pale and dark ink receive the small decal depth offset; previously pale strokes
+could lose pixels against the cap surface. The existing glyph shapes and source
+legends are preserved, including symbols and two-line labels.
+
+Camera waypoints at 10 and 14 seconds ease farther back during the climb and
+keep the target higher. Peak pitch speed across 8..16 seconds drops from 4.16
+to 2.76 degrees/second. The drone's route and all music anchors are unchanged.
+CRT glass uses a broad quadratic reflection, spread over 16 closely spaced dark-green shades, instead
+of a steep power-16 spot and a separate brightness threshold.
+
+58 host tests and the native suite pass, including the climb pitch limit and
+CRT reflection/cache checks. Normal/slow playback evidence and image cadence
+measurements are recorded in benchmarks/polish.json.
+
+Headless playback passes at 300000 and 100000 cycles, rendering 1,837 and 1,121
+flight frames respectively. Normal reveal/swoosh/end: 24:54 / 25:6 / 26:57;
+slow: 24:55 / 25:7 / 26:58 (within cue tolerances). Both credits runs retain
+zero entry error on all 21 cards and finish at 43:29.
+
+cadence.py measures repeated decoded images during seconds 8..46, excluding
+intentional holds. Normal mean / p95 / longest holds are 33 / 57 / 86 ms;
+slow holds are 49 / 128 / 157 ms, with 65 holds over 100 ms. The slower setting
+is visibly less fluid, so 300000 remains the default. Encoded camera/LOD checks
+find no rapid reversals within eight poses across the first 20 seconds.
+The normal preview stays at build/robotron-preview.mp4; the slow comparison is
+build/robotron-slow-preview.mp4. Reproduce cadence measurements with:
+  python3 RT1715/cadence.py RT1715/capture/<completed-capture>

@@ -84,8 +84,8 @@ def detailed(source):
 def surface_legends(lines,mesh,scale):
     import legends
     # Smaller, source-colour ink follows the rendered dish, not a floating plane.
-    bounds=mesh.bounds.copy();bounds[0,:2]+=1;bounds[1,:2]-=1
-    faces=legends.polygons(lines,bounds,scale)
+    bounds=mesh.bounds.copy();bounds[0,:2]+=.5;bounds[1,:2]-=.5
+    faces=legends.polygons(lines,bounds,scale,stroke=.12,max_unit=1.15)
     projected=[]
     for face in faces:
         points=[(x,y,round((height(mesh,x/scale,y/scale)+.045)*scale)) for x,y,_ in face]

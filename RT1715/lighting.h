@@ -36,9 +36,10 @@ static int rt_glass_shade_cached(nlist *normals,unsigned index) {
         light=((long)normals[index].x*-6000L+(long)normals[index].y*-7000L+
                (long)normals[index].z*-13300L)>>14;
         if(light<0) light=0;if(light>16384) light=16384;
-        power=(light*light)>>14;power=(power*power)>>14;
-        power=(power*power)>>14;power=(power*power)>>14;
-        value=3+(int)(light>>13)+(int)((power*7)>>14);
+        /* A broad quadratic reflection replaces the steep power-16 spot.
+         * Sum before quantizing: no separate half-light threshold on glass. */
+        power=(light*light)>>14;
+        value=(int)((light*7+power*8)>>14);
         rt_light_values[index]=(unsigned char)value;rt_light_modes[index]=4;
         rt_light_stamps[index]=rt_light_epoch;
     }

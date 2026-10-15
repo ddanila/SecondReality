@@ -121,6 +121,6 @@ void rt_queue(object *o) {
         v=&vertices[face[3]];normal=&normals[face[2]];
         facing=(v->x/16)*normal->x+(v->y/16)*normal->y+(v->z/16)*normal->z;
         if(!(face[0]&F_2SIDE) && facing>=0) continue;
-        polygon(o,face,key && face[1]==96);
+        polygon(o,face,key && (face[1]==96 || (rounded_key && face[1]==144)));
     }
 }

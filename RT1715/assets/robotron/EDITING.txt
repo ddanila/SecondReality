@@ -41,7 +41,8 @@ keycaps.py samples exterior sections and the dished top, preserving skirt steps
 and rounded bodies while omitting hidden cavities. It does not decimate thin
 shells. Black/red caps have pale ink; function keys use a silver face and a
 blue-grey rim as an opaque palette approximation of their clear shells. Ink is
-projected onto the rendered dish. Distant keys use a rounded 14-face/16-vertex prefix; close views use the full
+projected onto the rendered dish. Strokes expand by 0.12 bitmap cells per side,
+with a 1.15 mm maximum cell size and a shared depth offset for pale/dark ink. Distant keys use a rounded 14-face/16-vertex prefix; close views use the full
 source-derived geometry. Generated names start with key-r-, which tells the
 renderer to select this new prefix; old key- names retain their six-face layout.
 Do not change the prefix counts without updating painter.c as well. Every variant must still fit the
@@ -77,7 +78,7 @@ each original material's ramp. Mesh, palette and flight transforms are unchanged
 
 materials.json controls the eight Robotron ramps. Their palette slots are fixed;
 the original drone colors are untouched. The screen is a smooth-normal surface
-with restrained view-dependent shading and a low glow floor. It has no alpha
+with a broad quadratic view-dependent reflection (all 16 shades of a narrow dark-green ramp) and a low glow floor. It has no alpha
 transparency or additional geometry over the bezel.
 
 Pictures and ASCII text
