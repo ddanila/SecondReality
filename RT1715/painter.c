@@ -13,6 +13,7 @@ static vlist vertices[500];
 static pvlist projected[500];
 static nlist normals[500];
 static rt_vertex screen[500];
+static unsigned key_opacity;
 static int glass,rounded_key,drone,bezel,detail;
 static long mix(long a,long b,long numerator,long denominator) {
     return a+rt_muldiv(b-a,numerator,denominator);
@@ -28,9 +29,11 @@ static void polygon(object *o,rt_face_word *face,int decal) {
     long d,num;
     int filtered=(decal || detail) && rt_detail_enabled();
     int readable=drone?2:(rounded_key && face[1]==32?1:0);
+    if(filtered) rt_detail_opacity(rounded_key?key_opacity:255);
     if(n>8) exit(3);
     flat_color=face[1];
     if(!(face[0]&F_GOURAUD)) flat_color+=rt_readable_shade(rt_shade(&normals[face[2]],face[0]),&normals[face[2]],face[0],readable);
+    if(rounded_key && decal) flat_color=face[1]+15;
     /* Most polygons never cross the near plane. Send projected vertices
      * straight to the rasterizer instead of constructing and copying a
      * second camera-space polygon for every key face and ink triangle. */
@@ -99,6 +102,9 @@ void rt_queue(object *o) {
         calc_rotate(coarse_vertices,vertices,o->v0,o->r);
         for(i=0;i<coarse_vertices;i++) if(vertices[i].z<nearest) nearest=vertices[i].z;
         coarse=nearest>240L*64L;
+        /* Fade ink before the geometry LOD drops its legend faces. */
+        key_opacity=nearest<=160L*64L?255:(nearest>=240L*64L?0:
+            (unsigned)((240L*64L-nearest)*255/(80L*64L)));
 #ifdef RT_PM
         /* One-millimetre dish detail must be subpixel. Per-object hysteresis
          * prevents switching back and forth during slow camera motion. */

@@ -68,6 +68,28 @@ def crt_surround(profile=None):
     return glass,gasket
 
 
+def collar(back,front):
+    """Join differently sampled closed rings without leaving an open rear rim."""
+    def ordered(points):
+        points=np.unique(points,axis=0)
+        angles=np.mod(np.arctan2(points[:,2]-320,points[:,0]),2*np.pi)
+        order=np.argsort(angles)
+        return points[order],angles[order]
+    a,aa=ordered(back);b,bb=ordered(front);n=len(a);m=len(b)
+    vertices=np.concatenate((a,b));faces=[];i=j=0
+    while i<n or j<m:
+        an=aa[(i+1)%n]+(2*np.pi if i+1>=n else 0) if i<n else np.inf
+        bn=bb[(j+1)%m]+(2*np.pi if j+1>=m else 0) if j<m else np.inf
+        if an<bn:
+            faces.append((i%n,(i+1)%n,n+j%m));i+=1
+        else:
+            faces.append((i%n,n+(j+1)%m,n+j%m));j+=1
+    mesh=trimesh.Trimesh(vertices=vertices,faces=faces,process=True)
+    radial=mesh.triangles_center-np.array([0,0,320])
+    if np.mean(np.sum(mesh.face_normals[:,[0,2]]*radial[:,[0,2]],axis=1))<0:mesh.invert()
+    return mesh
+
+
 def bezel():
     # Trace each profile with the same angular rays, so the rounded-rectangle
     # roll and superelliptic opening align without twisted connecting strips.
@@ -87,7 +109,7 @@ def bezel():
               ring(outline(259,212),-142,324)]
     m=surface(profiles)
     if np.mean(m.face_normals[:,1])>0:m.invert()
-    return m
+    return trimesh.util.concatenate([m,collar(ring(rounded(300,260,0),-142),profiles[0])])
 
 
 def housing():

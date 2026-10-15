@@ -13,7 +13,8 @@ import build
 import animation
 
 HERE=Path(__file__).resolve().parent
-SHOTS={'key-channel':700,'disk-inserting':1732,'disk-seated':1822,'lever-closed':1926,
+SHOTS={'key-close-650':650,'key-close-660':660,'key-close-670':670,'key-close-680':680,
+       'key-channel':700,'disk-inserting':1732,'disk-seated':1822,'lever-closed':1926,
        'boot-loader':2242,'boot-startup':2662,'boot-prompt':2802,'swoosh':3344,'handoff':3992}
 
 

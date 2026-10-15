@@ -23,4 +23,5 @@ int rt_detail_enabled(void);
 void rt_detail_init(const unsigned char *palette,const unsigned char *lookup);
 void rt_detail_raster(rt_vertex *vertices,int count);
 void rt_raster(rt_vertex *vertices,int count,int decal);
+void rt_detail_opacity(unsigned opacity);
 #endif

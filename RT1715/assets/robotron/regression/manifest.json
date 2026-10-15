@@ -1,7 +1,11 @@
 {
   "accepted": true,
-  "capture": "20261015-201529-147002",
+  "capture": "20261015-203709-217046",
   "poses": {
+    "key-close-650": 650,
+    "key-close-660": 660,
+    "key-close-670": 670,
+    "key-close-680": 680,
     "key-channel": 700,
     "disk-inserting": 1732,
     "disk-seated": 1822,
@@ -13,9 +17,25 @@
     "handoff": 3992
   },
   "images": {
+    "key-close-650": {
+      "changed_pixels": 0,
+      "sha256": "43c1a97ec9fbb20674ea187cac6a2677c6e4bf5946433599f3c768f0c4e2f4fb"
+    },
+    "key-close-660": {
+      "changed_pixels": 0,
+      "sha256": "79083cc5664de25d9aeea0982785f32d5445ad7f9083a29d24b5f797b678ef1a"
+    },
+    "key-close-670": {
+      "changed_pixels": 0,
+      "sha256": "7aef89e6c4d7b9f86fdf192d35657bc82f69ab72b2487493c495b88b88e962ee"
+    },
+    "key-close-680": {
+      "changed_pixels": 0,
+      "sha256": "4d951eb56b81721592b8cf2937099bb91dc66bf292d0bc00f85d7eb03f44b80a"
+    },
     "key-channel": {
       "changed_pixels": 0,
-      "sha256": "2859d849d504db7ef7c5bc83151e20df9ee5137017c79024d258be8e5a0ec465"
+      "sha256": "01119be1281e883e5c826ca67a8cf2ec51a4effc2f03355503f6c690e094436d"
     },
     "disk-inserting": {
       "changed_pixels": 0,
@@ -27,40 +47,40 @@
     },
     "lever-closed": {
       "changed_pixels": 0,
-      "sha256": "e9692fa869b2b78d8baa444c04d795c2324c4474266a8e2c6a76238fb916fd64"
+      "sha256": "48021b06e56239484f38304758d55295c895cbca5db2f51760bec1ad58d27480"
     },
     "boot-loader": {
       "changed_pixels": 0,
-      "sha256": "eb91fffb56292a47f9b8743835f986c179921d7734631bb8160fed616c795c36"
+      "sha256": "82cdc6d03f1a997d0da50095cbd91769d13cb0f723803e2eb8b20b29089401b6"
     },
     "boot-startup": {
       "changed_pixels": 0,
-      "sha256": "4bd9ac11ce2bd194c937656a4f869565c719e0e868e793c48f0a67d7e76a2a83"
+      "sha256": "10ce63b2230e4abdcea3d8d0c5455f39c4498953bc1daca5d43dcbe293de0e4a"
     },
     "boot-prompt": {
       "changed_pixels": 0,
-      "sha256": "530198ad735e5e74aff553fa9341684ef075b92f37841b48c1b671aa6fd0f158"
+      "sha256": "5ded092524148b78b7fa9e2792f3984e70c0cb809ed69e4a13b58a84251131d5"
     },
     "swoosh": {
       "changed_pixels": 0,
-      "sha256": "b0314a0f774ba6e057baa26a5d6bf86a124527b36f84d67ef27a6ec0c9a4c96a"
+      "sha256": "3e5da81adb825ca0d36d3244fb49932c68a05451e7b540a06c4a70589152a319"
     },
     "handoff": {
       "changed_pixels": 0,
-      "sha256": "42304cbdcaa40831cb0d61f32d8d62082f77a0ad54f5948a98613c18b052117d"
+      "sha256": "66a127876f822c53dcaa4eb03b28d4b1ad02a7a04122a97fcf8bb03ff8474524"
     },
     "credit-handoff": {
       "changed_pixels": 0,
       "sha256": "c65d49f4d8fabfb9bf61bac10fbecf2572a0dab600cc2c32741d1c5a5ea78064"
     }
   },
-  "runtime_sha256": "4d97abc24fa58925f0532a3fd3829f75dc7c538d5e36f028b3bcf46b2662e755",
+  "runtime_sha256": "54f05c6d35e2e899be92f0cf8282bc039300f756e89b6979f764e5361e88344c",
   "asset_sha256": {
     "U2E.00M": "c0dacadd58a2b4250be12afce56a9b658e09e3b0346c92a039015685ce85f926",
     "U2E.0AB": "6f8294580b0b23c09bf3f94c5750eaa3e95c6a64f83ce554b176e58e50f658d8",
     "U2E.AA": "ac41e3184fe425ef9d52757a31e9c74819ee93eac2790bb35552b51edee87bdc",
     "U2E.PRS": "dc7c89cfc7c886ea26c6da4676d5f6f357d3283bc714c7b1c690a8cf5c00eb63",
-    "U2E.VIS": "48dfbc288f7a5f5f0006cf0eeef8b220d176be9a18ed33a5d1bb3fbf3782819c",
+    "U2E.VIS": "556bcd6f1ebc371c96c03c2d84a18e89e56a7087fb941177bb3d6a72c55f5f49",
     "CRED.EXE": "ab4623e49ff44f567462fd08049c0c46a7aec506aa20a1f3c57f1e654e145c8f",
     "CARD01.CRD": "e81a21c8b7b2dbb855905e6908e92130a1f8fce2c36bf16f7bcb67f683689277",
     "CRED.IDX": "d48374773e0b464e91c1313b28762ecb9b48e820b77fcaa397435b08c37e4aca",
@@ -75,7 +95,7 @@
     "U2E.006": "01bc37762c7a1a9d421465855802fc9823d5e646a1f9f76180ba0559396c7f64",
     "U2E.007": "e36672f6bc391ff7526eb4e0a7dfd773fab199ae5616ad5d2bf3c885bf280e72",
     "U2E.008": "21f2e9bc056df358f6bd19f110dc892c29f14cae60453d288867beb9b048a910",
-    "U2E.009": "f35a32e052516ebdf9a1a2a29e6886b4e06b0883a1883e9b41c9c85ea1cf899a",
+    "U2E.009": "ce5800518d38f0e28cf9719a17b9b8f0f5455fe45eadf42aeade1b2280d654f4",
     "U2E.010": "84feee584d5827c57bcd345f58ddb4ba0d591552ddc23025316c12d58b429c54",
     "U2E.011": "4a35a04167060743d260d2d5e025571a036e5a4a0907d28ce1b9350d86c59500",
     "U2E.012": "3450f1bbf8ca05eb7a96f7b7fad7f0da503014a0841f11ccbd93253351d1ff40",

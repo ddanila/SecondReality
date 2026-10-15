@@ -1170,3 +1170,30 @@ Final measured close-pass cadence (8..46 seconds): mean image hold 32.39 ms
 music/credit synchronization, 76 host tests, protected-mode kernel tests and
 reviewed visual regression frames pass. The 1000000-cycle trial exceeded this
 host's real-time capacity and was rejected in favour of 600000 cycles.
+
+Bezel join and key-legend dropout correction
+-------------------------------------------
+The thin glass gasket was not the remaining outer gap. The bezel's rear outer
+rim at Y=-145 was open in front of the housing at Y=-142. A triangulated collar
+now joins their differently sampled rings with outward winding. The bezel's
+only remaining boundaries are its CRT opening and shared housing interface.
+The horizontal split in the monitor housing is intentionally retained.
+
+Key lettering used Q4 projected coordinates over whole-pixel opaque geometry.
+Evaluating both depth planes at the pixel centre did not compensate for the
+opaque vertices' rounding. Filtered decals now use a slope-scaled depth offset
+covering one pixel of displacement in both axes, plus two depth units. Actual
+foreground surfaces still occlude them. Key ink also uses constant material
+colour instead of per-triangle lighting, and fades from full opacity at 160 mm
+to zero at the 240 mm geometry cutoff. This avoids sudden legend removal by
+key LOD. Per-sample opacity adds 1,024,000 bytes to the detail buffers.
+
+The regression suite includes consecutive close-key poses 650/660/670/680,
+where the old renderer repeatedly lost entire letters. Host tests cover all
+16 fractional-pixel phases on six depth slopes, opaque foreground occlusion,
+partial opacity and the closed bezel return. Full motion checks use headless
+DOSBox-X. See benchmarks/bezel-ink.json for validation and before/after frames.
+Validation: 79 host tests, protected-mode tests, 14 visual reference images and
+full headless playback pass. Mean close-pass image hold is 32.61 ms (about
+30.7 FPS), p95 57.07 ms and maximum 71.34 ms, with no holds above 100 ms.
+Music cues and all 21 credit-card transitions remain synchronized.

@@ -34,6 +34,14 @@ class MonitorGeometryTests(unittest.TestCase):
         self.assertAlmostEqual(gasket.extents[0]-glass.extents[0],1)
         self.assertAlmostEqual(gasket.extents[2]-glass.extents[2],1)
 
+    def test_bezel_has_closed_outer_return_to_housing(self):
+        bezel=monitor.bezel();bezel.merge_vertices()
+        self.assertTrue(bezel.is_winding_consistent)
+        edges=bezel.edges_unique[np.bincount(bezel.edges_unique_inverse)==1]
+        # Only the glass opening and the shared housing rim remain open.
+        self.assertTrue(np.allclose(bezel.vertices[edges][:,:,1],-142))
+        self.assertEqual(len(edges),36)
+
     def test_shell_has_rounded_corners_and_source_envelope(self):
         shell=monitor.housing()
         np.testing.assert_allclose(shell.bounds,[[-160,-142,180],[160,192,460]],atol=.01)

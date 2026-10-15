@@ -23,6 +23,7 @@ class DetailTests(unittest.TestCase):
     @classmethod
     def tearDownClass(cls):cls.lib.rt_depth_end();cls.tmp.cleanup()
     def setUp(self):
+        self.lib.rt_detail_opacity(255)
         self.lib.rt_depth_window(0,320,0,200);self.lib.rt_depth_begin()
         self.lib.rt_raster((Vertex*4)(Vertex(0,0,1000,0),Vertex(320,0,1000,0),Vertex(320,200,1000,0),Vertex(0,200,1000,0)),4,0)
     def draw(self,x0,x1,z=1100):
@@ -61,6 +62,34 @@ class DetailTests(unittest.TestCase):
                 Vertex(164,320,right,63),Vertex(160,320,left,63)),4)
             self.lib.rt_depth_flush()
             self.assertTrue(13<=self.lib.rt_color_at(10,15)<=17,slope)
+
+    def test_integer_surface_projection_does_not_hide_subpixel_ink(self):
+        # Same sloping surface, but its opaque projected vertices have lost
+        # the fractional pixel retained by the ink. Test every Q4 phase.
+        for slope in (4,16,64,-4,-16,-64):
+            for phase in range(16):
+                self.setUp()
+                shift=slope*phase//16
+                self.lib.rt_raster((Vertex*4)(
+                    Vertex(0,0,2000+shift,0),Vertex(20,0,2000+shift+slope*20,0),
+                    Vertex(20,30,2000+shift+slope*20,0),Vertex(0,30,2000+shift,0)),4,0)
+                left=2000+slope*10;right=left+slope//4
+                self.lib.rt_detail_raster((Vertex*4)(
+                    Vertex(160,160,left,63),Vertex(164,160,right,63),
+                    Vertex(164,320,right,63),Vertex(160,320,left,63)),4)
+                self.lib.rt_depth_flush()
+                self.assertTrue(13<=self.lib.rt_color_at(10,15)<=17,(slope,phase))
+
+    def test_legend_fade_composites_without_a_hard_cut(self):
+        samples=[]
+        for opacity in (0,64,128,192,255):
+            self.setUp();self.lib.rt_detail_opacity(opacity)
+            self.draw(160,192);self.lib.rt_depth_flush()
+            samples.append(self.lib.rt_color_at(10,15))
+        self.assertEqual(samples[0],0)
+        self.assertEqual(samples[-1],63)
+        self.assertTrue(all(a<b for a,b in zip(samples,samples[1:])))
+        self.assertTrue(29<=samples[2]<=33)
 
     def test_clipping_and_frame_reset(self):
         self.draw(-160,16);self.lib.rt_depth_flush();self.assertEqual(self.lib.rt_color_at(0,15),63)
