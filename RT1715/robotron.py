@@ -128,18 +128,34 @@ def assembly_pose(flight,time,pose):
     return tuple(np.rint(position).astype(int))+tuple(np.rint(basis.flatten()).astype(int))
 
 
+def steering_time(flight,time):
+    settings=flight.get('steering')
+    if not settings:return time
+    u=np.clip((time-settings['fade_start'])/(settings['end']-settings['fade_start']),0,1)
+    lead=settings['lead_seconds']*(1-u*u*u*(10-15*u+6*u*u))
+    return min(flight['drone'][-1]['time'],time+lead)
+
+
+def drone_scale(flight,time):
+    settings=flight.get('miniature')
+    if not settings:return 1.
+    u=np.clip((time-settings['start'])/(settings['end']-settings['start']),0,1)
+    return settings['scale']+(1-settings['scale'])*u*u*u*(10-15*u+6*u*u)
+
+
 def drone_rotation(flight, time):
-    """Original ship nose is local +X; align it with the 3D path tangent."""
+    """Original ship nose is +X; anticipate the upcoming path tangent."""
     keys=flight['drone'];start=keys[0]['time'];end=keys[-1]['time']
     def velocity(t):
         lo=max(start,t-.05);hi=min(end,t+.05)
         return (sample_track(keys,hi,'position')-sample_track(keys,lo,'position'))/(hi-lo)
+    time=steering_time(flight,time)
     v=velocity(time);speed=np.linalg.norm(v)
     if speed<1e-6: raise ValueError('Drone track has no heading at this sample')
     forward=v/speed
     left=np.cross([0.,0.,1.],forward);left/=np.linalg.norm(left)
     up=np.cross(forward,left)
-    # Smooth bank independently of heading: +X remains exactly tangent.
+    # Bank into the anticipated turn without delaying the nose heading.
     settings=flight.get('bank',{});window=settings.get('smoothing_seconds',.24)
     limit=math.radians(settings.get('max_degrees',16));accel=settings.get('acceleration_scale',200)
     def raw_bank(t):
@@ -349,7 +365,7 @@ def prepare(root, build, command, presentation=None):
         t=f/flight['fps'];eye,target=sample(flight,t)
         drone_pos=sample_track(flight['drone'],t,'position')
         rotation=drone_rotation(flight,t)
-        rotation*=SCALE/96  # Approximately 7.5 mm wide in the assembly's units.
+        rotation*=SCALE/96*drone_scale(flight,t)  # Miniature in the key channel; original scale after climbing out.
         drone_state=tuple(np.rint(drone_pos*SCALE-rotation@center).astype(int))+tuple(
             np.rint(rotation.flatten()*16384).astype(int))
         frame=[camera(eye,target)]; enabled=[True]

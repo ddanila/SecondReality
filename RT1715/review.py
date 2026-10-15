@@ -9,7 +9,7 @@ import sys
 from PIL import Image,ImageDraw,ImageFont
 
 HERE=Path(__file__).resolve().parent
-SHOTS=[('KEYBOARD',8,4),('KEYPAD / TURN',17,3),('DRIVE FRONTS',30,4),
+SHOTS=[('KEY CHANNEL',8,4),('KEYPAD / TURN',17,3),('DRIVE FRONTS',30,4),
        ('MONITOR CORNER',43,3),('MONITOR PASS',46,2),('FULL REVEAL',50,3),
        ('DRONE SWOOSH',53,2),('TURN START',55.2,1),
        ('TURN MID',59,1),('TURN END',62.3,1),('CREDITS HANDOFF',62,7),('CPU LOCATOR',71,3),

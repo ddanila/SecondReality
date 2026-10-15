@@ -112,34 +112,15 @@ static int music_frame(unsigned *position) {
     frame=(long)rt_row_cs[ord-19][row]*70/100;
     frame+=(unsigned short)(tick-last_tick);return frame;
 }
-static void fadeset(unsigned char *vram) {
-    int y;
-    outpw(0x3c4,0x0f02);
-    for(y=0;y<200;y++) {
-        int mid=y>=25 && y<175;
-        memset(vram+y*80,mid?254:0,17);memset(vram+y*80+17,mid?253:252,47);
-        outpw(0x3c4,0x0e02);vram[y*80+63]=mid?254:0;outpw(0x3c4,0x0f02);
-        memset(vram+y*80+64,mid?254:0,16);
-    }
-}
 static void intro(unsigned char *palette) {
-    unsigned char p[768];int a,b;
-    rt_video_init();memset(p,0,sizeof(p));for(a=3;a<192;a++) p[a]=63;
-    for(b=0;b<33;b++) {
-        for(a=3;a<762;a++) p[a]=p[a]+2>63?63:p[a]+2;
-        rt_wait();rt_palette(p);
-    }
-    for(b=0;b<16;b++) rt_wait();
-    fadeset((unsigned char *)0xa0000);rt_wait();
+    unsigned char black[768];int b;
+    /* Preserve the inherited 100-retrace pre-roll and Mode-X setup, but keep
+     * every VGA page black instead of flashing the preceding scene white. */
+    rt_video_init();memset(black,0,sizeof(black));rt_palette(black);
+    for(b=0;b<50;b++) rt_wait();
     outp(0x3d4,9);outp(0x3d5,(inp(0x3d5)&0xf0)|0x80);rt_wait();
-    for(b=1;b<4;b++) fadeset((unsigned char *)(0xa0000+b*16384));
-    for(b=0;b<16;b++) rt_wait();
-    for(b=0;b<33;b++) {
-        for(a=3;a<759;a++) p[a]=p[a]<2?0:p[a]-2;
-        for(a=759;a<765;a++) p[a]=p[a]+2>63?63:p[a]+2;
-        rt_wait();rt_palette(p);
-    }
-    memset(palette+252*3,0,12);memset(palette+253*3,63,6);rt_palette(palette);
+    for(b=0;b<49;b++) rt_wait();
+    memset(palette+252*3,0,12);rt_palette(palette);
 }
 static rmatrix last_local,last_view;
 static int last_matrix_valid;

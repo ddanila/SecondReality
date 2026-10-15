@@ -48,8 +48,13 @@ close views use the source-derived geometry. Every variant must still fit the
 Motion and materials
 --------------------
 flight.json contains camera eye/target tracks, drone positions and bank settings.
-The drone uses continuous-acceleration interpolation, tangent-aligned heading,
-and smoothed banking capped at 16 degrees. The camera also uses continuous-
+The drone uses continuous-acceleration interpolation and smoothed banking capped
+at 16 degrees. The steering block looks 0.45 seconds ahead for both nose heading
+and bank, then fades anticipation from 42 to 45 seconds so the final swoosh keeps
+its original heading. The miniature block sets 23% scale in the initial key-row
+channel and eases back to full size from 8 to 16 seconds. The original mesh is
+unchanged. The camera rides just above the key tops while the drone flies below
+their rims; preserve clearance when moving these opening waypoints. The camera also uses continuous-
 acceleration interpolation: avoid duplicate positions or stop flags in the close
 flyover. The follow block blends the target toward the drone (weight 0.55),
 then smoothly releases tracking from fade_start=30 to end=36 seconds for the

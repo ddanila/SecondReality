@@ -913,3 +913,24 @@ At fixed 300000 DOSBox-X cycles the richer keys render 1,790 flight frames
 (previously 1,925), about 31 fps averaged over the authored 58-second flight.
 Full headless playback passes: overview 24:54, swoosh 25:6, flight end 26:57,
 and credits 28:0 through 43:29; all 21 card entries retain zero cue error.
+
+
+Anticipatory steering and the key-row opening (2026-10-15)
+-------------------------------------------------------
+The drone now points and banks toward the tangent 0.45 seconds ahead, instead
+of waiting for its current velocity to turn. Anticipation fades from 42 to 45
+seconds; the final diagonal swoosh remains unchanged. The first seven seconds
+fly between keyboard rows at local Y=-25.5 mm, Z=9.8 mm, below the rounded caps.
+The camera follows 35 mm behind, just above their tops. A miniature opening
+scale (23%) provides wing-tip clearance; the original mesh smoothly returns to
+full size during the climb from 8 to 16 seconds.
+
+The protected-mode player's inherited white flash is replaced by black, keeping
+all 100 pre-roll retraces and the original music gate. The opening changes no
+reveal, swoosh, rotation or credits cues. 56 host tests cover anticipated heading,
+wing-tip clearance through the channel and climb, camera continuity and the
+unchanged swoosh behavior. Evidence is in benchmarks/key-channel.json.
+Full headless playback at fixed 300000 cycles renders 1,828 flight frames;
+reveal/swoosh/end stay at 24:54 / 25:6 / 26:57, and credits at 28:0-43:29.
+All 21 credit entries have zero measured cue error. The opening black frame,
+key channel, climb and subsequent review shots were inspected in the capture.

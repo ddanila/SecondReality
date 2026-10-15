@@ -33,6 +33,12 @@ def load(path=DEFAULT, source=None):
     follow=flight.get('follow')
     if follow and not (0<=follow['weight']<=1 and 0<=follow['fade_start']<follow['end']<=45.5):
         raise ValueError('Invalid camera-follow interval')
+    steering=flight.get('steering')
+    if steering and not (0<=steering['lead_seconds']<=1 and 0<=steering['fade_start']<steering['end']<=45):
+        raise ValueError('Steering anticipation must finish before the swoosh')
+    miniature=flight.get('miniature')
+    if miniature and not (0<miniature['scale']<=1 and 0<=miniature['start']<miniature['end']<=19):
+        raise ValueError('Miniature drone must regain full size before the drive pass')
     turn=flight.get('turntable')
     if turn and not (48.1<=turn['start']<turn['end']<=58 and 0<turn['degrees']<=180
                      and len(turn['pivot'])==3 and all(isinstance(v,(int,float)) for v in turn['pivot'])):

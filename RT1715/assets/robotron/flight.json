@@ -6,31 +6,59 @@
     {
       "time": 0,
       "eye": [
-        -235,
-        -440,
-        83
+        -220,
+        -381.76124,
+        44.02803
       ],
       "target": [
-        -150,
-        -380,
-        35
+        -185,
+        -381.26129,
+        38.35
       ],
-      "subject": "Skim the first key rows",
+      "subject": "Pursue the miniature drone through the key-row channel",
       "curve": "quintic"
     },
     {
       "time": 7,
       "eye": [
-        -100,
-        -425,
-        75
+        -70,
+        -381.76124,
+        44.02803
       ],
       "target": [
-        -20,
-        -365,
-        35
+        -35,
+        -381.26129,
+        38.35
       ],
-      "subject": "Across the keycaps"
+      "subject": "Pursue the miniature drone through the key-row channel"
+    },
+    {
+      "time": 8,
+      "eye": [
+        -48,
+        -381.76124,
+        44.02803
+      ],
+      "target": [
+        -13,
+        -381.26129,
+        38.35
+      ],
+      "subject": "Pursue the miniature drone through the key-row channel"
+    },
+    {
+      "time": 10,
+      "eye": [
+        0,
+        -383.12076,
+        59.4683
+      ],
+      "target": [
+        35,
+        -382.50678,
+        52.49528
+      ],
+      "subject": "Pursue the miniature drone through the key-row channel"
     },
     {
       "time": 14,
@@ -209,18 +237,34 @@
     {
       "time": 0,
       "position": [
-        -173,
-        -399,
-        57
+        -185,
+        -381.26129,
+        38.35
       ],
       "curve": "quintic"
     },
     {
       "time": 7,
       "position": [
-        -30,
-        -386,
-        57
+        -35,
+        -381.26129,
+        38.35
+      ]
+    },
+    {
+      "time": 8,
+      "position": [
+        -13,
+        -381.26129,
+        38.35
+      ]
+    },
+    {
+      "time": 10,
+      "position": [
+        35,
+        -382.50678,
+        52.49528
       ]
     },
     {
@@ -371,5 +415,15 @@
       -100,
       0
     ]
+  },
+  "steering": {
+    "lead_seconds": 0.45,
+    "fade_start": 42,
+    "end": 45
+  },
+  "miniature": {
+    "scale": 0.23,
+    "start": 8,
+    "end": 16
   }
 }

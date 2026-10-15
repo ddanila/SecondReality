@@ -73,17 +73,18 @@ class RobotronTests(unittest.TestCase):
             p2=robotron.sample(flight,t+epsilon)[0]
             self.assertLess(np.linalg.norm((p2-p1)-(p1-p0)),.001)
 
-    def test_drone_nose_tracks_full_3d_velocity_through_entire_flight(self):
+    def test_drone_nose_tracks_anticipated_3d_velocity_through_entire_flight(self):
         import json
         import numpy as np
         flight=json.loads((robotron.HERE/'assets/robotron/flight.json').read_text())
         end=flight['drone'][-1]['time']
         for t in np.linspace(0,end,500):
-            lo=max(0,t-.05);hi=min(end,t+.05)
+            heading_time=robotron.steering_time(flight,t)
+            lo=max(0,heading_time-.05);hi=min(end,heading_time+.05)
             tangent=robotron.sample_track(flight['drone'],hi,'position')-robotron.sample_track(flight['drone'],lo,'position')
             tangent/=np.linalg.norm(tangent)
             rotation=robotron.drone_rotation(flight,t)
-            # +X is the nose of U2E.028. Banking must not change its heading.
+            # +X is the nose of U2E.028. Banking must not delay its anticipated heading.
             np.testing.assert_allclose(rotation @ [1.,0.,0.],tangent,atol=1e-10)
             np.testing.assert_allclose(rotation.T @ rotation,np.eye(3),atol=1e-10)
             self.assertAlmostEqual(np.linalg.det(rotation),1.)
