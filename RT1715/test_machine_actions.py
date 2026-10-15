@@ -35,20 +35,20 @@ class MachineActionTests(unittest.TestCase):
         settled=machine.pose('src-drive-latch-0-0',self.base,s['close'][0]+s['lever_settle_seconds'],s,self.data)
         self.assertEqual(opened,settled)
 
-    def test_latch_keeps_its_raised_pivot_and_turns_down(self):
-        pivot=np.array([-113,-211,92])*64
+    def test_latch_keeps_its_fitted_pivot_and_turns_down(self):
+        pivot=np.array([-113,-211,96])*64
         for t in np.linspace(0,30,80):
             pose=machine.pose('src-drive-latch-0-0',self.base,t,self.settings,self.data)
             r=np.array(pose[3:]).reshape(3,3)/16384
-            np.testing.assert_allclose(r@pivot+pose[:3],pivot+[0,0,6*64],atol=1)
+            np.testing.assert_allclose(r@pivot+pose[:3],pivot,atol=1)
             np.testing.assert_allclose(r.T@r,np.eye(3),atol=.0001)
         np.testing.assert_allclose(r@[30,0,0],[0,0,-30],atol=.001)
         opened=machine.pose('src-drive-latch-0-0',self.base,26,self.settings,self.data)
         r=np.array(opened[3:]).reshape(3,3)/16384
         np.testing.assert_allclose(r@[30,0,0],[30,0,0],atol=.001)
         # Entire hub and raised handle stay above the highest disk label point.
-        # Source hub radius 6.5 mm; finger outline reaches 6 mm either side.
-        hub=np.array([[dx,0,dz] for dx,dz in [(6.5,0),(-6.5,0),(0,6.5),(0,-6.5)]])+pivot/64
+        # Fitted hub radius 5.2 mm; both levers share this geometry.
+        hub=np.array([[dx,0,dz] for dx,dz in [(5.2,0),(-5.2,0),(0,5.2),(0,-5.2)]])+pivot/64
         raised=hub@r.T+np.array(opened[:3])/64
         self.assertGreater(raised[:,2].min(),90.301)
         self.assertEqual(machine.pose('src-drive-latch-1-0',self.base,30,self.settings,self.data),self.base)
@@ -99,3 +99,15 @@ class MachineActionTests(unittest.TestCase):
         for i,state in enumerate(states):
             captured=any(a<=i/10<b for a,b in machine.drive_activity())
             self.assertEqual(captured,bool(state&2))
+
+    def test_both_levers_have_identical_fit_and_stay_inside_drive_faces(self):
+        import trimesh
+        from source_geometry import fit_latch
+        vertices=np.array([[-6.5,-8,-6.5],[30,0,6.5]])
+        left=trimesh.Trimesh(vertices=vertices+[-113,-211,92],faces=[],process=False)
+        right=trimesh.Trimesh(vertices=vertices+[41,-211,92],faces=[],process=False)
+        a=fit_latch(left,0).vertices;b=fit_latch(right,1).vertices
+        np.testing.assert_allclose(b-a,[[154,0,0],[154,0,0]])
+        self.assertGreater(a[:,2].min(),90.301)
+        self.assertLess(a[:,2].max(),102)
+        self.assertLess(a[:,0].max(),-85)

@@ -128,6 +128,19 @@ def sample(flight,time):
         # authored separation crosses the desired distance between keyframes.
         extra*=ease(extra)
         eye=position+offset*(1+weight*extra/distance)
+    closing=flight.get('screen_return')
+    if closing and time>closing['start']:
+        u=np.clip((time-closing['start'])/(closing['end']-closing['start']),0,1)
+        weight=u*u*u*(10-15*u+6*u*u)
+        # Blend in machine coordinates, then follow its rigid turn. Both the
+        # dolly and orbit start/end with zero velocity and acceleration.
+        turn=flight['turntable'];pivot=np.array(turn['pivot'],float)
+        v=np.clip((time-turn['start'])/(turn['end']-turn['start']),0,1)
+        angle=math.radians(turn['degrees'])*v*v*v*(10-15*v+6*v*v)
+        c,s=math.cos(angle),math.sin(angle)
+        rotation=np.array([[c,-s,0],[s,c,0],[0,0,1.]])
+        eye=rotation@((1-weight)*eye+weight*np.array(closing['eye'])-pivot)+pivot
+        target=rotation@((1-weight)*target+weight*np.array(closing['target'])-pivot)+pivot
     return eye,target
 
 

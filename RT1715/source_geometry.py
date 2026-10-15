@@ -19,6 +19,20 @@ def chunks(source, faces_per_chunk=120, precision=(.5,.1,.5)):
         yield source.submesh([order[start:start+faces_per_chunk]],append=True)
 
 
+# The source lever overhangs its 146 x 42 mm face and crosses the slot.
+# Apply the same fit to both drives: 24 mm grip, 5.2 mm hub radius,
+# pivot Z=96. The open hub clears the 90.301 mm disk label by 0.499 mm.
+LATCH_SCALE=.8
+LATCH_RISE=4.
+
+
+def fit_latch(source,unit):
+    source=source.copy()
+    pivot=np.array([-113+154*unit,-211,92.])
+    source.vertices=(source.vertices-pivot)*LATCH_SCALE+pivot+[0,0,LATCH_RISE]
+    return source
+
+
 def front_parts(load, records):
     definitions=[('fascia','paint'),('drives','dark'),('drive-insets','dark'),
                  ('drive-latch-0','black'),('drive-latch-1','black'),
@@ -27,6 +41,8 @@ def front_parts(load, records):
                  ('reset','dark'),('power','white'),('power-housing','black')]
     for name,color in definitions:
         source=load(records[name])
+        if name.startswith('drive-latch-'):
+            source=fit_latch(source,int(name[-1]))
         if name=='power':
             # Preserve the recessed lens envelope; its sub-millimetre texture
             # alone contains thousands of triangles and is below VGA resolution.

@@ -444,7 +444,6 @@
       27.25
     ],
     "ready": 39,
-    "latch_lift_mm": 6,
     "screen": {
       "x": -112,
       "z": 408,
@@ -506,5 +505,19 @@
     ],
     "seat_fraction": 0.94,
     "lever_settle_seconds": 0.1
+  },
+  "screen_return": {
+    "start": 48.5,
+    "end": 57.2,
+    "eye": [
+      0,
+      -470,
+      340
+    ],
+    "target": [
+      0,
+      -125,
+      324
+    ]
   }
 }

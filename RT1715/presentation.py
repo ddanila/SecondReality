@@ -46,7 +46,6 @@ def load(path=DEFAULT, source=None):
             raise ValueError('Invalid animated drive or disk withdrawal')
         if not 0<=start<end<=close_start<close_end<machine['ready']<45.5:
             raise ValueError('Disk must seat before lever closure and boot completion')
-        if not 5<=machine['latch_lift_mm']<=8:raise ValueError('Lever hub must clear the disk slot')
         if 'seat' in machine:
             a,b,c=machine['seat']
             if not start<a<b<c==end or not 0<machine['seat_fraction']<1:
@@ -70,6 +69,10 @@ def load(path=DEFAULT, source=None):
     if turn and not (48.1<=turn['start']<turn['end']<=58 and 0<turn['degrees']<=180
                      and len(turn['pivot'])==3 and all(isinstance(v,(int,float)) for v in turn['pivot'])):
         raise ValueError('Turntable must follow the drone flyby and finish before credits')
+    closing=flight.get('screen_return')
+    if closing and (not turn or not 48.1<=closing['start']<closing['end']<=58
+                    or any(len(closing[k])!=3 for k in ('eye','target'))):
+        raise ValueError('Screen return must follow the flyby and finish before credits')
     if len(cards)!=21:raise ValueError('Keep 21 cards for the music interval')
     names=set()
     source_data=json.loads((root/'browser/model.json').read_text())

@@ -34,7 +34,7 @@ class MusicTimingTests(unittest.TestCase):
         self.assertLess(z,100)
         self.assertLess(abs(x/z),.2)
         self.assertLess(abs(y/z),.3)
-        self.assertGreater(np.linalg.norm(robotron.sample(f,54)[0]),1200)
+        self.assertGreater(np.linalg.norm(robotron.sample(f,48.1)[0]),1200)
         self.assertGreater(np.linalg.norm(eye),1200)
         self.assertLess(f['frames']/f['fps'],62.40-3.84)
 
@@ -66,7 +66,7 @@ class MusicTimingTests(unittest.TestCase):
         eye,target=robotron.sample(f,47.76)
         camera=np.array(robotron.camera(eye,target)[3:]).reshape(3,3)/16384
         direction=np.linalg.solve(camera,[240.,-160.,-20.]);direction/=np.linalg.norm(direction)
-        for t in np.linspace(45.5,49,60):
+        for t in np.linspace(45.5,48.5,60):
             np.testing.assert_allclose(robotron.sample(f,t)[0],eye,atol=1e-8)
         for t in np.linspace(47.1,48.1,50):
             heading=robotron.drone_rotation(f,t) @ [1.,0.,0.]

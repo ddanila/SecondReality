@@ -1243,3 +1243,33 @@ cue and 21-card transition. Close-pass cadence remains 32.61 ms mean (30.7 FPS),
 57.07 ms p95 and 71.34 ms maximum, matching the preceding build. Evidence is in
 benchmarks/presentation-polish.json. Temporary frame archives also prevent review exports
 from filling the host disk during subsequent AVI capture.
+
+Matched drive levers and final screen return (2026-10-15)
+------------------------------------------------------
+Both drive levers now use the same source-mesh fit, rather than lifting only
+one by 6 mm. Scaling each lever uniformly to 80 percent around its own pivot
+and setting both pivots to Z=96 mm gives a 24 mm grip and 5.2 mm hub radius.
+The open hub bottom is Z=90.8, clearing the disk label at Z=90.301 by 0.499 mm;
+the top stays below the drive front's Z=102 and the grip stays within its side.
+This is a demo-side mechanical fit of the source approximation, not a new
+measurement of the real mechanism. The left lever still opens at 3 o'clock,
+seats the disk fully, then turns clockwise to 6 o'clock. The right stays open.
+
+The overview stays wide through the swoosh and until 48.5 seconds. From then
+to 57.2 seconds the camera eases toward the CRT while following the rigid
+machine turn, ending with a front view of the captured OS prompt. Quintic
+position blending gives zero endpoint velocity and acceleration; the machine's
+90-degree Z rotation, soundtrack cues and credit duration remain unchanged.
+Continuous visual coverage now includes the final screen return through 58 s.
+
+Speed reference: 600000 fixed DOSBox-X cycles with the dynamic 486 core gives
+about 31 FPS in the close pass. The DOSBox-X guide estimates 23880 cycles for
+a 486DX2-66. Linear extrapolation is about 25 times that budget, or a purely
+hypothetical 1.66 GHz 486; it is NOT a real-hardware requirement or benchmark.
+DOSBox-X is not cycle accurate and instruction mix changes the comparison.
+https://dosbox-x.com/wiki/Guide%3ACPU-settings-in-DOSBox%E2%80%90X
+Validation: 85 host tests pass; the reviewed continuous reference contains
+1963 frames and all 14 fixed visual comparisons pass. Full headless playback
+20261015-223541-452093 passes all music cues and 21 credit transitions. Close
+flyover cadence remains 32.61 ms mean (30.7 FPS), 57.07 ms p95, 71.34 ms maximum,
+with no holds above 100 ms. See benchmarks/lever-screen-return.json.

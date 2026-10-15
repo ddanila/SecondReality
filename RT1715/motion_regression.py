@@ -13,7 +13,7 @@ from PIL import Image,ImageDraw
 import build
 
 HERE=Path(__file__).resolve().parent
-WINDOWS={'keyboard':(2,1680),'drive':(1682,1960),'monitor':(2030,3150),'swoosh':(3220,3450)}
+WINDOWS={'keyboard':(2,1680),'drive':(1682,1960),'monitor':(2030,3150),'swoosh':(3220,3450),'screen-return':(3452,4062)}
 BASELINE=HERE/'assets/robotron/motion-regression.json'
 
 def hashes(dos):

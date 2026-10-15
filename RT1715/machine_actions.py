@@ -8,7 +8,7 @@ import trimesh
 from PIL import Image
 from legends import rectangles
 from keycaps import hits
-from source_geometry import chunks
+from source_geometry import chunks, LATCH_RISE
 from monitor_geometry import crt_surround
 
 IDENTITY=(16384,0,0,0,16384,0,0,0,16384)
@@ -66,14 +66,13 @@ def pose(label,base,time,settings,data):
     if label.startswith('disk-'):
         result[1]-=round((1-insertion(time,settings))*settings['withdraw_mm']*64)
     if label.startswith(f"src-drive-latch-{settings['drive']}-"):
-        pivot=np.array(next(d for d in data['driveMotion'] if d['unit']==settings['drive'])['latchPivot'])*64
-        # Source hub overlaps the insertion plane. Raise the complete lever
-        # above the slot; rotate from +X (3 o'clock) to -Z (6 o'clock).
-        lift=np.array([0,0,settings['latch_lift_mm']*64])
+        pivot=np.array(next(d for d in data['driveMotion'] if d['unit']==settings['drive'])['latchPivot'])
+        pivot=(pivot+[0,0,LATCH_RISE])*64
+        # Both source meshes have the same fit; rotate around the fitted hub.
         interval=[settings['close'][0]+settings.get('lever_settle_seconds',0),settings['close'][1]]
         angle=math.pi/2*ease(time,interval);c,s=math.cos(angle),math.sin(angle)
         rotation=np.array([[c,0,s],[0,1,0],[-s,0,c]])
-        result[:3]=np.rint(pivot+lift-rotation@pivot).astype(int)
+        result[:3]=np.rint(pivot-rotation@pivot).astype(int)
         result[3:]=np.rint(rotation.flatten()*16384).astype(int)
     return tuple(result)
 

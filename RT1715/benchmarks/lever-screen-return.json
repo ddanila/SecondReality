@@ -1,0 +1,221 @@
+{
+  "changes": [
+    "identical fitted levers within both drive fronts, with disk clearance",
+    "smooth post-swoosh return to the rotating CRT"
+  ],
+  "host_tests": 85,
+  "mechanical_fit": {
+    "left_bounds": [
+      [
+        -118.2,
+        -217.4,
+        90.8
+      ],
+      [
+        -89.0,
+        -211.0,
+        101.2
+      ]
+    ],
+    "right_bounds": [
+      [
+        35.8,
+        -217.4,
+        90.8
+      ],
+      [
+        65.0,
+        -211.0,
+        101.2
+      ]
+    ],
+    "disk_bounds": [
+      [
+        -227.6750030517578,
+        -203.6750030517578,
+        89.0
+      ],
+      [
+        -94.32499694824219,
+        -70.32499694824219,
+        90.30000305175781
+      ]
+    ],
+    "open_vertical_clearance_mm": 0.49999694824218466,
+    "seated_depth_clearance_mm": 7.3249969482421875
+  },
+  "motion": {
+    "archive": "20261015-223257",
+    "frames": 1963,
+    "accepted_after_review": true
+  },
+  "playback": {
+    "capture": "20261015-223541-452093",
+    "dos_exit": "PASS",
+    "cpu_cycles": "fixed 600000",
+    "renderer_sha256": "7a8c0e9f9cfea83aa6ccd84692836cd098b14fc1905672469882a8135d32201a",
+    "scene_sha256": "42d54f0c8a903c505ea95980796a6b25b6b54662ab5c2f01f976b0afa4141d73",
+    "music_cues": {
+      "swoosh": [
+        25,
+        6
+      ],
+      "overview": [
+        24,
+        54
+      ],
+      "flight_end": [
+        26,
+        57
+      ],
+      "credits_start": [
+        28,
+        0
+      ],
+      "credits_end": [
+        43,
+        29
+      ]
+    },
+    "credit_schedule": {
+      "cards": 21,
+      "positions": [
+        [
+          28,
+          0
+        ],
+        [
+          28,
+          40
+        ],
+        [
+          29,
+          16
+        ],
+        [
+          29,
+          56
+        ],
+        [
+          30,
+          40
+        ],
+        [
+          31,
+          16
+        ],
+        [
+          31,
+          56
+        ],
+        [
+          32,
+          32
+        ],
+        [
+          33,
+          8
+        ],
+        [
+          33,
+          48
+        ],
+        [
+          34,
+          32
+        ],
+        [
+          35,
+          8
+        ],
+        [
+          35,
+          48
+        ],
+        [
+          36,
+          24
+        ],
+        [
+          37,
+          0
+        ],
+        [
+          38,
+          8
+        ],
+        [
+          39,
+          24
+        ],
+        [
+          41,
+          0
+        ],
+        [
+          41,
+          40
+        ],
+        [
+          42,
+          16
+        ],
+        [
+          42,
+          56
+        ]
+      ],
+      "entry_error_cs": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "end": [
+        43,
+        29
+      ]
+    },
+    "render_counters": {
+      "frames": 1857,
+      "vertices": 10638124,
+      "triangles": 3480308,
+      "spans": 49268810,
+      "clipped": 268096,
+      "ems_maps": 0
+    }
+  },
+  "cadence": {
+    "window_seconds": [
+      8,
+      46
+    ],
+    "cpu_cycles": "fixed 600000",
+    "captured_frames": 2663,
+    "unique_image_runs": 1165,
+    "mean_image_hold_ms": 32.61,
+    "p95_image_hold_ms": 57.07,
+    "max_image_hold_ms": 71.34,
+    "holds_over_100_ms": 0
+  },
+  "fixed_visual_reference_count": 14,
+  "hardware_speed_note": "600000 cycles / 23880 cycles * 66 MHz = hypothetical 1658 MHz 486; not a real-hardware measurement",
+  "speed_reference": "https://dosbox-x.com/wiki/Guide%3ACPU-settings-in-DOSBox%E2%80%90X"
+}
