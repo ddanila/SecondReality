@@ -12,7 +12,6 @@ from pathlib import Path
 import platform
 import re
 import shutil
-import struct
 import subprocess
 import sys
 
@@ -129,6 +128,9 @@ def main():
         _,args.robotron,_=load(args.presentation)
     if args.robotron and args.project:
         parser.error("Choose --robotron or --project")
+    if args.robotron:
+        from chapters import require_buildable
+        require_buildable()
     assembler, linker = tool(args.jwasm), tool(args.wlink)
     build = HERE / "build"
     dos = build / "dos"
@@ -177,7 +179,8 @@ def main():
     # STARTMUS loads module 0 through a little-endian offset in REALITY.FC.
     # Both slots point to the same module: MUSIC1 is not needed by this cut.
     music = (ROOT / "MAIN/MUSIC0.S3M").read_bytes()
-    (dos / "REALITY.FC").write_bytes(struct.pack("<II6xH", 16, 16, 0x1B1C) + music)
+    from music import module_archive
+    (dos / "REALITY.FC").write_bytes(module_archive(music))
     manifest.append({"file": "REALITY.FC", "source": "MAIN/MUSIC0.S3M",
                      "module_sha256": hashlib.sha256(music).hexdigest(),
                      "module_offset": 16, "start_order": 18})

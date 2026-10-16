@@ -1,0 +1,360 @@
+Robotron: additional Second Reality chapters
+===========================================
+Recorded 2026-10-16 on rt1715.
+Status: implemented as optional expanded/extended cuts and runnable studies.
+See EXPANSION.txt for commands, editorial decisions and implementation limits.
+
+Purpose
+-------
+Expand the presentation from an exterior tour and technical credits into a
+journey through the machine. Reinterpret original Second Reality effects using
+Robotron geometry, boards, markings and documented functional relationships.
+Every effect discussed is recorded below. The first release uses the strongest
+three additions; later stages evaluate the remaining effects as complete scenes
+or short transitions. Inclusion depends on visual quality and narrative fit.
+
+This is a DOS PC presentation about the Robotron. Effects displayed through its
+CRT are artistic transitions, not evidence that a U880 could render them. Actual
+boot text continues to come from the documented DAC reference capture.
+
+Baseline and constraints
+------------------------
+- Preserve the current short version as a selectable cut and regression target.
+- Keep the original drone and the existing scenic flight, disk insertion,
+  latch action, boot, wide reveal, near-camera swoosh and technical credits.
+- Preserve the flight's local MUSIC0 cues: overview 24:54, swoosh 25:6,
+  flight end 26:57; credits start 28:0 and end 43:29.
+- Keep all 21 credit slots and their reading time in the short and first expanded
+  cuts. A later longer cut may relocate the credits but must retain their length
+  and deliberately remap and validate every musical entry.
+- Build, convert and precalculate on the host. Test DOSBox-X headlessly, with
+  unattended completion and no confirmation windows.
+- Start from the current dynamic486, 32 MiB, 300000-cycle profile. Record any
+  justified change; visual quality and reliable pacing take precedence over
+  marginal speed gains. Do not assume an effect fits until measured.
+- Resolve and hash the latest source model at implementation time. Keep sibling
+  repositories read-only; retain reproducible source identities for each build.
+- Extend the existing claim index for new factual labels. Distinguish specimen
+  observations, reference configurations and illustrative signal diagrams.
+- Keep text legible at the actual DOS resolution and 4:3 display aspect. Prefer
+  short labels, stable reading holds and restrained green/amber accents.
+- Do not add personal/model-author credits to the on-screen presentation;
+  preserve required provenance and notices in the companion documentation.
+
+Narrative and release structure
+-------------------------------
+First expanded cut, playback order:
+  Short identity -> particle-built mark -> board lens/rotozoom inspection ->
+  data tunnel -> existing close flight and whole-computer reveal -> credits.
+
+Opening material shows components and abstract forms, avoiding a full exterior
+view that would spoil the flight's reveal. The identity and particle sections
+may be one scene. Duration estimates below are storyboard budgets, not approved
+music cues; musical phrases determine final lengths.
+
+Later extended cut:
+  The same opening and flight -> deliberate transition through the CRT ->
+  internal assembly/transparency chapter and selected abstract effects ->
+  return to the machine -> complete technical credits.
+
+The later extension cannot simply occupy the existing flight-to-credit gap.
+That gap already has musical duties. Establish a new musical route and credit
+cue mapping before integrating additional scenes there. Keep the first expanded
+cut available even if this longer structure is adopted.
+
+Implementation order
+--------------------
+0. Baseline, source audit and music storyboard.
+1. Lens/rotozoomer board inspection: first standalone visual prototype.
+2. Dot tunnel: build the connection from inspection to the existing flight.
+3. Particle identity and restrained cinematic opening; assemble expanded cut 1.
+4. Transparent shell/internal assembly: prototype and design extended cut 2.
+5. Techno wake-up and plasma: evaluate short musical passages/transitions.
+6. Evaluate landscape, mirror scroller, mountain scroller and jelly image.
+7. Final editorial selection, complete-cut validation, documentation and release.
+
+Implementation order differs from playback order: validate the most useful new
+scene first. Build each effect as a separately previewable chapter before adding
+it to the complete sequence. Do not silently replace the short-cut defaults.
+
+Stage 0: evidence and music before integration
+---------------------------------------------
+Original sequence: MAIN/U2.ASM. SCRIPT describes the intended effects; DESIGN
+and IDEAS include abandoned concepts and must not be treated as shipped scenes.
+Confirm each candidate against executable mappings and source implementation.
+
+The original selects module 1 for the earlier effects, then module 0 at order
+18 for the city flight. Our present cut packages only MUSIC0 and starts at that
+entry (RT1715/SEQUENCE.INC). Adding earlier effects requires either restoring
+selected MUSIC1 passages and their module handoff or explicitly retiming the
+remakes to another reviewed musical arrangement. Do not concatenate arbitrary
+time slices or assume original frame counts still match a new scene.
+
+Tasks:
+- Preserve current source/runtime hashes, cue report and visual references.
+- Inspect MUSIC1 order/row timing, effect-entry markers, original module switch
+  and sound-driver loading. Audition candidate passages and capture references.
+- Produce a cue sheet: cut, scene, module, entry/exit order:row, duration,
+  visual event, fade/transition and expected next scene. Record absolute times
+  only as derived values, because the opening shifts the current timeline.
+- Select complete musical phrases for the opening. Verify the handoff to
+  MUSIC0 order 18 retains the established flight's local cue timing.
+- Audit original build dependencies, asset generators, DIS calls, segmented
+  pointers, interrupt hooks, VGA modes and palette ownership for each effect.
+
+Deliverables: reproducible baseline, source inventory, musical cue sheet and
+low-cost storyboard/animatic. Gate: audible continuity and protected flight/
+credit cues verified before complete-cut integration.
+
+Stage 1: board inspection with lens and rotozoomer
+------------------------------------------------
+Sources: LENS/MAIN.C, LENS/ASM.ASM, LENS/MAKEFILE and associated asset generators.
+Original executable: LNS&ZOOM.EXE. Relative effort: medium.
+Provisional duration: 15-25 seconds.
+
+Use a high-quality render of a real source board. Reveal the board, move a lens
+to the U880 and selected RAM/controller components, pause on readable markings,
+then rotate/zoom into the circuitry. Choose a coherent board or explicitly
+transition between boards; never imply unrelated components share a board.
+
+Reuse image sampling, lens lookup logic and motion concepts. Generate new
+backgrounds, palettes, focus coordinates and lens paths on the host. Reuse the
+component selection and evidence already available to the credit tooling.
+Avoid a tiny source bitmap enlarged beyond useful detail: prepare sufficient
+source resolution or discrete detail levels with stable transitions.
+
+Acceptance: source-correct chip focus; readable holds; no lens edge corruption,
+palette flashes, objectionable aliasing or unintended image repetition. A
+single-scene host preview and headless DOS capture must agree on composition.
+
+Stage 2: dot tunnel / journey through data
+----------------------------------------
+Sources: TUNNELI/TUN10.PAS, ROUTINES.ASM and generated tunnel tables.
+Original executable: TUNNELI.EXE. Relative effort: medium.
+Provisional duration: 6-12 seconds.
+
+Transform the board inspection into an abstract tunnel inspired by connector
+pins and traces. Suggest keyboard -> CPU -> memory -> display through changes
+in shape and restrained pulses, with minimal text. This is functional imagery,
+not a traced bus transaction or a claim about exact electrical timing.
+
+Reuse projection/table ideas, replacing steering and ring profiles. Host-build
+any necessary conversion or port; do not introduce guest Pascal compilation.
+End on a composition/colour that hands naturally to the flight's opening.
+
+Acceptance: continuous movement and speed, no abrupt camera flips or clipping,
+no dense flickering dots, a clearly planned musical exit into the flight.
+
+Stage 3: particle identity and cinematic introduction
+----------------------------------------------------
+Particle sources: DOTS/MAIN.C, ASM.ASM, FACE.C and MAKEFILE.
+Original executable: MINVBALL.EXE. Relative effort: medium.
+Opening references: ALKU and original launcher/script introduction sequence.
+Provisional combined duration: 8-15 seconds.
+
+Particles gather into a recognizable Robotron mark or 1715M lettering, hold,
+then resolve into a keyboard matrix or board geometry used by the lens scene.
+Reuse projection/gravity/bounce routines where appropriate; target-shape
+sampling and controlled morphing are new work. Avoid morph paths that create
+an unreadable cloud or merely substitute one static logo for another.
+
+Borrow the original introduction's typography, framing and deliberate pacing
+for a brief identity/title treatment. Do not reveal the complete exterior yet.
+The full spaceship/explosion introduction is a lower-priority alternative;
+prototype only if the expanded musical structure warrants its added length.
+
+Acceptance: recognizable title at native size, intentional settling and exit,
+no long blank opening or gratuitous white flash. Assemble and validate expanded
+cut 1 with the unchanged flight and full-duration credits.
+
+Stage 4: glenz transparency and internal assembly
+------------------------------------------------
+Sources: GLENZ/MAIN.C, rendering assembly and MAKEFILE.
+Original executable: GLENZ.EXE. Relative effort: high.
+Provisional duration: 12-20 seconds in the later extended cut.
+
+After the whole-machine reveal, show a simplified translucent case surrounding
+opaque source-model boards and drives. Separate assemblies slightly, rotate to
+expose their relationships, and reassemble. Reuse source transforms and the
+credit cutaway's component grouping. Exploded positions are illustrative;
+they are not a mechanical disassembly procedure.
+
+First prototype a few transparent shell surfaces around opaque parts. Compare
+the original palette-based glenz approach with a limited transparency pass in
+our protected-mode renderer. Resolve overlap ordering and depth behaviour
+before committing to detailed geometry. Full-model transparency is not required
+and must not turn chip leads and case seams into visual noise.
+
+Acceptance: correct occlusion, stable overlaps, recognizable internal layout,
+no false missing panels, readable motion and settled inspection views. Publish
+the renderer tradeoff and measured playback cost with the prototype.
+
+Stage 5: techno and plasma accents
+----------------------------------
+Techno sources: TECHNO/KOE.C and associated assembly; TECHNO.EXE.
+Relative effort: medium. Provisional duration: 4-8 seconds.
+Adapt interference/scanning patterns and music-row pulses into an abstract
+machine-waking passage. Resolve into a green display or a real boot view.
+Keep artistic effects distinct from captured boot output; avoid adding fake
+OS messages. Gate: rhythm supports the transition without excessive flashing
+or obscuring the machine's authentic display details.
+
+Plasma sources: PLZPART/MAIN.C, PLZ.C, VECT.C and assembly; PLZPART.EXE.
+Relative effort: medium-high. Provisional duration: 5-10 seconds.
+Prototype a restrained signal field that becomes a component-shaped object or
+fills the CRT during a transition. Start with original plasma behaviour, then
+assess the new object's surface mapping and silhouette. Gate: the passage has
+a clear place in the story and a clean handoff; otherwise retain it as an
+optional standalone homage rather than lengthening the main cut.
+
+For either effect, the original IDEAS proposal to enter a monitor containing
+effects and return to the vector world is a useful reference. Design screen
+framing, projection, palette and musical continuity together; it is not a
+simple insert into the current timed credit handoff.
+
+Stage 6: remaining candidates and explicit decision criteria
+-----------------------------------------------------------
+Comanche / sinus landscape
+  Sources: COMAN/MAIN.C, THELOOP machinery, MAKEFILE; 3DSINFLD.EXE.
+  Idea: stylized PCB terrain, with traces as roads and chips as raised blocks.
+  Effort: high for a useful adaptation. It is a height-field renderer, not a
+  general renderer for our source models; overhangs/leads need another method.
+  Prototype a small board-inspired height field. Include only if its composition
+  adds a distinct experience beyond our existing close 3D flight. Label its
+  simplified geometry as an artistic interpretation in companion documentation.
+
+Mirror-ball / water scroller
+  Sources: WATER/DEMO.PAS and its tables/generators; RAYSCRL.EXE.
+  Idea: a short reflective badge or closing motif using Robotron artwork.
+  Effort: medium-high; inspect precomputed reflection assets before promising
+  arbitrary live reflections. Prototype one new motif and its host asset path.
+  Include only if readable and visually connected to the machine; avoid another
+  long technical scroller duplicating the existing credits.
+
+Mountain scroller
+  Sources: FOREST/READ2.PAS and associated assets; MNTSCRL.EXE.
+  Idea: a short board-silhouette landscape carrying a title or chapter marker.
+  Effort: medium-high, subject to the source asset-format audit. Prototype a
+  single replacement landscape/title. Include if it provides a useful chapter
+  transition without repeating the particle identity or PCB landscape scene.
+
+Jelly picture
+  Sources: JPLOGO source and build mapping; JPLOGO.EXE.
+  Idea: a brief deforming Robotron badge/image that settles into crisp lettering.
+  Effort: medium, pending asset-path verification. Prototype a source-derived
+  badge and controlled settling. Include as a transition only if distortion
+  remains intentional and the final identity is readable.
+
+For each candidate, retain a preview and a written include/defer decision with
+its reason. These are planned evaluations, not promises to insert every effect
+into one long presentation. Avoid redundant scenes and preserve the best cut.
+
+Shared implementation design
+----------------------------
+- Add a scene/cut manifest with explicit asset references, source identities,
+  music cues and entry/exit contracts. Use it to drive previews and validation.
+- Keep useful original algorithms/assembly, but adapt unsafe memory assumptions
+  and host asset generation. Choose original real-mode execution versus a
+  protected-mode port per effect after the dependency audit, not by default.
+- Give each scene explicit ownership and cleanup of video mode, palette,
+  interrupt hooks and buffers. Preserve the resident music/launcher contract.
+- Provide standalone scene playback, deterministic capture and full-cut playback.
+  A standalone preview must state when it substitutes a music entry or context.
+- Tie motion to elapsed demo/music time, not raw rendered frame counts. Confirm
+  behaviour when frames are skipped and at a second emulation speed.
+- Precompute assets/tables on the host as appropriate. Keep live DOS rendering
+  where it defines the effect; document any baked representation and footprint.
+- Extend source/claim provenance, package manifests and checksums for every new
+  asset. Verify original music preservation if modules remain unedited.
+
+Validation and completion gates
+-------------------------------
+For each scene:
+  Inspect a native-size still and a continuous capture; check focus, flicker,
+  clipping, palette stability, speed and entry/exit. Add meaningful checks for
+  asset formats, cue mapping and state cleanup rather than mirroring code.
+
+For expanded cut 1:
+  Verify musical handoff to MUSIC0 order 18, all existing flight-local events,
+  every credit entry and full credit duration. Reuse existing flight references
+  and scene-relative samples; do not mistake shifted wall time for a regression.
+
+For extended cut 2:
+  Review its new music structure end to end. Explicitly version the remapped
+  credits cue sheet, preserve full reading duration and verify the return from
+  the internal/CRT chapter. The original short cut must still pass its old cues.
+
+For release:
+  Run complete headless DOSBox-X playback, check audio/video transitions and
+  clean exit, package selectable cuts and notices, then launch a fresh extracted
+  package outside the development tree. Check every packaged hash and source
+  companion. Record evidence and update editing/run documentation.
+
+Completion record to maintain during implementation:
+  [x] Stage 0 baseline, audit and musical storyboard
+  [x] Stage 1 lens inspection prototype and DOS validation
+  [x] Stage 2 data tunnel and flight handoff
+  [x] Stage 3 identity/opening and expanded cut 1
+  [x] Stage 4 transparency prototype and extended-cut structure
+  [x] Stage 5 techno/plasma prototypes and editorial decisions
+  [x] Stage 6 four remaining prototypes/evaluations and decisions
+  [x] Stage 7 complete-cut validation, evidence and release documentation
+
+The initial plan above preceded implementation. The following checkpoint records
+its foundations; the completion record below describes the implemented cuts.
+
+Preparation checkpoint (2026-10-16)
+----------------------------------
+Implemented host foundations, before Stage 0's musical/editorial audit:
+- Versioned short-cut scene/cue/state contract in assets/robotron/chapters.json.
+- Shared log validator and source-derived scene-relative cue sheet (chapters.py).
+- Capture contract snapshots and portable CHAPTERS.JSON in new releases.
+- Host music archive builder supporting both original module slots; the current
+  single-module output remains byte-identical.
+- Build guard for the implemented short launcher; no speculative cut selection.
+
+The existing short cut remains the only runnable cut. No new DOS chapter, VGA
+state adapter, standalone chapter launcher or MUSIC1 control-flow interpreter
+has been implemented. These depend on the per-effect audit and prototypes.
+Stage 0 remains open: the musical audition, original-effect build dependencies
+and expansion storyboard are not replaced by this infrastructure work.
+
+Implementation completion (2026-10-16)
+------------------------------------
+- Added the expanded opening: particle identity, source-board lens/rotozoom and
+  data tunnel, then the preserved flight and all 21 technical cards.
+- Added the extended cut: source-masked CRT entry, translucent source-positioned
+  component/enclosure study, scan/interference, plasma and CRT return, then all
+  credits at their original local cues and scheduled duration.
+- Added runnable landscape, mirror-scroll, mountain-scroll and jelly studies.
+  They remain optional after visual evaluation; the full spaceship/explosion
+  introduction is deferred. EXPANSION.txt records the editorial reasons.
+- Added host previews from the same C renderer, individual DOS scene launches,
+  a ten-effect DOS study reel, an editable phrase manifest and source provenance.
+- Preserved the short runtime and included SHORT.EXE in expanded outputs.
+- Both original music payloads remain unchanged. A bounded order-handoff wait
+  fixes the original player's stale-position interval after changing modules.
+- New complete-cut captures and extracted-release validation are recorded in
+  benchmarks/expansion.json, along with host tests and reviewed DOS artifacts.
+
+The new effects are live C remakes of the source techniques. They do not claim
+binary identity with the original effects. The glenz view uses simplified
+source-sized component envelopes, and the CRT transition zooms a source-rendered
+image with an exact glass mask. These deliberate representations keep the
+existing production flight renderer and its source-detail guarantees intact.
+
+Hardware-story revision (2026-10-16, after initial expansion validation)
+--------------------------------------------------------------------
+Completed the requested editorial follow-up:
+- Moving lens samples the board underneath its current position and changes
+  its inspection route for U880, main RAM and video RAM.
+- Bounding envelopes replaced by source board/component surfaces.
+- Interference/plasma replaced by key-to-memory and memory-to-raster chapters.
+- Photo CRT zoom replaced by a live 3D approach from the flight's final camera,
+  using shared monitor geometry and the real captured DAC prompt.
+- Distinct inspection/processing/display palettes and operation captions.
+- Flight-only launcher and existing flight files remain byte-identical.
+Host visibility preparation keeps detailed geometry practical in DOS: exact
+25 Hz poses, compact visible triangles, live projection and depth rasterization.
+The earlier implementation notes above describe the initial prototype; current
+behaviour and limitations are documented in EXPANSION.txt.

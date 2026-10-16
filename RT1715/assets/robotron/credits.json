@@ -2,9 +2,9 @@
   {
     "image": "workstation",
     "lines": [
-      "Robotron 1715M",
-      "Keyboard, CRT and twin drives",
-      "Now a closer look inside"
+      "Inside the Robotron 1715M",
+      "Processor, video, drives and power",
+      "An illustrated component tour"
     ],
     "view": {
       "parts": [
@@ -28,7 +28,8 @@
         0,
         -57.653
       ],
-      "title": "ROBOTRON 1715M"
+      "title": "ROBOTRON 1715M",
+      "cutaway": true
     },
     "evidence": "SOURCES.txt"
   },
@@ -61,7 +62,94 @@
         40,
         15
       ],
-      "title": "THE PROCESSING CORE"
+      "title": "THE PROCESSING CORE",
+      "reveal": true
+    },
+    "evidence": "SOURCES.txt"
+  },
+  {
+    "image": "main-ram",
+    "lines": [
+      "Main memory",
+      "256 KiB / 32 M4164B-12 chips",
+      "Working storage for programs"
+    ],
+    "view": {
+      "parts": [
+        "logic-boards-motherboard"
+      ],
+      "board": "motherboard",
+      "angle": [
+        25,
+        0,
+        0
+      ],
+      "focus_chips": [
+        "M4164B"
+      ],
+      "annotation": "RAM BANK",
+      "title": "MAIN MEMORY"
+    },
+    "evidence": "SOURCES.txt"
+  },
+  {
+    "image": "cpu-clock",
+    "lines": [
+      "System timing",
+      "3.9936 MHz CPU clock",
+      "1715W / M reference profile"
+    ],
+    "view": {
+      "parts": [
+        "logic-boards-motherboard"
+      ],
+      "board": "motherboard",
+      "angle": [
+        30,
+        0,
+        70
+      ],
+      "highlight_chips": [
+        "UA880"
+      ],
+      "title": "SYSTEM TIMING",
+      "diagram": "clock",
+      "focus_chips": [
+        "UA880"
+      ],
+      "annotation": "UA880",
+      "margin": [
+        40,
+        35,
+        12
+      ]
+    },
+    "evidence": "SOURCES.txt"
+  },
+  {
+    "image": "dma-serial",
+    "lines": [
+      "DMA and serial I/O",
+      "UA858 DMA / UA8560 SIO",
+      "Data transfer and communication"
+    ],
+    "view": {
+      "parts": [
+        "logic-boards-motherboard"
+      ],
+      "board": "motherboard",
+      "angle": [
+        30,
+        0,
+        90
+      ],
+      "focus_chips": [
+        "UA858",
+        "UA8560",
+        "CTC"
+      ],
+      "annotation": "DMA / I-O",
+      "title": "DMA AND SERIAL I/O"
     },
     "evidence": "SOURCES.txt"
   },
@@ -101,6 +189,110 @@
     "evidence": "SOURCES.txt"
   },
   {
+    "image": "floppy-controller",
+    "lines": [
+      "Floppy controller",
+      "U8272 at A44",
+      "Coordinates disk transfers"
+    ],
+    "view": {
+      "parts": [
+        "logic-boards-motherboard"
+      ],
+      "board": "motherboard",
+      "angle": [
+        15,
+        0,
+        -25
+      ],
+      "focus_chips": [
+        "U8272"
+      ],
+      "margin": [
+        65,
+        65,
+        15
+      ],
+      "highlight_chips": [
+        "U8272"
+      ],
+      "annotation": "FLOPPY CTRL",
+      "title": "FLOPPY CONTROLLER"
+    },
+    "evidence": "SOURCES.txt"
+  },
+  {
+    "image": "drive-adapters",
+    "lines": [
+      "Drive ribbon adapters",
+      "Board 05-330-0024",
+      "34-way drive / 26-way ribbon"
+    ],
+    "view": {
+      "parts": [
+        "drive-adapter"
+      ],
+      "angle": [
+        50,
+        0,
+        75
+      ],
+      "focus_component": "drive-adapter-boards",
+      "margin": [
+        12,
+        10,
+        15
+      ],
+      "annotation": "ADAPTER",
+      "title": "DRIVE RIBBON ADAPTERS"
+    },
+    "evidence": "SOURCES.txt"
+  },
+  {
+    "image": "drive-electronics",
+    "lines": [
+      "Drive electronics",
+      "TEAC controller boards",
+      "Motor and read/write circuitry"
+    ],
+    "view": {
+      "parts": [
+        "drive-boards",
+        "drive-board-components",
+        "drive-traces",
+        "drive-contacts"
+      ],
+      "angle": [
+        25,
+        0,
+        40
+      ],
+      "title": "DRIVE ELECTRONICS"
+    },
+    "evidence": "SOURCES.txt"
+  },
+  {
+    "image": "diskette",
+    "lines": [
+      "Disk organization",
+      "80 cylinders / 2 sides",
+      "TOS/M reference: 5 x 1024 B/track"
+    ],
+    "view": {
+      "parts": [
+        "drive-diskette-0",
+        "drive-diskette-label-0"
+      ],
+      "angle": [
+        25,
+        0,
+        15
+      ],
+      "title": "DISK ORGANIZATION"
+    },
+    "evidence": "SOURCES.txt"
+  },
+  {
     "image": "keyboard",
     "lines": [
       "Keyboard controller",
@@ -120,7 +312,100 @@
         8
       ],
       "annotation": "CONTROLLER",
-      "title": "KEYBOARD CONTROLLER"
+      "title": "KEYBOARD CONTROLLER",
+      "reveal": true
+    },
+    "evidence": "SOURCES.txt"
+  },
+  {
+    "image": "keyboard-rom",
+    "lines": [
+      "Keyboard firmware",
+      "Socketed replacement EPROM",
+      "Stores controller instructions"
+    ],
+    "view": {
+      "parts": [
+        "keyboard-controller"
+      ],
+      "focus_parts": [
+        "keyboard-controller-rom-cover"
+      ],
+      "margin": [
+        10,
+        12,
+        8
+      ],
+      "angle": [
+        25,
+        0,
+        25
+      ],
+      "annotation": "EPROM",
+      "title": "KEYBOARD FIRMWARE"
+    },
+    "evidence": "SOURCES.txt"
+  },
+  {
+    "image": "keyboard-scan",
+    "lines": [
+      "Keyboard scanning",
+      "13 x 8 matrix / 683 kHz",
+      "K7658 reference configuration"
+    ],
+    "view": {
+      "parts": [
+        "keyboard-controller-board",
+        "keyboard-controller-chips",
+        "keyboard-controller-leads",
+        "keyboard-controller-traces",
+        "keyboard-controller-ink"
+      ],
+      "angle": [
+        10,
+        0,
+        0
+      ],
+      "title": "KEYBOARD SCANNING",
+      "diagram": "matrix",
+      "annotation": "UB880D",
+      "margin": [
+        4,
+        4,
+        4
+      ],
+      "focus_component": "keyboard-controller-chips",
+      "component_selection": "largest-body"
+    },
+    "evidence": "SOURCES.txt"
+  },
+  {
+    "image": "keyboard-interface",
+    "lines": [
+      "Keyboard connection",
+      "Separate controller PCB",
+      "Carries key data to the computer"
+    ],
+    "view": {
+      "parts": [
+        "keyboard-controller",
+        "keyboard-entry-choke"
+      ],
+      "focus_parts": [
+        "keyboard-controller-connectors"
+      ],
+      "angle": [
+        55,
+        0,
+        150
+      ],
+      "margin": [
+        5,
+        8,
+        8
+      ],
+      "annotation": "DATA LINK",
+      "title": "KEYBOARD CONNECTION"
     },
     "evidence": "SOURCES.txt"
   },
@@ -154,7 +439,66 @@
         30,
         12
       ],
-      "title": "DISPLAY CONTROLLER"
+      "title": "DISPLAY CONTROLLER",
+      "reveal": true
+    },
+    "evidence": "SOURCES.txt"
+  },
+  {
+    "image": "display-ram",
+    "lines": [
+      "Display memory",
+      "Three UL6516D RAM chips",
+      "Local storage on the video board"
+    ],
+    "view": {
+      "parts": [
+        "logic-boards-display-controller"
+      ],
+      "board": "display-controller",
+      "angle": [
+        25,
+        0,
+        -25
+      ],
+      "margin": [
+        8,
+        8,
+        8
+      ],
+      "focus_chips": [
+        "UL6516D"
+      ],
+      "flip": true,
+      "annotation": "3 x RAM",
+      "title": "DISPLAY MEMORY",
+      "diagram": "video",
+      "highlight_chips": [
+        "UL6516D"
+      ]
+    },
+    "evidence": "SOURCES.txt"
+  },
+  {
+    "image": "display-installed",
+    "lines": [
+      "Display board mounting",
+      "Components face downward",
+      "Above the main processor board"
+    ],
+    "view": {
+      "parts": [
+        "logic-boards-display-controller",
+        "logic-mounts-display-controller",
+        "logic-connectors-display-controller"
+      ],
+      "board": "display-controller",
+      "angle": [
+        60,
+        0,
+        150
+      ],
+      "title": "DISPLAY BOARD MOUNTING"
     },
     "evidence": "SOURCES.txt"
   },
@@ -217,274 +561,6 @@
     "evidence": "SOURCES.txt"
   },
   {
-    "image": "main-ram",
-    "lines": [
-      "Main memory",
-      "256 KiB / 32 M4164B-12 chips",
-      "Working storage for programs"
-    ],
-    "view": {
-      "parts": [
-        "logic-boards-motherboard"
-      ],
-      "board": "motherboard",
-      "angle": [
-        25,
-        0,
-        0
-      ],
-      "focus_chips": [
-        "M4164B"
-      ],
-      "annotation": "RAM BANK",
-      "title": "MAIN MEMORY"
-    },
-    "evidence": "SOURCES.txt"
-  },
-  {
-    "image": "floppy-controller",
-    "lines": [
-      "Floppy controller",
-      "U8272 at A44",
-      "Coordinates disk transfers"
-    ],
-    "view": {
-      "parts": [
-        "logic-boards-motherboard"
-      ],
-      "board": "motherboard",
-      "angle": [
-        15,
-        0,
-        -25
-      ],
-      "focus_chips": [
-        "U8272"
-      ],
-      "margin": [
-        65,
-        65,
-        15
-      ],
-      "highlight_chips": [
-        "U8272"
-      ],
-      "annotation": "FLOPPY CTRL",
-      "title": "FLOPPY CONTROLLER"
-    },
-    "evidence": "SOURCES.txt"
-  },
-  {
-    "image": "keyboard-rom",
-    "lines": [
-      "Keyboard firmware",
-      "Socketed replacement EPROM",
-      "Stores controller instructions"
-    ],
-    "view": {
-      "parts": [
-        "keyboard-controller"
-      ],
-      "focus_parts": [
-        "keyboard-controller-rom-cover"
-      ],
-      "margin": [
-        10,
-        12,
-        8
-      ],
-      "angle": [
-        25,
-        0,
-        25
-      ],
-      "annotation": "EPROM",
-      "title": "KEYBOARD FIRMWARE"
-    },
-    "evidence": "SOURCES.txt"
-  },
-  {
-    "image": "display-ram",
-    "lines": [
-      "Display memory",
-      "Three UL6516D RAM chips",
-      "Local storage on the video board"
-    ],
-    "view": {
-      "parts": [
-        "logic-boards-display-controller"
-      ],
-      "board": "display-controller",
-      "angle": [
-        25,
-        0,
-        -25
-      ],
-      "margin": [
-        8,
-        8,
-        8
-      ],
-      "focus_chips": [
-        "UL6516D"
-      ],
-      "flip": true,
-      "annotation": "3 x RAM",
-      "title": "DISPLAY MEMORY"
-    },
-    "evidence": "SOURCES.txt"
-  },
-  {
-    "image": "dma-serial",
-    "lines": [
-      "DMA and serial I/O",
-      "UA858 DMA / UA8560 SIO",
-      "Data transfer and communication"
-    ],
-    "view": {
-      "parts": [
-        "logic-boards-motherboard"
-      ],
-      "board": "motherboard",
-      "angle": [
-        30,
-        0,
-        90
-      ],
-      "focus_chips": [
-        "UA858",
-        "UA8560",
-        "CTC"
-      ],
-      "annotation": "DMA / I-O",
-      "title": "DMA AND SERIAL I/O"
-    },
-    "evidence": "SOURCES.txt"
-  },
-  {
-    "image": "drive-adapters",
-    "lines": [
-      "Drive ribbon adapters",
-      "Board 05-330-0024",
-      "34-way drive / 26-way ribbon"
-    ],
-    "view": {
-      "parts": [
-        "drive-adapter"
-      ],
-      "angle": [
-        50,
-        0,
-        75
-      ],
-      "focus_component": "drive-adapter-boards",
-      "margin": [
-        12,
-        10,
-        15
-      ],
-      "annotation": "ADAPTER",
-      "title": "DRIVE RIBBON ADAPTERS"
-    },
-    "evidence": "SOURCES.txt"
-  },
-  {
-    "image": "keyboard-scan",
-    "lines": [
-      "Keyboard scanning",
-      "13 x 8 matrix / 683 kHz",
-      "K7658 reference configuration"
-    ],
-    "view": {
-      "parts": [
-        "keyboard-controller-board",
-        "keyboard-controller-chips",
-        "keyboard-controller-leads",
-        "keyboard-controller-traces"
-      ],
-      "angle": [
-        10,
-        0,
-        0
-      ],
-      "title": "KEYBOARD SCANNING"
-    },
-    "evidence": "SOURCES.txt"
-  },
-  {
-    "image": "cpu-clock",
-    "lines": [
-      "System timing",
-      "3.9936 MHz CPU clock",
-      "1715W / M reference profile"
-    ],
-    "view": {
-      "parts": [
-        "logic-boards-motherboard"
-      ],
-      "board": "motherboard",
-      "angle": [
-        30,
-        0,
-        70
-      ],
-      "highlight_chips": [
-        "UA880",
-        "UA858",
-        "UA8560",
-        "CTC"
-      ],
-      "title": "SYSTEM TIMING"
-    },
-    "evidence": "SOURCES.txt"
-  },
-  {
-    "image": "display-installed",
-    "lines": [
-      "Display board mounting",
-      "Components face downward",
-      "Above the main processor board"
-    ],
-    "view": {
-      "parts": [
-        "logic-boards-display-controller",
-        "logic-mounts-display-controller",
-        "logic-connectors-display-controller"
-      ],
-      "board": "display-controller",
-      "angle": [
-        60,
-        0,
-        150
-      ],
-      "title": "DISPLAY BOARD MOUNTING"
-    },
-    "evidence": "SOURCES.txt"
-  },
-  {
-    "image": "drive-electronics",
-    "lines": [
-      "Drive electronics",
-      "TEAC controller boards",
-      "Motor and read/write circuitry"
-    ],
-    "view": {
-      "parts": [
-        "drive-boards",
-        "drive-board-components",
-        "drive-traces",
-        "drive-contacts"
-      ],
-      "angle": [
-        25,
-        0,
-        40
-      ],
-      "title": "DRIVE ELECTRONICS"
-    },
-    "evidence": "SOURCES.txt"
-  },
-  {
     "image": "fan",
     "lines": [
       "Cooling assembly",
@@ -508,62 +584,11 @@
     "evidence": "SOURCES.txt"
   },
   {
-    "image": "diskette",
-    "lines": [
-      "Disk organization",
-      "80 cylinders / 2 sides",
-      "TOS/M reference: 5 x 1024 B/track"
-    ],
-    "view": {
-      "parts": [
-        "drive-diskette-0",
-        "drive-diskette-label-0"
-      ],
-      "angle": [
-        25,
-        0,
-        15
-      ],
-      "title": "DISK ORGANIZATION"
-    },
-    "evidence": "SOURCES.txt"
-  },
-  {
-    "image": "keyboard-interface",
-    "lines": [
-      "Keyboard connection",
-      "Separate controller PCB",
-      "Carries key data to the computer"
-    ],
-    "view": {
-      "parts": [
-        "keyboard-controller",
-        "keyboard-entry-choke"
-      ],
-      "focus_parts": [
-        "keyboard-controller-connectors"
-      ],
-      "angle": [
-        55,
-        0,
-        150
-      ],
-      "margin": [
-        5,
-        8,
-        8
-      ],
-      "annotation": "DATA LINK",
-      "title": "KEYBOARD CONNECTION"
-    },
-    "evidence": "SOURCES.txt"
-  },
-  {
     "image": "robotron",
     "lines": [
       "Robotron 1715M",
       "A journey inside the machine",
-      ""
+      "END OF TRANSMISSION"
     ],
     "view": {
       "parts": [
@@ -587,7 +612,8 @@
         0,
         25
       ],
-      "title": "ROBOTRON 1715M"
+      "title": "ROBOTRON 1715M",
+      "closing": true
     },
     "evidence": "SOURCES.txt"
   }

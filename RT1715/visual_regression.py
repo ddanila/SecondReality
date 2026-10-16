@@ -48,8 +48,8 @@ def main():
     def duration(path):
         return float(subprocess.check_output(['ffprobe','-v','error','-show_entries','format=duration','-of','csv=p=0',str(path)]))
     credit=max((args.capture/name for name in result['video_files']),key=duration)
-    subprocess.run(['ffmpeg','-v','error','-i',str(credit),'-ss','66.5','-frames:v','1','-vf','scale=320:200:flags=neighbor',str(out/'credit-handoff.png')],check=True)
-    names=[*SHOTS,'credit-handoff'];report={'accepted':args.accept,'capture':args.capture.name,'poses':SHOTS,'images':{},'runtime_sha256':hashlib.sha256((out/'U2E.EXE').read_bytes()).hexdigest()}
+    subprocess.run(['ffmpeg','-v','error','-i',str(credit),'-ss','68.0','-frames:v','1','-vf','scale=320:200:flags=neighbor',str(out/'credit-handoff.png')],check=True)
+    names=[*SHOTS,'credit-handoff'];report={'accepted':args.accept,'credit_sample_seconds':68.0,'capture':args.capture.name,'poses':SHOTS,'images':{},'runtime_sha256':hashlib.sha256((out/'U2E.EXE').read_bytes()).hexdigest()}
     slots=animation.mapping((out/'U2E.00M').read_bytes())[1:]
     inputs=['U2E.00M','U2E.0AB','U2E.AA','U2E.PRS','U2E.VIS',
             'CRED.EXE','CARD01.CRD','CRED.IDX','CRED.SYN','CRED.CUE','CRED.TIM']

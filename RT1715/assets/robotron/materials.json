@@ -8,8 +8,8 @@
   "paint": {
     "base": 48,
     "rgb": "#d9ceb3",
-    "ambient": 0.4,
-    "diffuse": 0.6
+    "ambient": 0.44,
+    "diffuse": 0.56
   },
   "pcb": {
     "base": 64,
@@ -19,15 +19,15 @@
   },
   "metal": {
     "base": 80,
-    "rgb": "#d0d9df",
-    "ambient": 0.24,
-    "diffuse": 0.76
+    "rgb": "#c5d4dd",
+    "ambient": 0.2,
+    "diffuse": 0.8
   },
   "black": {
     "base": 96,
-    "rgb": "#141a1c",
-    "ambient": 0.12,
-    "diffuse": 0.88
+    "rgb": "#1b2020",
+    "ambient": 0.28,
+    "diffuse": 0.48
   },
   "red": {
     "base": 112,
@@ -38,8 +38,8 @@
   "blue": {
     "base": 128,
     "rgb": "#9bb5bd",
-    "ambient": 0.34,
-    "diffuse": 0.66
+    "ambient": 0.4,
+    "diffuse": 0.55
   },
   "white": {
     "base": 144,

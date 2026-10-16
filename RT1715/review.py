@@ -12,8 +12,10 @@ HERE=Path(__file__).resolve().parent
 SHOTS=[('KEY CHANNEL',8,4),('KEYPAD / TURN',17,3),('DRIVE FRONTS',30,4),
        ('MONITOR CORNER',43,3),('MONITOR PASS',46,2),('FULL REVEAL',50,3),
        ('DRONE SWOOSH',53,2),('TURN START',55.2,1),
-       ('TURN MID',59,1),('TURN END',62.3,1),('CREDITS HANDOFF',62,7),('CPU LOCATOR',71,3),
-       ('RAM LOCATOR',102,3),('DISPLAY MEMORY',118,3),('CLOSING CARD',170,3)]
+       ('TURN MID',59,1),('TURN END',62.3,1),('CREDITS HANDOFF',62,7),('CASE CUTAWAY',65.8,2.8),('CPU REVEAL',70.8,1.4),
+       ('RAM LOCATOR',76,3),('SYSTEM TIMING',81,3),
+       ('KEYBOARD REVEAL',117.8,1.4),('KEY MATRIX',127.7,3),
+       ('DISPLAY REVEAL',137.8,1.4),('DISPLAY DATA PATH',143,3),('CLOSING CARD',170,3)]
 
 def render(capture):
     result=json.loads((capture/'result.json').read_text())

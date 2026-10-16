@@ -52,7 +52,7 @@ class MusicTimingTests(unittest.TestCase):
         flight = ("SWOOSH frame=3344 order=25 row=6\n"
                   "OVERVIEW frame=3186 order=24 row=54\n"
                   "END order=26 row=57 frame=4064\n")
-        credits = "START order=28 row=0\nEND order=43 row=46\nCOMPLETE\n"
+        credits = "START order=28 row=0\nEND order=43 row=29\nCOMPLETE\n"
         self.assertEqual(verify_sync(flight, credits)['credits_start'], (28,0))
         with self.assertRaises(ValueError):
             verify_sync(flight.replace('END order=26 row=57','END order=19 row=4'),credits)

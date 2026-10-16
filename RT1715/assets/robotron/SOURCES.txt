@@ -62,3 +62,10 @@ Finishing-pass specification audit:
   CPU, keyboard CPU, video controller/RAM, DMA/SIO, adapters, board orientation
   and fan claims were checked against the canonical README/board records and
   DAC inspection entries. Reference clock/matrix/media labels remain explicit.
+
+Narrative diagrams (2026-10-16):
+  credit_story.py clock, keyboard matrix and display-path graphics are
+  functional explanations, not recovered circuit diagrams. Clock/matrix
+  reference numbers and UL6516D count retain the evidence listed above.
+  Reveals are editorial transitions from the assembly to source-board renders;
+  they do not claim to animate a mechanically valid disassembly procedure.

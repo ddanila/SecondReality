@@ -1,7 +1,20 @@
 Second Reality: RT1715 extraction
 ================================
 
-Current checkpoint (2026-10-15, branch rt1715)
+Expansion plan: EXPANSION-PLAN.txt records the additional original effects,
+Robotron adaptations, implementation order, music integration and release gates.
+Implementation and commands for the optional expanded cuts are in EXPANSION.txt.
+The main flight-and-credits cut remains the current focus:
+  build/dos/RT1715.EXE         Latest 3D flight + all 21 credits (300000 cycles).
+  build/dos/FLIGHT.EXE         Flight only, using the same current scene assets.
+  build/robotron-preview.mp4   Latest full flight-and-credits recording.
+Optional expansion builds preserve flight + credits as SHORT.EXE and provide
+FLIGHT.EXE separately. They are isolated snapshots: rebuild them from build/dos
+to include later main-cut changes. Build/capture directories and MP4s are local
+generated artifacts, not committed media. Source, documentation, validation
+summaries and reviewed reference images are versioned.
+
+Current checkpoint (2026-10-16, branch rt1715)
 --------------------------------------------
 The Robotron presentation includes the protected-mode renderer, scenic close-up
 flight, tangent-facing banked drone, differentiated materials and CRT shading,
@@ -12,12 +25,20 @@ a photo-derived front badge, visual baselines and a checked release packager.
 The current renderer bakes filtered markings, visible faces and projection on
 the native host. It keeps the original images and music timing while running
 at fixed 300000 DOSBox-X cycles (32 MiB). The previous profile used 600000.
-Current evidence is in benchmarks/substantial-rendering.json; the finishing
-checkpoint remains documented in benchmarks/finishing.json.
+The technical-tour pass groups credits by subsystem, adds explanatory diagrams
+and short board reveals, refines material ramps and gives the closing card a
+stationary fade. Its extracted release has passed unattended playback.
+The component guide adds a source-model cutaway, component-linked diagrams,
+clearer credit typography, a single-card host preview and a portable claim index.
+Latest main-cut evidence is in benchmarks/label-screen.json; component-guide
+and renderer evidence remain in benchmarks/component-guide.json and
+benchmarks/substantial-rendering.json. The newest fixes stabilize the white disk
+label and enlarge the final CRT prompt. Validation: 110 host tests, 1963 reviewed
+motion frames, 14 fixed reference images and full headless DOS playback.
 
 Start with assets/robotron/EDITING.txt and assets/robotron/presentation.json for
 the current Robotron workflow. Validation evidence is tracked in
-benchmarks/substantial-rendering.json. The older generic city replacement workflow below
+benchmarks/component-guide.json. The older generic city replacement workflow below
 remains available separately.
 
 Build outputs, source snapshots and video captures are local generated files,
@@ -150,6 +171,10 @@ Generated CARDxx.CRD files contain a CRD1 header, 768 bytes of 6-bit VGA
 palette, a 320x200 caption panel (indices 0..15), and a 160x100 picture
 (indices 16..255). CRED.IDX selects cards and hold durations. These files
 are build outputs; edit the manifest/source assets instead.
+Animated cards use CRD2 with the same base layout, followed by little-endian
+uint16 frame count and reveal duration in centiseconds, then count * 16000
+picture bytes using the shared palette. The DOS player streams one frame at
+a time into its existing buffer; static cards remain CRD1.
 
 Run and test headlessly:
 
@@ -1228,10 +1253,10 @@ motion_regression.py exports every authored frame of the keyboard pass
 (0..24 s), drive action (24..28 s), monitor approach (29..45 s), and swoosh
 (46..49.29 s). /visual accepts up to 2048 ascending poses. Each run writes
 35 FPS films, contact sheets and per-frame hashes in build/motion-regressions.
-Raw PPMs are packed into a CRC-verified frames.zip after film generation;
-acceptance verifies every frame hash directly from this archive. A run needs
-at least 512 MiB free for its temporary frames. This avoids accumulating
-hundreds of MiB per review and starving DOSBox-X video capture of disk space.
+Completed PPMs are streamed into a CRC-verified frames.zip during capture;
+films and contact sheets read the archive, and acceptance verifies every
+frame hash directly from it. A run needs at least 128 MiB free. This avoids
+accumulating hundreds of MiB of temporary frames during a review.
 Normal runs fail on missing/changed references; they never accept them silently:
   python3 RT1715/motion_regression.py
 After reviewing the films and sheets, explicitly accept the archived run:
@@ -1322,3 +1347,159 @@ Aggregate time drops 54.46 percent for equal render counts in these six poses.
 These uncapped kernel/scene timings include per-frame cache reading, decoding
 and validation. Full playback remains limited to the authored 35 Hz timeline.
 Measurements and validation identities: benchmarks/substantial-rendering.json.
+
+Technical tour and release verification (2026-10-16)
+--------------------------------------------------
+The 21 credits now progress through processing/memory, storage, keyboard,
+display and power/cooling. All entry beats and the 43:29 ending stay fixed.
+Three cards add DOS-resolution functional diagrams: system timing, keyboard
+matrix scanning and the display data path. Reference specifications stay
+labelled; these illustrations do not claim to reproduce circuit wiring.
+CPU, keyboard-controller and display-controller cards briefly show the whole
+machine, isolate their board, then settle on their existing annotated detail.
+The 0.8-second reveals use a shared palette and one streamed 16 KiB picture
+buffer. More than 2.5 seconds remain still for reading. Static projects retain
+the CRD1 path; CRD2 validates its frame count, duration and full file length.
+
+Material ramps give plastic softer shading, metal cooler/high-contrast shading
+and dark rubber a restrained matte response. CRT phosphor/lettering and the
+original drone palette remain unchanged. The closing card uses a restrained
+whole-machine composition and END OF TRANSMISSION caption, fading in place
+on the existing final cue instead of sliding out.
+
+verify_release.py unpacks a release into a temporary directory, verifies every
+SHA256SUMS entry and required notices, then runs its shipped HEADLESS.SH from
+outside the extracted directory. It checks complete playback, every credit
+entry/end cue and that no packaged file changed. DOS sees only the extracted
+runtime directory; no development model assets or guest compiler are needed.
+  python3 RT1715/verify_release.py RT1715/build/releases/<release>.zip
+
+Validation: 95 host tests pass. Headless playback 20261016-074856-201105
+passes all 21 card entries and the original music/end cues. Fourteen fixed
+views and 1963 continuous DOS frames have reviewed material references;
+every continuous frame matches the native host bake exactly. The new archive
+streaming path retains CRC-checked PPMs while keeping only pending frames raw.
+The 288-file release was unpacked into a fresh temporary directory and its
+shipped launcher completed headlessly in 175.48 seconds, with all hashes,
+notices, transitions and exit checks passing. Evidence: benchmarks/technical-tour.json.
+
+Component guide and single-card authoring (2026-10-16)
+----------------------------------------------------
+The first credit now opens the source-model main unit: its lid lifts clear
+and its display board rises to expose the main board. The four callouts show
+processing, video, drives and power. This is an explanatory exploded view;
+source XY locations remain fixed and the offsets are not service instructions.
+The timing, keyboard and video diagrams now include highlighted actual source
+components. Short pulses connect these pictures to their functional roles;
+the keyboard example travels from key to UB880D to host, then rests.
+All seven animated cards leave at least 2.52 seconds still for reading. Entry
+beats, all 21 slots and the 43:29 ending remain unchanged.
+
+Picture labels use a minimum 9-pixel font rather than falling back to 7 pixels.
+Secondary caption brightness increases from 187 to 221 before quantization.
+Preview at 4:3, including the 320x240 small-size export, to judge legibility.
+preview_credit.py renders one selected card on the host, exports exact DOS
+quantized stills and APNG motion, and reports reading time without installing
+or rebuilding the flyover. See assets/robotron/EDITING.txt for commands.
+
+assets/robotron/claims.json maps all 63 nonempty caption lines to editorial,
+observed, documented-design, reference-configuration, model or functional
+classifications. Twenty-one source records include exact local locations,
+short excerpts and SHA-256 identities. Packaging checks the caption text
+against this reviewed index and includes CLAIMS.JSON and TECHNICAL-SOURCES.TXT.
+The source index is readable without access to the development repositories.
+
+Validation: 98 host tests pass. Playback 20261016-111819-127780 passes all
+21 entries and original music/end cues. All 14 fixed views pass; only the
+first-credit reference changes. Its sample now falls after the cutaway settles.
+All 235 flyover runtime files retain their previous hashes, preserving the
+reviewed 1963-frame motion baseline. The standalone keyboard-card preview is
+byte-identical to its installed DOS card. Source hashes verify all 21 evidence
+records. The 290-file release completed its fresh-extraction headless test in
+175.14 seconds, including hashes, companion documents, cues and exit.
+Evidence: benchmarks/component-guide.json.
+
+Chapter preparation (2026-10-16)
+--------------------------------
+assets/robotron/chapters.json now records the short cut's scene IDs, executable
+and module identities, tracker boundaries, state contracts and cue tolerances.
+chapters.py validates this contract and emits scene-relative musical times:
+  python3 RT1715/chapters.py --timing
+  python3 RT1715/chapters.py --timing --capture RT1715/capture/<capture>
+These commands inspect source modules and saved logs without rebuilding or
+starting DOSBox. The current credits cover 104.12 seconds on their music clock.
+The strict music reader still rejects unsupported tracker control flow; MUSIC1
+must be audited before its timing can be used for new chapters.
+
+run.py and verify_release.py share contract-driven cue validation, including
+missing/duplicate events and the final credits cue. New captures save a hashed
+chapters.json snapshot; releases include that snapshot as CHAPTERS.JSON and
+validate against it. Older captures are revalidated before adopting the current
+contract. Older releases retain compatibility with the default contract.
+
+music.module_archive() supports the original two-slot STARTMUS archive layout.
+The current build calls it with MUSIC0 only and produces exactly the same bytes
+as before. A second module can be packed without rewriting either payload;
+this does not yet implement musical transitions or a new DOS scene launcher.
+
+Only the short cut is executable. The build checks its implemented contract;
+new cuts need their own launcher adapter and explicit integration. State
+contracts describe ownership obligations; they do not automatically reset VGA
+or interrupt handlers. Scene-specific ports, standalone DOS scene previews,
+MUSIC1 timing support and new launcher sequencing belong to the subsequent
+prototype stages. See EXPANSION-PLAN.txt for the implementation order.
+
+Validation: 104 host tests pass, including byte-identical single-module music
+packing, two-module offsets/payloads, cue rejection and saved-capture replay.
+The 291-file package passed fresh-extraction headless playback in 175.19 seconds
+with all 21 credit entries, protected cues and unattended exit. Evidence:
+benchmarks/chapter-foundation.json. DOS runtime binaries/assets were unchanged.
+
+Expanded cuts (2026-10-16)
+-------------------------
+EXPANSION.txt documents optional expanded and extended cuts, isolated chapter
+previews and the ten-effect study reel. The primary opening uses source-board
+inspection, particles and a data tunnel; the longer cut adds source-masked CRT
+entry/return, translucent component envelopes, interference and plasma. Both
+original music modules are preserved, and SHORT.EXE retains the short version.
+A bounded module-order handoff prevents stale tracker positions from starting
+credits prematurely. All inherited flight cues and 21 credit slots pass.
+
+Validation: 109 host tests pass. Both full cuts, an isolated CRT chapter, the
+study reel and the preserved short launcher pass headless DOSBox-X playback.
+Both release ZIPs pass fresh-extraction playback, runtime hashes, chapter cues,
+credit schedules and unattended exit. Evidence: benchmarks/expansion.json.
+The production flight runtime/assets remain byte-identical to the base cut.
+
+Flight-only playback (no opening effects or credits):
+  python3 RT1715/flight_only.py
+  python3 RT1715/run.py --entry FLIGHT.EXE
+See EXPANSION.txt for the difference between FLIGHT.EXE and SHORT.EXE.
+
+Hardware chapter revision: dynamic component lens, source-board geometry,
+key-to-display narrative and live 3D CRT continuation. See EXPANSION.txt.
+Recommended playback for the extended cut: run.py --cycles 600000.
+
+Disk label stability and closer final screen approach (2026-10-16)
+----------------------------------------------------------------
+The flight-and-credits cut now draws the source diskette paper label and hub
+ring as filtered, unshaded surface details. Their original top surfaces and
+height are preserved, while the hidden undersides are omitted. This avoids
+depth ties with the jacket and unstable thin-triangle coverage during insertion;
+it uses the existing filtered marking renderer rather than raising the paper
+into the lever clearance. Mechanical timing and positions are unchanged.
+
+The final screen-return camera moves from [0,-470,340] to [0,-390,350], aiming
+at [0,-140,350]. This enlarges the captured OS lettering by roughly one third
+and keeps the upper screen/prompt in view. The existing smooth turn and music
+cues are retained. Build and play the main cut with:
+  RT1715/build/host-python/bin/python RT1715/build.py --robotron
+  RT1715/build/host-python/bin/python RT1715/run.py
+The full MP4 remains build/robotron-preview.mp4.
+
+Evidence: benchmarks/label-screen.json; before/after insertion film and final
+camera comparisons: build/label-screen-review/. Host tests: 110 passed.
+Final validation: capture/20261016-145305-609618 passed at 300000 cycles in
+175.30 seconds wall time; original flight/credit music cues and all 21 cards
+passed. Reviewed 1963 continuous DOS frames and accepted the intended label
+and closing-camera changes; 14 fixed reference images pass after review.

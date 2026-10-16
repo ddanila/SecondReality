@@ -16,6 +16,15 @@ static unsigned char palette[768];
 static unsigned char far *caption;
 static unsigned char far *picture;
 static FILE *trace;
+static FILE *active_card;
+static unsigned reveal_count,reveal_cs,reveal_frame,total_cards;
+#define CARD_PIXELS 80772L
+static int read_reveal(unsigned frame) {
+    if(frame==reveal_frame) return 1;
+    if(fseek(active_card,CARD_PIXELS+4L+(long)frame*16000L,SEEK_SET) ||
+       fread(picture,1,16000U,active_card)!=16000U) return 0;
+    reveal_frame=frame;return 1;
+}
 unsigned music_position(void);
 #pragma aux music_position = "mov bx,6" "int 0fch" "shl cx,6" "or bx,cx" "mov ax,bx" value [ax] modify [bx cx dx]
 
@@ -96,6 +105,15 @@ static void upload(void) {
     }
 }
 
+static void upload_picture(void) {
+    unsigned plane,x,y;
+    for(plane=0;plane<4;plane++) {
+        outpw(0x3c4,(0x100<<plane)|2);
+        for(y=0;y<100;y++) for(x=plane;x<160;x+=4)
+            vram[32000U+y*160U+100U+x/4]=picture[y*160U+x];
+    }
+}
+
 static int show_card(unsigned hold) {
     long y;
     int velocity, x;
@@ -126,6 +144,7 @@ static int show_scheduled(unsigned number) {
     unsigned now,t,scale=65535,next_scale;long y;
     unsigned *cue=cues[number];
     /* Prepare while blank; keep file and palette work ahead of the entry cue. */
+    if(reveal_count && !read_reveal(0)) return 0;
     split(400);scroll(0);upload();dim_palette(0);
     while(music_position()<credit_cue && !dis_call(2)) dis_call(1);
     while(credit_time()<cue[0] && !dis_call(2)) dis_call(1);
@@ -139,11 +158,20 @@ static int show_scheduled(unsigned number) {
             split((unsigned)(y/128+200));scroll(320-(int)(y/80));
             next_scale=t<64?t:64;
         } else if(now<cue[2]) {
+            if(reveal_count) {
+                unsigned frame=(unsigned)((long)(now-cue[1])*(reveal_count-1)/reveal_cs);
+                if(frame>=reveal_count) frame=reveal_count-1;
+                if(frame!=reveal_frame) {
+                    if(!read_reveal(frame)) return 0;
+                    upload_picture();
+                }
+            }
             split(200);scroll(320);next_scale=64;
         } else {
             t=(unsigned)((long)(now-cue[2])*256/(cue[3]-cue[2]));
             y=25600L*t*t/65536L;
-            split((unsigned)(y/128+200));scroll(320+(int)(y/80));
+            if(number+1==total_cards) { split(200);scroll(320); }
+            else { split((unsigned)(y/128+200));scroll(320+(int)(y/80)); }
             next_scale=64-t/4;
         }
         if(next_scale!=scale) { dim_palette(next_scale);scale=next_scale; }
@@ -177,6 +205,7 @@ int main(void) {
     if (!index) return fail("cannot open CRED.IDX");
     if (fscanf(index,"RT1715 %u",&count)!=1 || count<1 || count>99)
         return fail("invalid credit index");
+    total_cards=count;
     caption=(unsigned char far *)malloc(64000U);
     picture=(unsigned char far *)malloc(16000U);
     if (!caption || !picture) return fail("not enough memory for credit buffers");
@@ -206,12 +235,21 @@ int main(void) {
             return fail("invalid credit entry");
         card=fopen(name,"rb");
         if (!card) return fail("cannot open credit card");
-        if (fread(magic,1,4,card)!=4 || memcmp(magic,"CRD1",4) ||
+        if (fread(magic,1,4,card)!=4 || (memcmp(magic,"CRD1",4) && memcmp(magic,"CRD2",4)) ||
             fread(palette,1,768,card)!=768 ||
             fread(caption,1,64000U,card)!=64000U ||
-            fread(picture,1,16000U,card)!=16000U || fgetc(card)!=EOF)
+            fread(picture,1,16000U,card)!=16000U)
             return fail("invalid or truncated credit card");
-        fclose(card);
+        reveal_count=0;reveal_frame=65535;active_card=card;
+        if(!memcmp(magic,"CRD2",4)) {
+            long expected;
+            if(fread(&reveal_count,2,1,card)!=1 || fread(&reveal_cs,2,1,card)!=1 ||
+               reveal_count<2 || reveal_count>16 || reveal_cs<20 || reveal_cs>100)
+                return fail("invalid reveal header");
+            expected=CARD_PIXELS+4L+(long)reveal_count*16000L;
+            if(fseek(card,0,SEEK_END) || ftell(card)!=expected)
+                return fail("truncated reveal frames");
+        } else if(fgetc(card)!=EOF) return fail("unexpected card payload");
         if(number==0) {
             log_position("READY");
             if(!scheduled) {
@@ -221,7 +259,8 @@ int main(void) {
             graph();
         }
         if (trace) { fprintf(trace,"CARD %u %s\n",number+1,name); fflush(trace); }
-        if (!(scheduled?show_scheduled(number):show_card(hold))) break;
+        if (!(scheduled?show_scheduled(number):show_card(hold))) { fclose(card);break; }
+        fclose(card);
     }
     log_position("END");
     fclose(index);

@@ -181,3 +181,60 @@ it. The runtime falls back to live rendering if it is missing or invalid.
 Host generation additionally requires a native C compiler and liblz4 (Homebrew
 package lz4). No new guest tools are needed. The default DOSBox-X profile is
 now fixed 300000 cycles, dynamic 486, 32 MiB RAM.
+
+Credit narrative and reveals
+----------------------------
+credits.json order is the presentation order. Keep 21 slots; entry/end cues
+are generated independently from MUSIC0 and remain fixed when cards move.
+The current sequence is processing/memory, storage, keyboard, display,
+power/cooling, then the closing image.
+
+view.diagram selects clock, matrix or video: functional illustrations drawn
+by credit_story.py directly at 160x100. These are explanatory diagrams, not
+measured wiring diagrams. Their numerical reference labels come from SOURCES.
+view.reveal=true uses the full-board locator render to transition from the
+workstation to the board and then its existing detail image. It requires an
+annotated, cropped view with its locator enabled. The reveal lasts 80 cs after
+entry; at least 2.5 seconds of static reading time remain in the current slots.
+view.closing=true composes the final image; the scheduled final card fades in
+place rather than sliding away. All other cards keep the original transition.
+
+CRD2 embeds a shared palette and streamed picture frames. Do not hand-edit
+its frame count or append bytes. The DOS loader checks counts, duration and
+exact file length before showing it. CRD1 static project cards still work.
+
+Single-card authoring and the illustrated guide
+----------------------------------------------
+Render just one credit (ID or 1-based number), without building the flight:
+  RT1715/build/host-python/bin/python RT1715/preview_credit.py keyboard-scan
+  RT1715/build/host-python/bin/python RT1715/preview_credit.py 1
+Optional --manifest, --source, --openscad and --output select other inputs.
+The output contains CARD.CRD, exact quantized still.png, a small 320x240
+actual-size.png, animated reveal.png (APNG), and timing.json. The animation
+includes the motion and static reading hold; DOS entry/exit scrolling is not
+simulated. No DOS runtime files are installed by this command. A component
+reveal may also render its shared workstation context image once.
+
+View labels use at least 9-pixel fonts and secondary captions are brighter.
+Keep titles short: they now fail rather than silently shrinking below this
+picture-label floor. Diagram pictures use the actual component mask, with a
+gold outline linking the photograph to its functional block. The keyboard
+scan view selects the largest DIP body, the source UB880D, rather than the
+whole strip of controller chips; the pulse is illustrative key data.
+
+view.cutaway=true introduces the main unit using 16 host-rendered poses. Its
+lid lifts out of view and the display board rises 65 mm; XY assembly placement
+stays intact. All geometry comes from the source meshes. These offsets are
+an explanatory exploded view, not a service/disassembly sequence. Cutaway
+and diagram motion lasts 96 cs; the existing board/detail reveals stay at
+80 cs. Current cards retain at least 2.52 seconds of static reading time.
+
+claims.json is the reviewed companion index. Each nonempty caption line must
+match it exactly before packaging. Update a changed claim's text, category,
+source IDs and qualification after checking the evidence. Source records
+carry exact locations, short excerpts and full-file hashes, so the packaged
+TECHNICAL-SOURCES.TXT and CLAIMS.JSON remain readable without sibling repos.
+Check that the referenced source files have not changed:
+  python3 RT1715/claim_index.py --check-source ..
+Export a readable standalone index:
+  python3 RT1715/claim_index.py --output RT1715/build/claim-index

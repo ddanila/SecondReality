@@ -1,0 +1,200 @@
+{
+  "version": 1,
+  "modules": {
+    "music0": {
+      "source": "MAIN/MUSIC0.S3M",
+      "slot": 0
+    },
+    "music1": {
+      "source": "MAIN/MUSIC1.S3M",
+      "slot": 1
+    }
+  },
+  "scenes": {
+    "flight": {
+      "status": "implemented",
+      "executable": "U2E.EXE",
+      "module": "music0",
+      "entry": [
+        18,
+        0
+      ],
+      "exit": [
+        26,
+        57
+      ],
+      "capture_log": "flight.log",
+      "state_contract": {
+        "entry": "Resident DIS/music active; renderer initializes VGA and its own buffers.",
+        "exit": "Return to launcher with music running; release renderer-owned resources.",
+        "execution": "protected DOS/32A, or existing legacy build option"
+      }
+    },
+    "credits": {
+      "status": "implemented",
+      "executable": "CRED.EXE",
+      "module": "music0",
+      "entry": [
+        28,
+        0
+      ],
+      "exit": [
+        43,
+        29
+      ],
+      "capture_log": "credits.log",
+      "state_contract": {
+        "entry": "Same resident MUSIC0 continues; initialize credit palette and display.",
+        "exit": "Return status to launcher; launcher owns music fade and final DOS cleanup.",
+        "execution": "real-mode DOS"
+      }
+    }
+  },
+  "cuts": {
+    "short": {
+      "launcher": "short-v1",
+      "scenes": [
+        "flight",
+        "credits"
+      ],
+      "checks": {
+        "swoosh": {
+          "scene": "flight",
+          "label": "SWOOSH",
+          "target": [
+            25,
+            6
+          ],
+          "min": [
+            25,
+            5
+          ],
+          "max": [
+            25,
+            8
+          ]
+        },
+        "overview": {
+          "scene": "flight",
+          "label": "OVERVIEW",
+          "target": [
+            24,
+            54
+          ],
+          "min": [
+            24,
+            52
+          ],
+          "max": [
+            24,
+            58
+          ]
+        },
+        "flight_end": {
+          "scene": "flight",
+          "label": "END",
+          "target": [
+            26,
+            57
+          ],
+          "min": [
+            26,
+            55
+          ],
+          "max": [
+            28,
+            0
+          ]
+        },
+        "credits_start": {
+          "scene": "credits",
+          "label": "START",
+          "target": [
+            28,
+            0
+          ],
+          "min": [
+            28,
+            0
+          ],
+          "max": [
+            28,
+            1
+          ]
+        },
+        "credits_end": {
+          "scene": "credits",
+          "label": "END",
+          "target": [
+            43,
+            29
+          ],
+          "min": [
+            43,
+            28
+          ],
+          "max": [
+            43,
+            30
+          ]
+        }
+      }
+    },
+    "flight": {
+      "launcher": "flight-v1",
+      "scenes": [
+        "flight"
+      ],
+      "checks": {
+        "swoosh": {
+          "scene": "flight",
+          "label": "SWOOSH",
+          "target": [
+            25,
+            6
+          ],
+          "min": [
+            25,
+            5
+          ],
+          "max": [
+            25,
+            8
+          ]
+        },
+        "overview": {
+          "scene": "flight",
+          "label": "OVERVIEW",
+          "target": [
+            24,
+            54
+          ],
+          "min": [
+            24,
+            52
+          ],
+          "max": [
+            24,
+            58
+          ]
+        },
+        "flight_end": {
+          "scene": "flight",
+          "label": "END",
+          "target": [
+            26,
+            57
+          ],
+          "min": [
+            26,
+            55
+          ],
+          "max": [
+            28,
+            0
+          ]
+        }
+      }
+    }
+  }
+}

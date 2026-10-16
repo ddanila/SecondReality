@@ -99,3 +99,17 @@ def write_credit_schedule(module,output,transition,count):
     (output/'CRED.TIM').write_bytes(struct.pack('<1024H',*(t for row in clock for t in row)))
     import json
     (output/'credit-cues.json').write_text(json.dumps(report,indent=2)+'\n')
+
+
+def module_archive(module0, module1=None):
+    """Build STARTMUS's two-slot archive without modifying module payloads.
+
+    A one-module cut aliases slot 1 to slot 0, matching the original extraction.
+    Supplying module 1 prepares the original loader format for future chapters;
+    choosing playback orders and switching modules remains the launcher's job.
+    """
+    for payload in (module0,) if module1 is None else (module0, module1):
+        if len(payload) < 96 or payload[44:48] != b'SCRM':
+            raise ValueError('Expected an S3M module payload')
+    second = 16 if module1 is None else 16 + len(module0)
+    return struct.pack('<II6xH', 16, second, 0x1B1C) + module0 + (module1 or b'')

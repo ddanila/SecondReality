@@ -1,0 +1,207 @@
+Robotron expanded cuts
+======================
+Implemented 2026-10-16. The original short build in build/dos is unchanged.
+
+Build and watch
+---------------
+Use the existing host environment and validated short build as the base:
+  RT1715/build/host-python/bin/python RT1715/expansion.py
+  RT1715/build/host-python/bin/python RT1715/run.py --dos-dir RT1715/build/expanded/dos
+
+The expanded cut adds a particle identity, source-board lens inspection and dot
+journey before the established flight. run.py captures headlessly and produces
+capture/<timestamp>/preview.mp4. DOS still draws every effect frame live.
+
+The longer cut adds a 3D CRT approach, separated source boards, key-to-memory
+and memory-to-display chapters, then returns to the CRT before full credits:
+  RT1715/build/host-python/bin/python RT1715/expansion.py --cut extended --output RT1715/build/extended --assets-from RT1715/build/expanded
+  RT1715/build/host-python/bin/python RT1715/run.py --dos-dir RT1715/build/extended/dos
+
+Every build preserves the base launcher as SHORT.EXE. From DOS, run SHORT.EXE
+for the original short presentation or RT1715.EXE for the selected expanded cut.
+From the host:
+  RT1715/build/host-python/bin/python RT1715/run.py --dos-dir RT1715/build/expanded/dos --entry SHORT.EXE
+Do not run FX.EXE or POST.EXE directly: they require the resident music bridge.
+No compilation or model conversion happens in DOS.
+
+The ten core effects can be evaluated together, without replaying the flight/cards:
+  RT1715/build/host-python/bin/python RT1715/expansion.py --cut studies --output RT1715/build/studies --assets-from RT1715/build/expanded
+  RT1715/build/host-python/bin/python RT1715/run.py --dos-dir RT1715/build/studies/dos --cycles 600000
+
+Or build one isolated effect with its own music entry:
+  RT1715/build/host-python/bin/python RT1715/expansion.py --cut scene --scene lens --output RT1715/build/lens --assets-from RT1715/build/expanded
+  RT1715/build/host-python/bin/python RT1715/run.py --dos-dir RT1715/build/lens/dos
+An isolated scene uses MUSIC1 orders 42-44; it substitutes the complete cut's
+musical context. Available IDs: identity, lens, tunnel, glenz, techno, plasma,
+terrain, mirror, mountain, jelly, screen-in, screen-out.
+
+A silent host preview uses the same C effect renderer:
+  RT1715/build/host-python/bin/python RT1715/preview_effect.py lens --assets RT1715/build/expanded/dos --seconds 22.154 --output RT1715/build/lens.mp4
+Use a DOS capture to assess music, transitions and emulated frame cadence.
+
+Source and editorial decisions
+------------------------------
+These are new C remakes of original effect concepts, not newly linked original
+16-bit effect executables. Their low-level implementation is independent; the
+references below establish the original technique and executable mapping.
+
+Original reference             Adaptation and disposition
+DOTS/MAIN.C, MINVBALL.EXE       Live particles assemble the Robotron identity.
+LENS/MAIN.C, LNS&ZOOM.EXE       Moving component-aware magnification of source boards.
+TUNNELI/TUN10.PAS               Project moving rings into a curved data tunnel.
+GLENZ/MAIN.C                   Separated source motherboard and display-board geometry.
+TECHNO/KOE.C                   Key -> U880 -> main RAM -> display memory.
+PLZPART/MAIN.C                 Character fetch -> glyph rows -> phosphor illustration.
+COMAN/MAIN.C, 3DSINFLD.EXE      A PCB-inspired height-field landscape study.
+WATER/DEMO.PAS, RAYSCRL.EXE     A reflective board-image sphere and short scroll.
+FOREST/READ2.PAS, MNTSCRL.EXE    Circuit hills with a moving title.
+JPLOGO/JP.C                    A deforming identity that settles into lettering.
+ALKU and SCRIPT               Restrained title pacing, combined with particles.
+
+The main cut includes the first three: they explain or introduce the computer
+without showing its entire exterior before the established reveal. The longer
+cut uses glenz/techno/plasma IDs for the connected internal hardware chapter. Terrain,
+mirror, mountain and jelly remain runnable studies: terrain repeats the existing
+flight, mountain repeats the landscape/title role, mirror has a weaker hardware
+connection, and jelly repeats the particle identity. They are not padding in
+both full cuts. A full spaceship/explosion introduction is deferred because it
+lengthens the opening without adding Robotron information.
+
+The internal scene uses actual source board, chip-body and lead surfaces, with
+quadric simplification. It separates motherboard and display board for visibility;
+these offsets illustrate their roles, not a mechanical disassembly procedure.
+The CRT transition uses live perspective geometry, starting at the flight's final
+camera in machine coordinates. Its monitor surfaces are shared with the flight,
+and its screen contains the captured DAC prompt. The module handoff still has a
+brief fade; this is a matched camera continuation, not a single uninterrupted
+renderer invocation. No source photo is zoomed for this transition anymore.
+
+Assets and facts
+----------------
+The host reloads browser/model.json and verifies referenced mesh hashes using
+credit_scene.py. Critical front parts are exported from current SCAD. Relevant
+boards are rendered from that source through credit_views.py; the magnifier paths use component annotation masks, not guessed chip positions. Each detail
+is paired with its own board view, so display RAM is not placed on the CPU board.
+SCAD/model/image hashes and assembly bounds are recorded in FXSOURCE.JSON.
+--assets-from checks current model identities and recorded binary asset hashes.
+
+U880, main memory and video memory labels reuse the observed component evidence
+in assets/robotron/claims.json. Other new labels are editorial. Tunnel movement,
+data-flow pulses, glyph demonstration, reflection and terrain are artistic illustrations,
+not electrical measurements, a traced bus transaction or real firmware output.
+The existing S550/TOS-M capture remains the only represented boot sequence.
+
+assets/robotron/expansion.json records original references and phrase boundaries.
+renderer_id is the stable C dispatch ID; edit the intro/post/studies schedules
+to reorder playback, keeping those renderer IDs attached to their scene names.
+FX.IMG holds six 640x400 indexed source images; FX.FNT contains ASCII glyphs;
+FX.PTS contains identity point targets; FX.GEO contains assembly/component
+bounds; FX.LOC contains source-image focus locations. FX.CRT contains the source front
+view, CRT mask and focus point (legacy study assets). FX.MSH holds source
+triangles with 1/8 mm coordinates, material-ramp indices, groups, the final
+flight camera and captured prompt pixels. FX.DRW is the compact visible subset;
+FX.VIS stores exact per-pose visible triangle IDs for 25 Hz geometry motion.
+DOS still transforms, depth-tests and draws triangles; no rendered movie is used.
+The baker checks the same native C renderer and the cache is keyed by renderer,
+baker and mesh hashes. Other effects continue using the interpolated music clock. FX.TIM/POST.TIM hold scene cues and source-derived row clocks.
+EXPAND.JSON records the selected cut, schedule and runtime hashes.
+
+Music and lifecycle
+-------------------
+The opening plays unchanged MUSIC1 from order 42 to 50:
+  identity 42:0 -> 43:0   7.385 s
+  lens     43:0 -> 47:0  22.153 s
+  tunnel   47:0 -> 50:0   7.385 s
+Then the launcher selects unchanged MUSIC0 at order 18. The flight-local
+24:54 overview, 25:6 swoosh, 26:57 end and the ordinary 28:0 credit start survive.
+
+The longer cut switches from the completed flight to MUSIC1 at 60:0:
+  screen-in 60:0 -> 62:0  3.692 s
+  glenz     62:0 -> 64:0 14.770 s
+  techno   64:0 -> 65:0   7.384 s
+  plasma   65:0 -> 66:0   7.385 s
+  screen-out 66:0 -> 68:0 7.384 s
+It then restarts MUSIC0 at 28:0 for all 21 original-duration cards, ending at
+43:29. This is an intentional new module transition, not continuous MUSIC0
+through the post-flight chapter. The module archive preserves both original
+payloads byte for byte. The strict timing reader supports these selected linear
+passages; arbitrary tracker jumps/loops elsewhere remain unsupported.
+
+The original player updates its order field asynchronously after restarting a
+song. The new launcher waits for the selected order before entering the next
+part; a bounded timeout returns an error instead of hanging or letting credits
+consume a stale late order. Every effect initializes its own VGA mode, palette
+and memory, installs no interrupt callback, fades to black and returns its DOS
+status. The resident launcher owns music and final DOS cleanup. Frame animation
+uses music time with retrace interpolation, so skipped frames do not extend cues.
+
+Implementation limits and validation
+-----------------------------------
+The primary effect runtime uses flat DOS/32A memory and a linear VGA framebuffer.
+The original flight-only cut retains its 300000-cycle profile. Use 600000
+cycles and 32 MiB for the expanded hardware chapter. Runtime
+initialization caches fixed board views and sine tables; DOS renders lens
+sampling, particles, tunnel projection, depth-tested polygons and hardware diagrams.
+
+Host tests cover archive payload preservation, cue tables, launcher routing,
+missing/late events, deterministic moving native frames and malformed schedule
+boundaries. Native previews are inspected alongside actual DOS captures. Full
+cuts validate the inherited flight/credit cues plus every extra chapter entry
+and exit. New release packages include EXPAND.JSON and FXSOURCE.JSON and the
+release verifier checks their effect logs after fresh-extraction headless play.
+Concrete run paths, timings and release evidence are in benchmarks/expansion.json.
+
+FLIGHT-ONLY CUT
+---------------
+FLIGHT.EXE runs only the original Robotron 3D flight, then uses the normal
+resident music fade and DOS cleanup. SHORT.EXE still means flight + credits.
+Expanded and extended builds now also generate FLIGHT.EXE. To add it to any
+existing runtime without rebuilding assets:
+
+  python3 RT1715/flight_only.py --dos-dir RT1715/build/dos
+  python3 RT1715/run.py --entry FLIGHT.EXE --no-review
+
+The runner validates overview, swoosh and flight-end music cues and rejects
+any unexpected credit execution. Headless DOSBox-X and host assembly only.
+
+HARDWARE CHAPTER REVISION
+-------------------------
+Implemented the four editorial improvements plus the lens correction:
+* Lens position and sampled source coordinates now move together; each board
+  gets a component-centred scan rather than a fixed magnified patch.
+* Abstract post-flight interference/plasma is replaced by a conceptual
+  key -> U880 -> RAM -> video RAM -> glyph -> raster narrative.
+* Actual internal surfaces replace bounding envelopes; boards separate so
+  neither hides the other. Established flight monitor surfaces preserve its shape.
+* CRT movement starts from the existing final camera and uses live 3D geometry.
+* Inspection is cool blue, processing amber, output phosphor green; geometry
+  uses material ramps. Captions identify operations and actual components.
+The scene IDs remain stable for scripts, but techno/plasma now name hardware
+chapters rather than the earlier abstract effect implementations.
+
+Flight-only validation: capture/20261016-141958-742788, PASS at 300000 cycles,
+66.22 seconds wall time; overview 24:54, swoosh 25:6, end 26:57. No credits
+executed; non-silent audio and clean DOS exit confirmed. Chapter/expansion
+host tests: 12 passed. Preview: build/flight-only-preview.mp4.
+
+Hardware revision validation and previews
+----------------------------------------
+Latest revised runtimes: build/hardware-expanded/dos and
+build/hardware-release/dos (extended). Both include FLIGHT.EXE and SHORT.EXE.
+The extended preview is build/hardware-release/preview.mp4.
+Evidence: benchmarks/hardware-story.json. This includes complete tracker-cue
+results, unchanged flight/music checks, host tests and pixel-exact visibility
+comparisons. The full run uses headless DOSBox-X at 600000 cycles.
+The geometry renderer samples authored poses at 25 Hz; the board scene
+rasterizes about 31 frames/second in this profile. Source meshes contain 131693
+triangles; the union of visible triangles contains 15272, and each pose draws
+only its own visible subset. The source meshes are not replaced with a movie.
+
+Final capture: capture/20261016-143952-000826, PASS in 298.54 seconds wall
+time at 600000 cycles. Overview 24:54, swoosh 25:6, flight end 26:57; all
+post-flight chapter boundaries exact after initialization; credits 28:1 through
+43:29 with all 21 cards. All 110 host tests pass, including selective visibility
+parsing, pixel equality and rejection of out-of-range triangle IDs. Nine real
+geometry poses match the full renderer pixel for pixel. All 236 flight runtime
+files including FLIGHT.EXE are unchanged. Standard build/expanded/dos and
+build/extended/dos are updated; build/extended/preview.mp4 is the final preview.

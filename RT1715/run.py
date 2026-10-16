@@ -17,27 +17,11 @@ import wave
 HERE = Path(__file__).resolve().parent
 
 
-def verify_sync(flight_log, credit_log):
-    """Check actual tracker positions, including the >64 KB flight regression."""
-    def position(log, label):
-        match = re.search(r"^"+label+r"[^\n]*order=(\d+) row=(\d+)", log, re.M)
-        if not match:
-            raise ValueError(f"Missing {label} music cue")
-        return tuple(map(int, match.groups()))
-    cues = {"swoosh": position(flight_log, "SWOOSH"),
-            "overview": position(flight_log, "OVERVIEW"),
-            "flight_end": position(flight_log, "END"),
-            "credits_start": position(credit_log, "START"),
-            "credits_end": position(credit_log, "END")}
-    if not ((25, 5) <= cues["swoosh"] <= (25, 8)):
-        raise ValueError(f"Drone missed swoosh: {cues['swoosh']}")
-    if not ((24, 52) <= cues["overview"] <= (24, 58)):
-        raise ValueError(f"Overview missed logo interval: {cues['overview']}")
-    if not ((26, 55) <= cues["flight_end"] <= (28, 0)):
-        raise ValueError(f"Flyover ended early/late: {cues['flight_end']}")
-    if not ((28, 0) <= cues["credits_start"] <= (28, 1)):
-        raise ValueError(f"Credits missed theme entry: {cues['credits_start']}")
-    return cues
+def verify_sync(flight_log, credit_log, contract=None):
+    """Compatibility entry point shared by playback and release verification."""
+    from chapters import verify_logs
+    from chapters import DEFAULT
+    return verify_logs({'flight': flight_log, 'credits': credit_log}, contract or DEFAULT)
 
 
 def verify_card_schedule(log, schedule, clock):
@@ -61,6 +45,7 @@ def verify_card_schedule(log, schedule, clock):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--dos-dir",type=Path,default=HERE/"build/dos",help="Isolated runtime directory for comparisons")
+    parser.add_argument("--entry",choices=("RT1715.EXE","SHORT.EXE","FLIGHT.EXE"),default="RT1715.EXE",help="Select the expanded/default launcher or preserved short launcher")
     parser.add_argument("--dosbox", default="dosbox-x")
     parser.add_argument("--timeout", type=int, default=300, help="wall-clock limit in seconds")
     parser.add_argument("--no-review",action="store_true",help="Skip automatic Robotron preview/review export")
@@ -73,16 +58,23 @@ def main():
     if not emulator:
         raise SystemExit("DOSBox-X not found; pass --dosbox /path/to/dosbox-x")
     dos = args.dos_dir.resolve()
-    if not (dos / "RT1715.EXE").is_file():
+    expansion = json.loads((dos/'EXPAND.JSON').read_text()) if (dos/'EXPAND.JSON').exists() and args.entry=='RT1715.EXE' else None
+    flight_only = args.entry == "FLIGHT.EXE"
+    scene_only = expansion is not None and expansion['cut'] in ('scene','studies')
+    if not (dos / args.entry).is_file():
         raise SystemExit("Build first: python3 RT1715/build.py")
     capture = HERE / "capture" / datetime.now().strftime("%Y%m%d-%H%M%S-%f")
     capture.mkdir(parents=True)
+    from chapters import DEFAULT, require_buildable
+    require_buildable()
+    shutil.copyfile(DEFAULT, capture / 'chapters.json')
     (dos/"PM.CFG").write_text(args.color+"\n")
     result = dos / "RESULT.TXT"
     result.unlink(missing_ok=True)
     (dos / "CPU.TXT").unlink(missing_ok=True)
     (dos / "CRED.LOG").unlink(missing_ok=True)
     (dos / "FLIGHT.LOG").unlink(missing_ok=True)
+    for name in ("FX.LOG", "POST.LOG"): (dos/name).unlink(missing_ok=True)
     # Branch immediately on the application's return status, before ECHO
     # or other shell commands have a chance to change ERRORLEVEL.
     batch = """@echo off
@@ -97,6 +89,7 @@ echo FAIL > result.txt
 :done
 exit
 """
+    batch=batch.replace("rt1715.exe > demo.log",args.entry+" > demo.log")
     (dos / "RUNTEST.BAT").write_bytes(batch.replace("\n", "\r\n").encode("ascii"))
     env = dict(os.environ, SDL_VIDEODRIVER="dummy", SDL_AUDIODRIVER="dummy")
     command = [emulator, "-conf", "dosbox-x.conf", "-noautoexec", "-fastlaunch",
@@ -124,7 +117,7 @@ exit
         shutil.copyfile(dos / "DEMO.LOG", capture / "demo.log")
     if returncode or status != "PASS":
         raise SystemExit(f"Playback failed ({status}); inspect {capture / 'dosbox.log'}")
-    if (dos / "CRED.IDX").exists():
+    if not scene_only and not flight_only and (dos / "CRED.IDX").exists():
         credit_log = dos / "CRED.LOG"
         if not credit_log.exists() or not credit_log.read_text().endswith("COMPLETE\n"):
             raise SystemExit("Custom credits did not complete; inspect build/dos/CRED.LOG")
@@ -132,14 +125,19 @@ exit
     if (dos / "FLIGHT.LOG").exists():
         shutil.copyfile(dos / "FLIGHT.LOG", capture / "flight.log")
     sync_cues = None
-    if (dos / "CRED.SYN").exists():
+    if not scene_only and not flight_only and (dos / "CRED.SYN").exists():
         try:
             sync_cues = verify_sync((capture / "flight.log").read_text(),
-                                    (capture / "credits.log").read_text())
+                                    (capture / "credits.log").read_text(), capture / "chapters.json")
         except (OSError, ValueError) as error:
             raise SystemExit(f"Music synchronization failed: {error}")
+    if flight_only:
+        from chapters import verify_logs
+        sync_cues = verify_logs({"flight": (capture / "flight.log").read_text()}, capture / "chapters.json", "flight")
+        if (dos / "CRED.LOG").exists():
+            raise SystemExit("Flight-only cut unexpectedly ran credits")
     card_sync=None
-    if (dos/'CRED.CUE').exists():
+    if not scene_only and not flight_only and (dos/'CRED.CUE').exists():
         card_sync=verify_card_schedule((capture/'credits.log').read_text(),(dos/'CRED.CUE').read_text(),(dos/'CRED.TIM').read_bytes())
     actual_cycles=(dos / "CPU.TXT").read_text().strip()
     if args.cycles is not None and actual_cycles != f"fixed {args.cycles}":
@@ -168,7 +166,7 @@ exit
                 audible |= any(block)
             audio.append({"file": path.name, "seconds": duration,
                           "nonzero_samples": audible})
-    if not any(item["nonzero_samples"] and item["seconds"] > 30 for item in audio):
+    if not any(item["nonzero_samples"] and item["seconds"] > (5 if scene_only else 30) for item in audio):
         raise SystemExit("Missing sustained audio; inspect captures")
     summary = {"dos_exit": status, "headless": True,
                "wall_seconds": round(time.monotonic() - start, 2),
@@ -181,7 +179,24 @@ exit
         for p in sorted(dos.iterdir()) if p.is_file() and (p.name.startswith('U2E.') or
         p.suffix.upper() in ('.EXE','.CRD') or p.name in ('REALITY.FC','CRED.IDX','CRED.SYN','CRED.CUE','CRED.TIM'))}
     flight_text=(capture/"flight.log").read_text() if (capture/"flight.log").exists() else ""
-    summary["renderer_mode"]="protected" if flight_text.startswith("PROTECTED ") else "real"
+    summary["chapter_contract_sha256"] = hashlib.sha256((capture/"chapters.json").read_bytes()).hexdigest()
+    summary["cut"] = expansion['cut'] if expansion else ('flight' if flight_only else 'short')
+    if expansion:
+        from expansion_checks import verify
+        summary['expansion'] = {}
+        shutil.copyfile(dos/'EXPAND.JSON', capture/'expansion.json')
+        for filename, key in [('FX.LOG','intro'), ('POST.LOG','post')]:
+            if expansion[key]:
+                text=(dos/filename).read_text()
+                summary['expansion'][key]=verify(text,expansion[key])
+                (capture/filename.lower()).write_text(text)
+        for name, expected in expansion['runtime_sha256'].items():
+            actual=hashlib.sha256((dos/name).read_bytes()).hexdigest()
+            if actual != expected: raise ValueError('Expansion runtime changed: '+name)
+            summary['runtime_sha256'][name]=actual
+        summary['runtime_sha256']['EXPAND.JSON']=hashlib.sha256((dos/'EXPAND.JSON').read_bytes()).hexdigest()
+    summary["renderer_mode"]="protected-effects" if scene_only else ("protected" if flight_text.startswith("PROTECTED ") else "real")
+    if scene_only:summary["color_backend"]="linear-vga"
     if summary["renderer_mode"]=="real": summary["color_backend"]="legacy-vga"
     counters=re.search(r"^COUNTERS (.+)$",flight_text,re.M)
     if counters:
@@ -191,7 +206,9 @@ exit
     if card_sync is not None:summary["credit_schedule"]=card_sync
     (capture / "result.json").write_text(json.dumps(summary, indent=2) + "\n")
     print(f"PASS: DOS returned successfully; video and non-silent audio captured in {capture}")
-    if sync_cues is not None and not args.no_review:
+    if (expansion or flight_only) and not args.no_review:
+        subprocess.run([sys.executable,str(HERE/"preview.py"),str(capture),"--output",str(capture/"preview.mp4")],check=True)
+    if expansion is None and not flight_only and sync_cues is not None and not args.no_review:
         python=HERE/'build/host-python/bin/python'
         subprocess.run([str(python) if python.exists() else sys.executable,
                         str(HERE/'review.py'),str(capture)],check=True)

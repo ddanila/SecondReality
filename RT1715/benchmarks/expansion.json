@@ -1,0 +1,605 @@
+{
+  "date": "2026-10-16",
+  "host_tests": 109,
+  "tests_log": "build/expansion-tests.log",
+  "cuts": {
+    "expanded": {
+      "capture": "capture/20261016-135008-982384",
+      "result_sha256": "38eb89a733ed8f1a391b4a3afa838a12c8c2015c26948c29d6b4752f3fe36c36",
+      "dos_exit": "PASS",
+      "headless": true,
+      "wall_seconds": 212.65,
+      "cpu_cycles": "fixed 300000",
+      "music_cues": {
+        "swoosh": [
+          25,
+          6
+        ],
+        "overview": [
+          24,
+          54
+        ],
+        "flight_end": [
+          26,
+          57
+        ],
+        "credits_start": [
+          28,
+          0
+        ],
+        "credits_end": [
+          43,
+          29
+        ]
+      },
+      "expansion": {
+        "intro": {
+          "entries": [
+            {
+              "scene": "identity",
+              "position": [
+                42,
+                2
+              ]
+            },
+            {
+              "scene": "lens",
+              "position": [
+                43,
+                0
+              ]
+            },
+            {
+              "scene": "tunnel",
+              "position": [
+                47,
+                0
+              ]
+            }
+          ],
+          "end": [
+            50,
+            0
+          ],
+          "frames": 2402
+        }
+      },
+      "credit_schedule": {
+        "cards": 21,
+        "entry_error_cs": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "end": [
+          43,
+          29
+        ]
+      },
+      "unchanged_flight_files": 235,
+      "short_launcher_sha256": "23cd4e3c5c960ecec76f5a0d1ab24a74c1ad5d2a91a924041059ed28733d3ab2",
+      "module_sha256": [
+        "aacdb968ae9ebf07bfa02af129fb43f1b15101ab3a94c95b7f5fe69840d28fe1",
+        "3393f848a4840b53aa247c4158e414bad848879e7f6059e214631c310e8dde54"
+      ]
+    },
+    "extended": {
+      "capture": "capture/20261016-135007-598679",
+      "result_sha256": "42e903bf91a958971a1428265cc7ac9eaaec783d8646679926cf0a55c6395a1d",
+      "dos_exit": "PASS",
+      "headless": true,
+      "wall_seconds": 253.46,
+      "cpu_cycles": "fixed 300000",
+      "music_cues": {
+        "swoosh": [
+          25,
+          6
+        ],
+        "overview": [
+          24,
+          54
+        ],
+        "flight_end": [
+          26,
+          57
+        ],
+        "credits_start": [
+          28,
+          1
+        ],
+        "credits_end": [
+          43,
+          29
+        ]
+      },
+      "expansion": {
+        "intro": {
+          "entries": [
+            {
+              "scene": "identity",
+              "position": [
+                42,
+                2
+              ]
+            },
+            {
+              "scene": "lens",
+              "position": [
+                43,
+                0
+              ]
+            },
+            {
+              "scene": "tunnel",
+              "position": [
+                47,
+                0
+              ]
+            }
+          ],
+          "end": [
+            50,
+            0
+          ],
+          "frames": 2402
+        },
+        "post": {
+          "entries": [
+            {
+              "scene": "screen-in",
+              "position": [
+                60,
+                8
+              ]
+            },
+            {
+              "scene": "glenz",
+              "position": [
+                62,
+                0
+              ]
+            },
+            {
+              "scene": "techno",
+              "position": [
+                64,
+                0
+              ]
+            },
+            {
+              "scene": "plasma",
+              "position": [
+                65,
+                0
+              ]
+            },
+            {
+              "scene": "screen-out",
+              "position": [
+                66,
+                0
+              ]
+            }
+          ],
+          "end": [
+            68,
+            0
+          ],
+          "frames": 2673
+        }
+      },
+      "credit_schedule": {
+        "cards": 21,
+        "entry_error_cs": [
+          12,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "end": [
+          43,
+          29
+        ]
+      },
+      "unchanged_flight_files": 235,
+      "short_launcher_sha256": "23cd4e3c5c960ecec76f5a0d1ab24a74c1ad5d2a91a924041059ed28733d3ab2",
+      "module_sha256": [
+        "aacdb968ae9ebf07bfa02af129fb43f1b15101ab3a94c95b7f5fe69840d28fe1",
+        "3393f848a4840b53aa247c4158e414bad848879e7f6059e214631c310e8dde54"
+      ]
+    },
+    "studies": {
+      "capture": "capture/20261016-133957-148190",
+      "result_sha256": "cac4450fdb070f525d753f7d6851b2566b8d4bcc7e07c27d3cc7c3f2e7dcb48d",
+      "dos_exit": "PASS",
+      "headless": true,
+      "wall_seconds": 83.53,
+      "cpu_cycles": "fixed 600000",
+      "expansion": {
+        "intro": {
+          "entries": [
+            {
+              "scene": "identity",
+              "position": [
+                42,
+                1
+              ]
+            },
+            {
+              "scene": "lens",
+              "position": [
+                43,
+                0
+              ]
+            },
+            {
+              "scene": "tunnel",
+              "position": [
+                44,
+                0
+              ]
+            },
+            {
+              "scene": "glenz",
+              "position": [
+                45,
+                0
+              ]
+            },
+            {
+              "scene": "techno",
+              "position": [
+                47,
+                0
+              ]
+            },
+            {
+              "scene": "plasma",
+              "position": [
+                48,
+                0
+              ]
+            },
+            {
+              "scene": "terrain",
+              "position": [
+                50,
+                0
+              ]
+            },
+            {
+              "scene": "mirror",
+              "position": [
+                52,
+                0
+              ]
+            },
+            {
+              "scene": "mountain",
+              "position": [
+                54,
+                0
+              ]
+            },
+            {
+              "scene": "jelly",
+              "position": [
+                56,
+                0
+              ]
+            }
+          ],
+          "end": [
+            58,
+            0
+          ],
+          "frames": 4519
+        }
+      }
+    },
+    "isolated_screen": {
+      "capture": "capture/20261016-135208-440714",
+      "result_sha256": "3bc9bf8021c0f6404ef4d207fb2bbfbabf20b933ca8ecd984c8bc31a2adc7545",
+      "dos_exit": "PASS",
+      "headless": true,
+      "wall_seconds": 16.52,
+      "cpu_cycles": "fixed 300000",
+      "expansion": {
+        "intro": {
+          "entries": [
+            {
+              "scene": "screen-in",
+              "position": [
+                42,
+                2
+              ]
+            }
+          ],
+          "end": [
+            44,
+            0
+          ],
+          "frames": 789
+        }
+      }
+    },
+    "preserved_short": {
+      "capture": "capture/20261016-135402-292611",
+      "result_sha256": "cbae8fb46b1cc36cda8a1203807ef95c9d15f3421ee564134e2dcf6d1d24f362",
+      "dos_exit": "PASS",
+      "headless": true,
+      "wall_seconds": 178.17,
+      "cpu_cycles": "fixed 300000",
+      "music_cues": {
+        "swoosh": [
+          25,
+          6
+        ],
+        "overview": [
+          24,
+          54
+        ],
+        "flight_end": [
+          26,
+          57
+        ],
+        "credits_start": [
+          28,
+          0
+        ],
+        "credits_end": [
+          43,
+          29
+        ]
+      },
+      "credit_schedule": {
+        "cards": 21,
+        "entry_error_cs": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "end": [
+          43,
+          29
+        ]
+      }
+    }
+  },
+  "releases": {
+    "expanded": {
+      "result_sha256": "14bd1167d8c70e04d1b3f359687b6861605b9fafbdf15769c19e2bd47ac6175a",
+      "passed": true,
+      "archive_sha256": "149c7556cb7a53da8655a07cd944120c46e866dd5c01ddf47d7338d83939161d",
+      "packaged_files": 302,
+      "elapsed_seconds": 214.59,
+      "sync": {
+        "swoosh": [
+          25,
+          6
+        ],
+        "overview": [
+          24,
+          54
+        ],
+        "flight_end": [
+          26,
+          57
+        ],
+        "credits_start": [
+          28,
+          0
+        ],
+        "credits_end": [
+          43,
+          29
+        ]
+      },
+      "expansion": {
+        "intro": {
+          "entries": [
+            {
+              "scene": "identity",
+              "position": [
+                42,
+                2
+              ]
+            },
+            {
+              "scene": "lens",
+              "position": [
+                43,
+                0
+              ]
+            },
+            {
+              "scene": "tunnel",
+              "position": [
+                47,
+                0
+              ]
+            }
+          ],
+          "end": [
+            50,
+            0
+          ],
+          "frames": 2402
+        }
+      },
+      "archive": "build/releases/expanded/rt1715-25837c97-work.zip"
+    },
+    "extended": {
+      "result_sha256": "4ca8d9f6bb10e9c3974696dafdcaf3d999eecdf0298bdef5311441914e2b64ba",
+      "passed": true,
+      "archive_sha256": "72e884bab64522c561cf22880c07acf7c30c8c331fae306adaa5eb8866025fec",
+      "packaged_files": 304,
+      "elapsed_seconds": 254.09,
+      "sync": {
+        "swoosh": [
+          25,
+          6
+        ],
+        "overview": [
+          24,
+          54
+        ],
+        "flight_end": [
+          26,
+          57
+        ],
+        "credits_start": [
+          28,
+          1
+        ],
+        "credits_end": [
+          43,
+          29
+        ]
+      },
+      "expansion": {
+        "intro": {
+          "entries": [
+            {
+              "scene": "identity",
+              "position": [
+                42,
+                2
+              ]
+            },
+            {
+              "scene": "lens",
+              "position": [
+                43,
+                0
+              ]
+            },
+            {
+              "scene": "tunnel",
+              "position": [
+                47,
+                0
+              ]
+            }
+          ],
+          "end": [
+            50,
+            0
+          ],
+          "frames": 2402
+        },
+        "post": {
+          "entries": [
+            {
+              "scene": "screen-in",
+              "position": [
+                60,
+                8
+              ]
+            },
+            {
+              "scene": "glenz",
+              "position": [
+                62,
+                0
+              ]
+            },
+            {
+              "scene": "techno",
+              "position": [
+                64,
+                0
+              ]
+            },
+            {
+              "scene": "plasma",
+              "position": [
+                65,
+                0
+              ]
+            },
+            {
+              "scene": "screen-out",
+              "position": [
+                66,
+                0
+              ]
+            }
+          ],
+          "end": [
+            68,
+            0
+          ],
+          "frames": 2673
+        }
+      },
+      "archive": "build/releases/extended/rt1715-25837c97-work.zip"
+    }
+  },
+  "representations": {
+    "glenz": "Source-positioned opaque component bounds and translucent enclosure envelope",
+    "crt": "Source-rendered machine and exact screen mask; live image zoom and signal pattern"
+  },
+  "editorial": "Main cut: identity/lens/tunnel. Extended: CRT entry/glenz/techno/plasma/CRT return. Four lower-priority effects remain runnable studies.",
+  "reviewed_artifacts": [
+    "build/studies/dos-contact.png",
+    "build/extended/review.png",
+    "build/extended/crt-dos-review.png",
+    "build/expanded/preview.mp4",
+    "build/extended/preview.mp4",
+    "build/studies/preview.mp4"
+  ]
+}

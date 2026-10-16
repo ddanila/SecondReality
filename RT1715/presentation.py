@@ -86,6 +86,11 @@ def load(path=DEFAULT, source=None):
             if ImageFont.load_default(size=16).getlength(line)>304:
                 raise ValueError(f'Credit text too small at DOS resolution: {name}: {line}')
         if 'view' in card:
+            view=card['view']
+            if view.get('diagram') not in (None,'clock','matrix','video'):
+                raise ValueError('Unknown technical diagram')
+            if any(k in view and type(view[k]) is not bool for k in ('reveal','closing','cutaway')):
+                raise ValueError('Reveal and closing flags must be booleans')
             for prefix in card['view']['parts']:
                 if not any(n==prefix or n.startswith(prefix+'-') for n in parts):raise ValueError(f'Missing model parts: {prefix}')
             for name in card['view'].get('focus_parts',[]):

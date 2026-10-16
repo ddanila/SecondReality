@@ -45,9 +45,14 @@ def objects(load,records,data,settings):
     unit=settings['drive'];glass=crt_surround(data['screen'])[0]
     for part,color in [('drive-diskette','dark'),('drive-medium','dark'),('drive-diskette-label','white')]:
         source=load(records[f'{part}-{unit}'])
+        kind='machine-label' if part=='drive-diskette-label' else 'machine-disk'
+        if kind=='machine-label':
+            # Paper and hub-ring top surfaces are decals, not competing thin
+            # solids. Keep their source footprint and physical height.
+            source=source.submesh([np.flatnonzero(source.face_normals[:,2]>.5)],append=True)
         # Retain the jacket openings, medium and label; only subpixel welds.
         for i,m in enumerate(chunks(source,precision=(.1,.1,.02))):
-            yield f'disk-{part}-{i}',m,color,'machine-disk'
+            yield f'disk-{part}-{i}',m,color,kind
     for line,entry in enumerate(settings['boot_frames']):
         screen=settings['screen']
         with Image.open(BOOT/entry['image']) as bitmap:

@@ -1,0 +1,733 @@
+{
+  "version": 1,
+  "presentation_notes": [
+    "The cutaway lifts the lid 600 mm and display board 65 mm while retaining source XY positions. These offsets are presentation choices, not service instructions.",
+    "Gold outlines identify source-modeled components. The keyboard pulse is illustrative; it does not represent a measured signal or exact firmware execution.",
+    "Clock, keyboard and disk numerical profiles are reference configurations. Specimen observations concern photographed markings and construction.",
+    "Boot screens are captured from the DAC S550/TOS-M reference configuration; assets/robotron/boot/provenance.json pins the capture inputs."
+  ],
+  "claims": [
+    {
+      "card": "workstation",
+      "line": 1,
+      "text": "Inside the Robotron 1715M",
+      "kind": "editorial",
+      "sources": [],
+      "qualification": "Installed layout follows the model; lid/display lifts are explanatory, not a disassembly procedure."
+    },
+    {
+      "card": "workstation",
+      "line": 2,
+      "text": "Processor, video, drives and power",
+      "kind": "model-reconstruction",
+      "sources": [
+        "layout",
+        "psu",
+        "cutaway-model"
+      ],
+      "qualification": "Installed layout follows the model; lid/display lifts are explanatory, not a disassembly procedure."
+    },
+    {
+      "card": "workstation",
+      "line": 3,
+      "text": "An illustrated component tour",
+      "kind": "editorial",
+      "sources": [],
+      "qualification": "Installed layout follows the model; lid/display lifts are explanatory, not a disassembly procedure."
+    },
+    {
+      "card": "cpu",
+      "line": 1,
+      "text": "Main processor",
+      "kind": "editorial",
+      "sources": [],
+      "qualification": "UA880 CPU role follows the W/M design; exact specimen revision is not established."
+    },
+    {
+      "card": "cpu",
+      "line": 2,
+      "text": "UA880 / Z80-compatible",
+      "kind": "documented-design",
+      "sources": [
+        "cpu"
+      ],
+      "qualification": "UA880 CPU role follows the W/M design; exact specimen revision is not established."
+    },
+    {
+      "card": "cpu",
+      "line": 3,
+      "text": "Executes the system software",
+      "kind": "functional-explanation",
+      "sources": [
+        "cpu"
+      ],
+      "qualification": "UA880 CPU role follows the W/M design; exact specimen revision is not established."
+    },
+    {
+      "card": "main-ram",
+      "line": 1,
+      "text": "Main memory",
+      "kind": "editorial",
+      "sources": [],
+      "qualification": "Package marking is photo-supported; 32 x 64 Kbit gives 256 KiB."
+    },
+    {
+      "card": "main-ram",
+      "line": 2,
+      "text": "256 KiB / 32 M4164B-12 chips",
+      "kind": "specimen-observation",
+      "sources": [
+        "ram"
+      ],
+      "qualification": "Package marking is photo-supported; 32 x 64 Kbit gives 256 KiB."
+    },
+    {
+      "card": "main-ram",
+      "line": 3,
+      "text": "Working storage for programs",
+      "kind": "functional-explanation",
+      "sources": [
+        "ram"
+      ],
+      "qualification": "Package marking is photo-supported; 32 x 64 Kbit gives 256 KiB."
+    },
+    {
+      "card": "cpu-clock",
+      "line": 1,
+      "text": "System timing",
+      "kind": "editorial",
+      "sources": [],
+      "qualification": "3.9936 MHz is the W/M reference profile, not a measurement of this machine."
+    },
+    {
+      "card": "cpu-clock",
+      "line": 2,
+      "text": "3.9936 MHz CPU clock",
+      "kind": "reference-configuration",
+      "sources": [
+        "clock-reference"
+      ],
+      "qualification": "3.9936 MHz is the W/M reference profile, not a measurement of this machine."
+    },
+    {
+      "card": "cpu-clock",
+      "line": 3,
+      "text": "1715W / M reference profile",
+      "kind": "reference-configuration",
+      "sources": [
+        "clock-reference"
+      ],
+      "qualification": "3.9936 MHz is the W/M reference profile, not a measurement of this machine."
+    },
+    {
+      "card": "dma-serial",
+      "line": 1,
+      "text": "DMA and serial I/O",
+      "kind": "editorial",
+      "sources": [],
+      "qualification": "Device roles follow W/M documentation; exact local placement is provisional."
+    },
+    {
+      "card": "dma-serial",
+      "line": 2,
+      "text": "UA858 DMA / UA8560 SIO",
+      "kind": "documented-design",
+      "sources": [
+        "dma",
+        "sio"
+      ],
+      "qualification": "Device roles follow W/M documentation; exact local placement is provisional."
+    },
+    {
+      "card": "dma-serial",
+      "line": 3,
+      "text": "Data transfer and communication",
+      "kind": "functional-explanation",
+      "sources": [
+        "dma",
+        "sio"
+      ],
+      "qualification": "Device roles follow W/M documentation; exact local placement is provisional."
+    },
+    {
+      "card": "drives",
+      "line": 1,
+      "text": "Twin floppy drives",
+      "kind": "editorial",
+      "sources": [],
+      "qualification": "K5601 and Ratan identify separate assemblies; TEAC labels identify electronics, not an exact drive suffix."
+    },
+    {
+      "card": "drives",
+      "line": 2,
+      "text": "K5601 / Ratan assemblies",
+      "kind": "specimen-observation",
+      "sources": [
+        "drive-labels"
+      ],
+      "qualification": "K5601 and Ratan identify separate assemblies; TEAC labels identify electronics, not an exact drive suffix."
+    },
+    {
+      "card": "drives",
+      "line": 3,
+      "text": "TEAC-labelled electronics",
+      "kind": "specimen-observation",
+      "sources": [
+        "drive-labels"
+      ],
+      "qualification": "K5601 and Ratan identify separate assemblies; TEAC labels identify electronics, not an exact drive suffix."
+    },
+    {
+      "card": "floppy-controller",
+      "line": 1,
+      "text": "Floppy controller",
+      "kind": "editorial",
+      "sources": [],
+      "qualification": "A44 follows the W placement drawing; exact specimen correspondence is provisional."
+    },
+    {
+      "card": "floppy-controller",
+      "line": 2,
+      "text": "U8272 at A44",
+      "kind": "documented-design",
+      "sources": [
+        "fdc"
+      ],
+      "qualification": "A44 follows the W placement drawing; exact specimen correspondence is provisional."
+    },
+    {
+      "card": "floppy-controller",
+      "line": 3,
+      "text": "Coordinates disk transfers",
+      "kind": "functional-explanation",
+      "sources": [
+        "fdc"
+      ],
+      "qualification": "A44 follows the W placement drawing; exact specimen correspondence is provisional."
+    },
+    {
+      "card": "drive-adapters",
+      "line": 1,
+      "text": "Drive ribbon adapters",
+      "kind": "editorial",
+      "sources": [],
+      "qualification": "Board marking is observed; contact counts follow the documented interface, not verified wiring."
+    },
+    {
+      "card": "drive-adapters",
+      "line": 2,
+      "text": "Board 05-330-0024",
+      "kind": "specimen-observation",
+      "sources": [
+        "adapter"
+      ],
+      "qualification": "Board marking is observed; contact counts follow the documented interface, not verified wiring."
+    },
+    {
+      "card": "drive-adapters",
+      "line": 3,
+      "text": "34-way drive / 26-way ribbon",
+      "kind": "documented-design",
+      "sources": [
+        "adapter"
+      ],
+      "qualification": "Board marking is observed; contact counts follow the documented interface, not verified wiring."
+    },
+    {
+      "card": "drive-electronics",
+      "line": 1,
+      "text": "Drive electronics",
+      "kind": "editorial",
+      "sources": [],
+      "qualification": "TEAC board identity is observed; circuit-role wording is a general explanation."
+    },
+    {
+      "card": "drive-electronics",
+      "line": 2,
+      "text": "TEAC controller boards",
+      "kind": "specimen-observation",
+      "sources": [
+        "drive-labels"
+      ],
+      "qualification": "TEAC board identity is observed; circuit-role wording is a general explanation."
+    },
+    {
+      "card": "drive-electronics",
+      "line": 3,
+      "text": "Motor and read/write circuitry",
+      "kind": "functional-explanation",
+      "sources": [
+        "drive-labels"
+      ],
+      "qualification": "TEAC board identity is observed; circuit-role wording is a general explanation."
+    },
+    {
+      "card": "diskette",
+      "line": 1,
+      "text": "Disk organization",
+      "kind": "editorial",
+      "sources": [],
+      "qualification": "TOS/M reference format; not a claim about the contents of the photographed disk."
+    },
+    {
+      "card": "diskette",
+      "line": 2,
+      "text": "80 cylinders / 2 sides",
+      "kind": "reference-configuration",
+      "sources": [
+        "disk-reference"
+      ],
+      "qualification": "TOS/M reference format; not a claim about the contents of the photographed disk."
+    },
+    {
+      "card": "diskette",
+      "line": 3,
+      "text": "TOS/M reference: 5 x 1024 B/track",
+      "kind": "reference-configuration",
+      "sources": [
+        "disk-reference"
+      ],
+      "qualification": "TOS/M reference format; not a claim about the contents of the photographed disk."
+    },
+    {
+      "card": "keyboard",
+      "line": 1,
+      "text": "Keyboard controller",
+      "kind": "editorial",
+      "sources": [],
+      "qualification": "Socketed UB880D is observed; scanning is a functional explanation supported by the reference system."
+    },
+    {
+      "card": "keyboard",
+      "line": 2,
+      "text": "Socketed UB880D CPU",
+      "kind": "specimen-observation",
+      "sources": [
+        "keyboard-cpu",
+        "keyboard-data"
+      ],
+      "qualification": "Socketed UB880D is observed; scanning is a functional explanation supported by the reference system."
+    },
+    {
+      "card": "keyboard",
+      "line": 3,
+      "text": "Scans keys independently",
+      "kind": "functional-explanation",
+      "sources": [
+        "keyboard-cpu",
+        "keyboard-data"
+      ],
+      "qualification": "Socketed UB880D is observed; scanning is a functional explanation supported by the reference system."
+    },
+    {
+      "card": "keyboard-rom",
+      "line": 1,
+      "text": "Keyboard firmware",
+      "kind": "editorial",
+      "sources": [],
+      "qualification": "Replacement provenance is owner-confirmed; its binary contents remain unknown."
+    },
+    {
+      "card": "keyboard-rom",
+      "line": 2,
+      "text": "Socketed replacement EPROM",
+      "kind": "specimen-observation",
+      "sources": [
+        "keyboard-rom"
+      ],
+      "qualification": "Replacement provenance is owner-confirmed; its binary contents remain unknown."
+    },
+    {
+      "card": "keyboard-rom",
+      "line": 3,
+      "text": "Stores controller instructions",
+      "kind": "functional-explanation",
+      "sources": [
+        "keyboard-rom"
+      ],
+      "qualification": "Replacement provenance is owner-confirmed; its binary contents remain unknown."
+    },
+    {
+      "card": "keyboard-scan",
+      "line": 1,
+      "text": "Keyboard scanning",
+      "kind": "editorial",
+      "sources": [],
+      "qualification": "K7658 reference matrix/clock. Pulse animation is illustrative key data, not electrical timing."
+    },
+    {
+      "card": "keyboard-scan",
+      "line": 2,
+      "text": "13 x 8 matrix / 683 kHz",
+      "kind": "reference-configuration",
+      "sources": [
+        "keyboard-reference",
+        "keyboard-data"
+      ],
+      "qualification": "K7658 reference matrix/clock. Pulse animation is illustrative key data, not electrical timing."
+    },
+    {
+      "card": "keyboard-scan",
+      "line": 3,
+      "text": "K7658 reference configuration",
+      "kind": "reference-configuration",
+      "sources": [
+        "keyboard-reference",
+        "keyboard-data"
+      ],
+      "qualification": "K7658 reference matrix/clock. Pulse animation is illustrative key data, not electrical timing."
+    },
+    {
+      "card": "keyboard-interface",
+      "line": 1,
+      "text": "Keyboard connection",
+      "kind": "editorial",
+      "sources": [],
+      "qualification": "Separate PCB is observed; transmission description is functional, not a traced pinout."
+    },
+    {
+      "card": "keyboard-interface",
+      "line": 2,
+      "text": "Separate controller PCB",
+      "kind": "specimen-observation",
+      "sources": [
+        "keyboard-cpu",
+        "keyboard-data"
+      ],
+      "qualification": "Separate PCB is observed; transmission description is functional, not a traced pinout."
+    },
+    {
+      "card": "keyboard-interface",
+      "line": 3,
+      "text": "Carries key data to the computer",
+      "kind": "functional-explanation",
+      "sources": [
+        "keyboard-cpu",
+        "keyboard-data"
+      ],
+      "qualification": "Separate PCB is observed; transmission description is functional, not a traced pinout."
+    },
+    {
+      "card": "crt-controller",
+      "line": 1,
+      "text": "Display controller",
+      "kind": "editorial",
+      "sources": [],
+      "qualification": "SAB8275P marking is photo-supported; role follows the documented controller."
+    },
+    {
+      "card": "crt-controller",
+      "line": 2,
+      "text": "SAB8275P",
+      "kind": "specimen-observation",
+      "sources": [
+        "video-controller"
+      ],
+      "qualification": "SAB8275P marking is photo-supported; role follows the documented controller."
+    },
+    {
+      "card": "crt-controller",
+      "line": 3,
+      "text": "Turns display data into video",
+      "kind": "functional-explanation",
+      "sources": [
+        "video-controller"
+      ],
+      "qualification": "SAB8275P marking is photo-supported; role follows the documented controller."
+    },
+    {
+      "card": "display-ram",
+      "line": 1,
+      "text": "Display memory",
+      "kind": "editorial",
+      "sources": [],
+      "qualification": "Three UL6516D packages are photo-supported; the diagram is functional rather than a wiring diagram."
+    },
+    {
+      "card": "display-ram",
+      "line": 2,
+      "text": "Three UL6516D RAM chips",
+      "kind": "specimen-observation",
+      "sources": [
+        "video-installed",
+        "video-memory"
+      ],
+      "qualification": "Three UL6516D packages are photo-supported; the diagram is functional rather than a wiring diagram."
+    },
+    {
+      "card": "display-ram",
+      "line": 3,
+      "text": "Local storage on the video board",
+      "kind": "functional-explanation",
+      "sources": [
+        "video-installed",
+        "video-memory"
+      ],
+      "qualification": "Three UL6516D packages are photo-supported; the diagram is functional rather than a wiring diagram."
+    },
+    {
+      "card": "display-installed",
+      "line": 1,
+      "text": "Display board mounting",
+      "kind": "editorial",
+      "sources": [],
+      "qualification": "Component-side-down orientation is observed; modeled mounts and dimensions remain estimates."
+    },
+    {
+      "card": "display-installed",
+      "line": 2,
+      "text": "Components face downward",
+      "kind": "specimen-observation",
+      "sources": [
+        "video-installed"
+      ],
+      "qualification": "Component-side-down orientation is observed; modeled mounts and dimensions remain estimates."
+    },
+    {
+      "card": "display-installed",
+      "line": 3,
+      "text": "Above the main processor board",
+      "kind": "specimen-observation",
+      "sources": [
+        "video-installed"
+      ],
+      "qualification": "Component-side-down orientation is observed; modeled mounts and dimensions remain estimates."
+    },
+    {
+      "card": "monitor",
+      "line": 1,
+      "text": "Monochrome CRT",
+      "kind": "editorial",
+      "sources": [],
+      "qualification": "Curvature and recessed surround follow photographs; local dimensions are estimated."
+    },
+    {
+      "card": "monitor",
+      "line": 2,
+      "text": "Curved glass and recessed bezel",
+      "kind": "model-reconstruction",
+      "sources": [
+        "monitor"
+      ],
+      "qualification": "Curvature and recessed surround follow photographs; local dimensions are estimated."
+    },
+    {
+      "card": "monitor",
+      "line": 3,
+      "text": "The visible end of the video path",
+      "kind": "functional-explanation",
+      "sources": [
+        "monitor"
+      ],
+      "qualification": "Curvature and recessed surround follow photographs; local dimensions are estimated."
+    },
+    {
+      "card": "psu",
+      "line": 1,
+      "text": "Power supply",
+      "kind": "editorial",
+      "sources": [],
+      "qualification": "Only the enclosure is represented; no rail voltage, wattage or hidden circuit identity is asserted."
+    },
+    {
+      "card": "psu",
+      "line": 2,
+      "text": "Shielded metal enclosure",
+      "kind": "model-reconstruction",
+      "sources": [
+        "psu"
+      ],
+      "qualification": "Only the enclosure is represented; no rail voltage, wattage or hidden circuit identity is asserted."
+    },
+    {
+      "card": "psu",
+      "line": 3,
+      "text": "Supplies the system electronics",
+      "kind": "functional-explanation",
+      "sources": [
+        "psu"
+      ],
+      "qualification": "Only the enclosure is represented; no rail voltage, wattage or hidden circuit identity is asserted."
+    },
+    {
+      "card": "fan",
+      "line": 1,
+      "text": "Cooling assembly",
+      "kind": "editorial",
+      "sources": [],
+      "qualification": "Retainers and cushioning follow photographs; airflow is a general functional explanation."
+    },
+    {
+      "card": "fan",
+      "line": 2,
+      "text": "Fan, frame and retainers",
+      "kind": "specimen-observation",
+      "sources": [
+        "fan"
+      ],
+      "qualification": "Retainers and cushioning follow photographs; airflow is a general functional explanation."
+    },
+    {
+      "card": "fan",
+      "line": 3,
+      "text": "Moves air through the main unit",
+      "kind": "functional-explanation",
+      "sources": [
+        "fan"
+      ],
+      "qualification": "Retainers and cushioning follow photographs; airflow is a general functional explanation."
+    },
+    {
+      "card": "robotron",
+      "line": 1,
+      "text": "Robotron 1715M",
+      "kind": "editorial",
+      "sources": [],
+      "qualification": "Closing title and narrative text."
+    },
+    {
+      "card": "robotron",
+      "line": 2,
+      "text": "A journey inside the machine",
+      "kind": "editorial",
+      "sources": [],
+      "qualification": "Closing title and narrative text."
+    },
+    {
+      "card": "robotron",
+      "line": 3,
+      "text": "END OF TRANSMISSION",
+      "kind": "editorial",
+      "sources": [],
+      "qualification": "Closing title and narrative text."
+    }
+  ],
+  "sources": {
+    "cpu": {
+      "path": "3d-models/models/robotron-1715m/pcb-components.json",
+      "locator": "/instances/32/inspection (id=motherboard-A1)",
+      "sha256": "f0131185d38b1c2c93acf76007756f5f7c5cff70bdb30f08f18a56cc2abb6105",
+      "excerpt": "Z80-compatible main CPU. Documented W/M design; package and local placement estimated. Package: DIP-40_W15.24mm. A references follow the W placement drawing 1.93.310411.8/09; exact specimen revision and pin-one orientation remain unverified. Position uses a local projective fit to nominal DIP-40 lead pitch in owner photo 073200542. Reference correspondence and exact dimensions remain provisional."
+    },
+    "dma": {
+      "path": "3d-models/models/robotron-1715m/pcb-components.json",
+      "locator": "/instances/33/inspection (id=motherboard-A2)",
+      "sha256": "f0131185d38b1c2c93acf76007756f5f7c5cff70bdb30f08f18a56cc2abb6105",
+      "excerpt": "System DMA controller; floppy transfers. Documented W/M design; package and local placement estimated. Package: DIP-40_W15.24mm. A references follow the W placement drawing 1.93.310411.8/09; exact specimen revision and pin-one orientation remain unverified. Position uses a local projective fit to nominal DIP-40 lead pitch in owner photo 073200542. Reference correspondence and exact dimensions remain provisional. Visible specimen legend:"
+    },
+    "sio": {
+      "path": "3d-models/models/robotron-1715m/pcb-components.json",
+      "locator": "/instances/34/inspection (id=motherboard-A3)",
+      "sha256": "f0131185d38b1c2c93acf76007756f5f7c5cff70bdb30f08f18a56cc2abb6105",
+      "excerpt": "Serial I/O, including keyboard receiver. Documented W/M design; package and local placement estimated. Package: DIP-40_W15.24mm. A references follow the W placement drawing 1.93.310411.8/09; exact specimen revision and pin-one orientation remain unverified. Position uses a local projective fit to nominal DIP-40 lead pitch in owner photo 073200542. Reference correspondence and exact dimensions remain provisional. Visible specimen legend:"
+    },
+    "fdc": {
+      "path": "3d-models/models/robotron-1715m/pcb-components.json",
+      "locator": "/instances/35/inspection (id=motherboard-A44)",
+      "sha256": "f0131185d38b1c2c93acf76007756f5f7c5cff70bdb30f08f18a56cc2abb6105",
+      "excerpt": "Floppy-disk controller. Documented W/M design; package and local placement estimated. Package: DIP-40_W15.24mm. A references follow the W placement drawing 1.93.310411.8/09; exact specimen revision and pin-one orientation remain unverified. Position uses a local projective fit to nominal DIP-40 lead pitch in owner photo 073200542. Reference correspondence and exact dimensions remain provisional."
+    },
+    "video-controller": {
+      "path": "3d-models/models/robotron-1715m/pcb-components.json",
+      "locator": "/instances/117/inspection (id=display-controller-P19)",
+      "sha256": "f0131185d38b1c2c93acf76007756f5f7c5cff70bdb30f08f18a56cc2abb6105",
+      "excerpt": "Programmable CRT controller: character rows, attributes and cursor; the board fetches display data locally. Owner component photo 20261014_072935298; nominal package, photo-scaled location and pin-one orientation provisional. Package: DIP-40_W15.24mm. P references are museum photo-placement IDs, not schematic designators. The photographed board is marked 1.93.310402.1 B 2; exact equivalence to the W CRT drawing remains unverified."
+    },
+    "video-memory": {
+      "path": "3d-models/models/robotron-1715m/pcb-components.json",
+      "locator": "/instances/114/inspection (id=display-controller-P16)",
+      "sha256": "f0131185d38b1c2c93acf76007756f5f7c5cff70bdb30f08f18a56cc2abb6105",
+      "excerpt": "Logic/package placement on the W/M display controller. Owner component photo 20261014_072935298; nominal package, photo-scaled location and pin-one orientation provisional. Package: DIP-24_W15.24mm. P references are museum photo-placement IDs, not schematic designators. The photographed board is marked 1.93.310402.1 B 2; exact equivalence to the W CRT drawing remains unverified."
+    },
+    "ram": {
+      "path": "3d-models/models/robotron-1715m/README.md",
+      "locator": "lines 147-148; anchor: M4164B-12 population",
+      "sha256": "baf5c936ac8737459a2980aba92acb67049f02e36c90c9b48f40b59a02cae011",
+      "excerpt": "M4164B-12 population (32 \u00d7 64 Kbit = 256 KiB); CTC labels reflect UA857D. Positions/references inherited from the W drawing remain estimates, rather"
+    },
+    "clock-reference": {
+      "path": "dac/exhibits/robotron-1715m/README.md",
+      "locator": "lines 42-42; anchor: | Main board |",
+      "sha256": "61b9fda1a173459b81906eb5d97b90a26ce4b2eafc6ba9fb5b60bf50840cfd15",
+      "excerpt": "| Main board | 1715W/1715M profile, 256 KB, 3.9936 MHz, supplied CAS decoding | Board revision, switches and ROM dump |"
+    },
+    "keyboard-reference": {
+      "path": "dac/exhibits/robotron-1715m/README.md",
+      "locator": "lines 44-44; anchor: | Keyboard |",
+      "sha256": "61b9fda1a173459b81906eb5d97b90a26ce4b2eafc6ba9fb5b60bf50840cfd15",
+      "excerpt": "| Keyboard | S600/U880 K7658 reference, nominal 683 kHz, 13\u00d78 matrix | Owner photos confirm UB880D and replacement EPROM; ROM dump still needed |"
+    },
+    "disk-reference": {
+      "path": "dac/exhibits/robotron-1715m/README.md",
+      "locator": "lines 45-45; anchor: | Disk |",
+      "sha256": "61b9fda1a173459b81906eb5d97b90a26ce4b2eafc6ba9fb5b60bf50840cfd15",
+      "excerpt": "| Disk | TOS/M 1.0, 80\u00d72\u00d75\u00d71024 raw geometry | Owner disk image and OS revision |"
+    },
+    "drive-labels": {
+      "path": "dac/src/inspection.js",
+      "locator": "lines 71-71; anchor: rear plates identify a Robotron",
+      "sha256": "e01232d756b1ae9c2e7f6788fa89f1fa7999fff9cdda0861077815002f5754d8",
+      "excerpt": "    text: \"Danila\u2019s rear plates identify a Robotron K 5601, serial 044713, from VEB Robotron Buchungsmaschinenwerk Karl-Marx-Stadt, and an assembly by Ratan Exports & Industries Ltd. in India. The TEAC board labels read 15532064-00A and 15532092-00A. These small photo labels retain the original print and wear. The cable-obscured country line is typeset. Drive sizes and hidden details remain estimates.\","
+    },
+    "keyboard-cpu": {
+      "path": "dac/src/inspection.js",
+      "locator": "lines 125-125; anchor: separate narrow controller with a socketed",
+      "sha256": "e01232d756b1ae9c2e7f6788fa89f1fa7999fff9cdda0861077815002f5754d8",
+      "excerpt": "\"Danila\u2019s October 12 photos show the broad switch PCB and a separate narrow controller with a socketed UB880D, small DIP logic, discrete components, connector and shield clamp. The model reconstructs clean parts with nominal 2.54 mm IC lead pitch; board dimensions, placement and hidden routing remain estimates. Open the keyboard to separate the controller for inspection. Danila confirms that the installed EPROM came from another board. "
+    },
+    "keyboard-rom": {
+      "path": "dac/exhibits/robotron-1715m/README.md",
+      "locator": "lines 54-54; anchor: Danila confirms the keyboard EPROM",
+      "sha256": "61b9fda1a173459b81906eb5d97b90a26ce4b2eafc6ba9fb5b60bf50840cfd15",
+      "excerpt": "Danila confirms the keyboard EPROM came from another board and works; its blue window cover is represented, but its firmware contents are unknown. The S600 emulated reference has not been relabeled as the specimen ROM. Existing comparative motherboard/CRT references retain their credits."
+    },
+    "keyboard-data": {
+      "path": "dac/src/inspection.js",
+      "locator": "lines 31-31; anchor: keyboard\u2019s own Z80 scans",
+      "sha256": "e01232d756b1ae9c2e7f6788fa89f1fa7999fff9cdda0861077815002f5754d8",
+      "excerpt": " keys, or focus the exhibit and type. With S600 loaded, the keyboard\u2019s own Z80 scans switches and sends serial input to the OS; its firmware drives Caps and SI/SO state. Clicked Shift/Ctrl latch for one character. Physical keys remain held until release. S600 is a reference layout: some printed legends differ. Without a keyboard ROM, the character adapter retains unverified mappings.\","
+    },
+    "video-installed": {
+      "path": "3d-models/models/robotron-1715m/README.md",
+      "locator": "lines 70-70; anchor: display controller mounted component-side down",
+      "sha256": "baf5c936ac8737459a2980aba92acb67049f02e36c90c9b48f40b59a02cae011",
+      "excerpt": "h integrated A44 U8272 and 32 RAM packages, plus a separate display controller mounted component-side down. [board-layout.json](board-layout.json) records the shared placement, sources and uncertainty. There are <!-- pcb-counts -->138 nominal KiCad DIP packages and 2,568 lead apertures<!-- /pcb-counts -->. The October 14 component-side photographs locate 39 display-board ICs, including three UL6516D memories and the SAB8275P, red uprigh"
+    },
+    "monitor": {
+      "path": "3d-models/models/robotron-1715m/README.md",
+      "locator": "lines 66-66; anchor: monitor surround follows",
+      "sha256": "baf5c936ac8737459a2980aba92acb67049f02e36c90c9b48f40b59a02cae011",
+      "excerpt": "e enclosure instead of leaving an open horizontal slot. The monitor surround follows the rolled perimeter and dished inner return in `133017092` / `125018215`. Local depths and angles remain photo estimates."
+    },
+    "psu": {
+      "path": "dac/src/inspection.js",
+      "locator": "lines 119-119; anchor: The cover, grommets, fan straps",
+      "sha256": "e01232d756b1ae9c2e7f6788fa89f1fa7999fff9cdda0861077815002f5754d8",
+      "excerpt": "    text: \"The cover, grommets, fan straps and cushions follow Danila\u2019s photographs. The unseen power-supply electronics are not reconstructed. Fan motion indicates museum power state; its speed is illustrative.\","
+    },
+    "fan": {
+      "path": "dac/src/inspection.js",
+      "locator": "lines 158-158; anchor: Crossed metal retaining strips",
+      "sha256": "e01232d756b1ae9c2e7f6788fa89f1fa7999fff9cdda0861077815002f5754d8",
+      "excerpt": "ocal dimensions estimated\",photo:\"20261013_150303351\",text:\"Crossed metal retaining strips, corner screws and pale cushioning follow this machine. The rotor spins when powered; speed remains illustrative.\"};"
+    },
+    "adapter": {
+      "path": "dac/src/inspection.js",
+      "locator": "lines 159-159; anchor: The brown 05-330-0024 boards",
+      "sha256": "e01232d756b1ae9c2e7f6788fa89f1fa7999fff9cdda0861077815002f5754d8",
+      "excerpt": "ocal dimensions estimated\",photo:\"20261013_150516969\",text:\"The brown 05-330-0024 boards carry a black drive-edge socket and a taller pale ribbon connector with its retaining latch. Individual 34-way drive and 26-way ribbon contacts replace the previous blocks. Clean routing follows visible staggered bends without claiming a verified electrical pinout. Ribbon routes terminate on the W/M main board; hidden slack remains estimated.\"};"
+    },
+    "layout": {
+      "path": "dac/src/inspection.js",
+      "locator": "lines 113-113; anchor: The W/M motherboard integrates",
+      "sha256": "e01232d756b1ae9c2e7f6788fa89f1fa7999fff9cdda0861077815002f5754d8",
+      "excerpt": "    text: \"The W/M motherboard integrates the U8272 floppy controller, CPU and 256 KB RAM. The separate display controller is installed solder-side up, as photographed in this specimen. Mainboard placement follows the W drawings; display footprints follow the owner photo. The October 14 photos now show both component faces. Display population follows this specimen; motherboard placement and unmeasured dimensions remain provisional. KiCa"
+    },
+    "cutaway-model": {
+      "path": "3d-models/models/robotron-1715m/board-layout.json",
+      "locator": "lines 6-10; anchor: motherboard",
+      "sha256": "081f4f5567bb11844c605fa64f0beaba46d3ef95e30c2765ff2ae6a7e11338a5",
+      "excerpt": "    \"motherboard\": \"1715W/teil_a/Belegungsplan 1715 W A.jpg + B.jpg (1.93.310411.8/09)\",     \"display\": \"1715W/teil_b/Stromlauf CRT-Steuerung A.jpg + B.jpg (1.93.310412.6/04)\",     \"photo\": \"PXL_20261013_150312308.jpg\",     \"componentPhotos\": [       \"PXL_20261014_072935298.jpg\","
+    }
+  }
+}

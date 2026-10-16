@@ -4,6 +4,7 @@ import argparse
 import hashlib
 import json
 import math
+import struct
 import os
 from pathlib import Path
 import shutil
@@ -55,13 +56,17 @@ def load_project(path):
         if type(color) is not int or type(shades) is not int or shades not in (1,8,16,32) or not 0<=color<252 or color+shades>252:
             raise ValueError("Invalid palette ramp: use 1/8/16/32 shades within indices 0..251")
     for card in cards:
-        if not isinstance(card,dict) or set(card) - {"image", "render_model", "lines", "hold_frames", "camera"}:
+        if not isinstance(card,dict) or set(card) - {"image", "render_model", "lines", "hold_frames", "camera", "reveal_frames", "reveal_cs"}:
             raise ValueError("Unknown credit-card option")
         if ("image" in card) == ("render_model" in card):
             raise ValueError("Each card needs exactly one of image or render_model")
         if "render_model" in card and (not isinstance(card["render_model"],str) or
                                        not card["render_model"].lower().endswith(".scad")):
             raise ValueError("render_model must name an OpenSCAD .scad file")
+        frames=card.get('reveal_frames',[])
+        if frames and (not 2<=len(frames)<=16 or not 20<=card.get('reveal_cs',0)<=100):
+            raise ValueError('Reveal needs 2..16 frames and 20..100 centiseconds')
+        if any(not (path.parent/f).is_file() for f in frames):raise ValueError('Missing reveal frame')
         printable(card.get("lines"))
         hold = card.get("hold_frames", 200)
         if type(hold) is not int or not 1 <= hold <= 4200:
@@ -86,12 +91,15 @@ def openscad(command, source, target, extra):
                    env=env, check=True, timeout=180)
 
 
-def make_card(image_path, lines, output, preview):
+def make_card(image_path, lines, output, preview, reveal_frames=(), reveal_cs=80):
     printable(lines)
     with Image.open(image_path) as original:
         image = ImageOps.fit(original.convert("RGB"), (160,100), method=Image.Resampling.LANCZOS)
-    indexed = image.quantize(colors=240, method=Image.Quantize.MEDIANCUT,
-                             dither=Image.Dither.FLOYDSTEINBERG)
+    frames=[Image.open(p).convert('RGB').resize((160,100),Image.Resampling.LANCZOS) for p in reveal_frames]
+    atlas=Image.new('RGB',(160,100*(1+len(frames))))
+    for i,frame in enumerate([image,*frames]):atlas.paste(frame,(0,100*i))
+    shared=atlas.quantize(colors=240,method=Image.Quantize.MEDIANCUT,dither=Image.Dither.NONE)
+    indexed=shared.crop((0,0,160,100))
     colors = (indexed.getpalette() or [])[:720]
     colors += [0] * (720-len(colors))
     rgb = [v for i in range(16) for v in (i*17,)*3] + colors
@@ -107,13 +115,18 @@ def make_card(image_path, lines, output, preview):
                 break
         bbox = font.getbbox(line or " ")
         glyph = Image.new("L", (max(1,bbox[2]-bbox[0]),max(1,bbox[3]-bbox[1])))
-        ImageDraw.Draw(glyph).text((-bbox[0],-bbox[1]), line, font=font, fill=(255,238,187,187)[n])
+        ImageDraw.Draw(glyph).text((-bbox[0],-bbox[1]), line, font=font, fill=(255,244,221,221)[n])
         if glyph.width > 312:
             raise ValueError("Credit line does not fit the 320-pixel text panel")
         text.paste(glyph, ((320-glyph.width)//2, (12,66,110,150)[n]))
     ImageDraw.Draw(text).line((112,49,207,49),fill=85,width=1)
     caption = bytes(round(v*15/255) for v in text.tobytes())
-    output.write_bytes(b"CRD1" + bytes(round(v*63/255) for v in rgb) + caption + pixels)
+    payload=(b"CRD2" if frames else b"CRD1") + bytes(round(v*63/255) for v in rgb) + caption + pixels
+    if frames:
+        payload+=struct.pack('<HH',len(frames),reveal_cs)
+        for i in range(len(frames)):
+            payload+=bytes(p+16 for p in shared.crop((0,100*(i+1),160,100*(i+2))).tobytes())
+    output.write_bytes(payload)
     # Readable host preview of the stable composition; animation stays in DOS.
     picture = Image.frombytes("P", (160,100), pixels)
     picture.putpalette(rgb)
@@ -169,7 +182,8 @@ def prepare(project, build, dos, command="openscad"):
         else:
             image_path = project.parent / card["image"]
         name = f"CARD{n:02}.CRD"
-        make_card(image_path,card["lines"],output/name,output/f"card{n:02}-preview.png")
+        make_card(image_path,card["lines"],output/name,output/f"card{n:02}-preview.png",
+                  [project.parent/p for p in card.get("reveal_frames",[])],card.get("reveal_cs",80))
         index.append(f"{name} {card.get('hold_frames',200)}")
         report["credits"].append({"file":name,"lines":card["lines"],
                                    "image":str(image_path),"hold_frames":card.get("hold_frames",200)})

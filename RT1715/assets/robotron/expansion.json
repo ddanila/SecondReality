@@ -1,0 +1,223 @@
+{
+  "version": 1,
+  "description": "Optional live DOS remakes; preserve the short cut separately.",
+  "music": "MAIN/MUSIC1.S3M",
+  "scenes": [
+    {
+      "id": "identity",
+      "original_source": "DOTS/MAIN.C",
+      "status": "implemented",
+      "renderer": "effects.c",
+      "renderer_id": 0
+    },
+    {
+      "id": "lens",
+      "original_source": "LENS/MAIN.C",
+      "status": "implemented",
+      "renderer": "effects.c",
+      "renderer_id": 1
+    },
+    {
+      "id": "tunnel",
+      "original_source": "TUNNELI/TUN10.PAS",
+      "status": "implemented",
+      "renderer": "effects.c",
+      "renderer_id": 2
+    },
+    {
+      "id": "glenz",
+      "original_source": "GLENZ/MAIN.C",
+      "status": "implemented",
+      "renderer": "effects.c",
+      "renderer_id": 3
+    },
+    {
+      "id": "techno",
+      "original_source": "TECHNO/KOE.C",
+      "status": "implemented",
+      "renderer": "effects.c",
+      "renderer_id": 4
+    },
+    {
+      "id": "plasma",
+      "original_source": "PLZPART/MAIN.C",
+      "status": "implemented",
+      "renderer": "effects.c",
+      "renderer_id": 5
+    },
+    {
+      "id": "terrain",
+      "original_source": "COMAN/MAIN.C",
+      "status": "implemented-study",
+      "renderer": "effects.c",
+      "renderer_id": 6
+    },
+    {
+      "id": "mirror",
+      "original_source": "WATER/DEMO.PAS",
+      "status": "implemented-study",
+      "renderer": "effects.c",
+      "renderer_id": 7
+    },
+    {
+      "id": "mountain",
+      "original_source": "FOREST/READ2.PAS",
+      "status": "implemented-study",
+      "renderer": "effects.c",
+      "renderer_id": 8
+    },
+    {
+      "id": "jelly",
+      "original_source": "JPLOGO/JP.C",
+      "status": "implemented-study",
+      "renderer": "effects.c",
+      "renderer_id": 9
+    },
+    {
+      "id": "screen-in",
+      "original_source": "IDEAS: enter the monitor",
+      "status": "implemented",
+      "renderer": "effects.c",
+      "renderer_id": 10
+    },
+    {
+      "id": "screen-out",
+      "original_source": "IDEAS: return from the monitor",
+      "status": "implemented",
+      "renderer": "effects.c",
+      "renderer_id": 11
+    }
+  ],
+  "intro": [
+    [
+      "identity",
+      42,
+      0,
+      43,
+      0
+    ],
+    [
+      "lens",
+      43,
+      0,
+      47,
+      0
+    ],
+    [
+      "tunnel",
+      47,
+      0,
+      50,
+      0
+    ]
+  ],
+  "post": [
+    [
+      "screen-in",
+      60,
+      0,
+      62,
+      0
+    ],
+    [
+      "glenz",
+      62,
+      0,
+      64,
+      0
+    ],
+    [
+      "techno",
+      64,
+      0,
+      65,
+      0
+    ],
+    [
+      "plasma",
+      65,
+      0,
+      66,
+      0
+    ],
+    [
+      "screen-out",
+      66,
+      0,
+      68,
+      0
+    ]
+  ],
+  "studies": [
+    [
+      "identity",
+      42,
+      0,
+      43,
+      0
+    ],
+    [
+      "lens",
+      43,
+      0,
+      44,
+      0
+    ],
+    [
+      "tunnel",
+      44,
+      0,
+      45,
+      0
+    ],
+    [
+      "glenz",
+      45,
+      0,
+      47,
+      0
+    ],
+    [
+      "techno",
+      47,
+      0,
+      48,
+      0
+    ],
+    [
+      "plasma",
+      48,
+      0,
+      50,
+      0
+    ],
+    [
+      "terrain",
+      50,
+      0,
+      52,
+      0
+    ],
+    [
+      "mirror",
+      52,
+      0,
+      54,
+      0
+    ],
+    [
+      "mountain",
+      54,
+      0,
+      56,
+      0
+    ],
+    [
+      "jelly",
+      56,
+      0,
+      58,
+      0
+    ]
+  ]
+}

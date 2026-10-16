@@ -369,7 +369,7 @@ def prepare(root, build, command, presentation=None):
             triangles=keycaps.coarse_polygons(mesh,SCALE)+triangles
         print(f'Robotron {slot:02}: {label}: {len(triangles)} polygons',flush=True)
         render_name=label.replace("key-","key-r-",1) if kind=="keycap" else label
-        if kind in ('marking','machine-text'):render_name='ink-'+label
+        if kind in ('marking','machine-text','machine-label'):render_name='ink-'+label
         ink=key_legends.get(label,[])
         face_colors=[colors[color][0]]*len(triangles)
         if kind=='keycap' and key_styles[label]==1:
@@ -382,9 +382,10 @@ def prepare(root, build, command, presentation=None):
         face_colors += [colors[ink_color][0]]*len(ink)
         triangles+=ink
         sort_center=None
-        shades=1 if kind in ('machine-text','machine-led') or (kind=='marking' and color=='white') else 16
+        shades=1 if kind in ('machine-text','machine-led','machine-label') or (kind=='marking' and color=='white') else 16
         if kind=='machine-text':face_colors=[79]*len(triangles)
         if kind=='machine-led':face_colors=[127]*len(triangles)
+        if kind=='machine-label':face_colors=[159]*len(triangles)
         if kind=='marking' and color=='white':face_colors=[159]*len(triangles)
         binary=scene.encode('"'+render_name[:20]+'"',triangles,colors[color][0],shades,
                             face_colors=face_colors,precomputed_orders=False,sort_center=sort_center,smooth=('angle' if label=='bezel' else label=='screen'))

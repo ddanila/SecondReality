@@ -69,7 +69,7 @@ class CameraMotionTests(unittest.TestCase):
         r=np.array([[0,-1,0],[1,0,0],[0,0,1]])
         np.testing.assert_allclose(eye,r@(np.array(closing['eye'])-pivot)+pivot)
         np.testing.assert_allclose(target,r@(np.array(closing['target'])-pivot)+pivot)
-        self.assertLess(distances[-1],360)
+        self.assertLess(distances[-1],270)
 
     def test_screen_return_starts_and_finishes_without_a_velocity_jump(self):
         for t in (48.5,57.2):

@@ -8,8 +8,15 @@ from PIL import Image, ImageOps, ImageDraw, ImageFont
 from prepare import openscad
 
 
-def render_cards(config, output, records, load, chips, keys, command):
+def render_cards(config, output, records, load, chips, keys, command, only=None, context=False):
     cards=json.loads(config.read_text()); result=[]; report=[]
+    if only is not None:
+        cards=[c for c in cards if c['image']==only]
+        if not cards:raise ValueError('Unknown credit image: '+only)
+    if context:
+        for c in cards:c.get('view',{}).pop('cutaway',None)
+    if only and any(c.get('view',{}).get('reveal') for c in cards):
+        render_cards(config,output,records,load,chips,keys,command,only='workstation',context=True)
     for card in cards:
         name=card['image']; names=[]
         if 'view' not in card:
@@ -61,8 +68,11 @@ def render_cards(config, output, records, load, chips, keys, command):
             component=next(m for n,m,color in solids if n==view['focus_component'])
             pieces=component.split(only_watertight=False)
             largest=max(len(m.faces) for m in pieces)
-            pieces=[m for m in pieces if len(m.faces)>=largest*.5]
-            selected.append(min(pieces,key=lambda m:m.bounds.mean(axis=0)[0]))
+            if view.get('component_selection')!='largest-body':
+                pieces=[m for m in pieces if len(m.faces)>=largest*.5]
+            selected.append(max(pieces,key=lambda m:float(np.prod(m.extents)))
+                            if view.get('component_selection')=='largest-body' else
+                            min(pieces,key=lambda m:m.bounds.mean(axis=0)[0]))
         crop=None
         if view.get('focus_chips') or view.get('focus_parts') or view.get('focus_component'):
             if not selected: raise ValueError(f'Empty component focus: {name}')
@@ -102,6 +112,7 @@ def render_cards(config, output, records, load, chips, keys, command):
         pixels=np.array(Image.open(png).convert('RGB'))
         pixels[np.all(pixels==[29,31,33],axis=2)]=0
         rendered=Image.fromarray(pixels)
+        rendered.save(output/f'{name}-photo.png')
         locator=None
         if crop and view.get('annotation') and view.get('locator',True):
             full_images=[]
@@ -118,7 +129,7 @@ def render_cards(config, output, records, load, chips, keys, command):
             locator=Image.new('RGB',(48,70),'black');thumb=ImageOps.contain(overview,(44,54))
             ox=(48-thumb.width)//2;oy=12+(54-thumb.height)//2
             locator.paste(thumb,(ox,oy));d=ImageDraw.Draw(locator)
-            d.text((4,1),'BOARD' if board else 'PART',fill='white',font=ImageFont.load_default(size=8))
+            d.text((4,1),'BOARD' if board else 'PART',fill='white',font=ImageFont.load_default(size=9))
             if len(xx0):
                 sx=thumb.width/overview.width;sy=thumb.height/overview.height
                 d.rectangle((ox+int(xx0.min()*sx),oy+int(yy0.min()*sy),
@@ -144,7 +155,7 @@ def render_cards(config, output, records, load, chips, keys, command):
             else:
                 small=rendered.resize((160,100),Image.Resampling.LANCZOS)
                 sx=sy=1/6;main_y=0
-            draw=ImageDraw.Draw(small);font=ImageFont.load_default(size=8)
+            draw=ImageDraw.Draw(small);font=ImageFont.load_default(size=9)
             label=view['annotation'];target=(round(float(xx.mean())*sx),round(float(yy.mean())*sy)+main_y)
             width=round(draw.textlength(label,font=font))
             label_x=(104 if locator else 152)-width if target[0]>(54 if locator else 80) else 8
@@ -162,8 +173,8 @@ def render_cards(config, output, records, load, chips, keys, command):
             rendered=small.resize((960,600),Image.Resampling.NEAREST)
         if not view.get('annotation') and view.get('title'):
             small=rendered.resize((160,100),Image.Resampling.LANCZOS);draw=ImageDraw.Draw(small)
-            title=view['title'];font=ImageFont.load_default(size=8)
-            if draw.textlength(title,font=font)>150:font=ImageFont.load_default(size=7)
+            title=view['title'];font=ImageFont.load_default(size=9)
+            if draw.textlength(title,font=font)>150:raise ValueError('Shorten picture title: '+title)
             draw.rectangle((3,2,156,13),fill='black');draw.text((5,3),title,fill='white',font=font)
             rendered=small.resize((960,600),Image.Resampling.NEAREST)
         im=ImageOps.contain(rendered,(948,588))
@@ -174,4 +185,8 @@ def render_cards(config, output, records, load, chips, keys, command):
         stamp.write_text(signature)
         report.append(entry)
     (output/'credit-views.json').write_text(json.dumps(report,indent=2)+'\n')
-    return result
+    if any(c.get('view',{}).get('cutaway') for c in cards):
+        from credit_cutaway import render
+        render(output,records,load,chips,command)
+    from credit_story import finish
+    return finish(cards,result,output)

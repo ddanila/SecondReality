@@ -1,0 +1,228 @@
+{
+  "date": "2026-10-16",
+  "changes_in_order": [
+    "Readable labels and brighter secondary captions at 4:3",
+    "Source-mesh lid/display-board cutaway",
+    "Component-linked timing, key-data and video diagrams",
+    "Isolated single-card host previews with reading-time report",
+    "Portable per-caption claim index"
+  ],
+  "host_tests": 98,
+  "picture_label_font_floor": 9,
+  "secondary_caption_level": 221,
+  "cards": 21,
+  "animated_cards": [
+    1,
+    2,
+    4,
+    11,
+    13,
+    15,
+    16
+  ],
+  "minimum_static_reading_seconds": 2.52,
+  "preview": {
+    "command": "RT1715/build/host-python/bin/python RT1715/preview_credit.py keyboard-scan",
+    "matches_installed_card": true,
+    "card_sha256": "08f6d24d5fb610890c5e8722d9c8bc7c141e19fb251ecb550ef9ece0bc240626"
+  },
+  "cutaway": {
+    "source_xy_preserved": true,
+    "lid_lift_mm": 600,
+    "display_lift_mm": 65,
+    "frames": 16,
+    "duration_cs": 96,
+    "scope": "Illustrative exploded view, not service instructions."
+  },
+  "claims": {
+    "lines": 63,
+    "source_records": 21,
+    "source_hashes_verified": true,
+    "sha256": "59cef560249d23d1f110826ddb3eb3193b2b2edcda4f33b5318d429088a6ef59"
+  },
+  "playback": {
+    "capture": "capture/20261016-111819-127780",
+    "headless": true,
+    "dos_exit": "PASS",
+    "music_cues": {
+      "swoosh": [
+        25,
+        6
+      ],
+      "overview": [
+        24,
+        54
+      ],
+      "flight_end": [
+        26,
+        57
+      ],
+      "credits_start": [
+        28,
+        0
+      ],
+      "credits_end": [
+        43,
+        29
+      ]
+    },
+    "credit_schedule": {
+      "cards": 21,
+      "positions": [
+        [
+          28,
+          0
+        ],
+        [
+          28,
+          40
+        ],
+        [
+          29,
+          16
+        ],
+        [
+          29,
+          56
+        ],
+        [
+          30,
+          40
+        ],
+        [
+          31,
+          16
+        ],
+        [
+          31,
+          56
+        ],
+        [
+          32,
+          32
+        ],
+        [
+          33,
+          8
+        ],
+        [
+          33,
+          48
+        ],
+        [
+          34,
+          32
+        ],
+        [
+          35,
+          8
+        ],
+        [
+          35,
+          48
+        ],
+        [
+          36,
+          24
+        ],
+        [
+          37,
+          0
+        ],
+        [
+          38,
+          8
+        ],
+        [
+          39,
+          24
+        ],
+        [
+          41,
+          0
+        ],
+        [
+          41,
+          40
+        ],
+        [
+          42,
+          16
+        ],
+        [
+          42,
+          56
+        ]
+      ],
+      "entry_error_cs": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "end": [
+        43,
+        29
+      ]
+    }
+  },
+  "visual": {
+    "path": "build/visual-regressions/20261016-112300",
+    "passed": true,
+    "images": 14,
+    "changed_reference": "credit-handoff only; reviewed new cutaway and brighter captions",
+    "credit_sample_seconds": 68.0
+  },
+  "flyover": {
+    "unchanged_runtime_file_count": 235,
+    "verified_against_capture": "capture/20261016-074856-201105",
+    "retained_motion_reference_frames": 1963
+  },
+  "release": {
+    "path": "build/releases/component-guide/rt1715-25837c97-work.zip",
+    "passed": true,
+    "archive_sha256": "93034c2528e60597172cab7752acfe2047638068ebcf7fd7c1220b80cfc2daed",
+    "packaged_files": 290,
+    "elapsed_seconds": 175.14,
+    "launcher": "sh HEADLESS.SH (unpacked, launched from parent directory)",
+    "sync": {
+      "swoosh": [
+        25,
+        6
+      ],
+      "overview": [
+        24,
+        54
+      ],
+      "flight_end": [
+        26,
+        57
+      ],
+      "credits_start": [
+        28,
+        0
+      ],
+      "credits_end": [
+        43,
+        29
+      ]
+    }
+  }
+}

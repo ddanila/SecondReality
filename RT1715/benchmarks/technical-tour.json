@@ -1,0 +1,212 @@
+{
+  "date": "2026-10-16",
+  "host_tests": 95,
+  "changes_in_order": [
+    "Subsystem credit narrative",
+    "Clock, keyboard matrix and video-path diagrams",
+    "Three 0.8-second assembly/board/detail reveals",
+    "Material ramp separation",
+    "Closing composition and stationary fade",
+    "Fresh extracted release verification"
+  ],
+  "credit_count": 21,
+  "animated_cards": [
+    2,
+    11,
+    15
+  ],
+  "reveal_frames": 9,
+  "reveal_duration_cs": 80,
+  "minimum_static_reading_cs": 268,
+  "playback": {
+    "capture": "capture/20261016-074856-201105",
+    "dos_exit": "PASS",
+    "headless": true,
+    "music_cues": {
+      "swoosh": [
+        25,
+        6
+      ],
+      "overview": [
+        24,
+        54
+      ],
+      "flight_end": [
+        26,
+        57
+      ],
+      "credits_start": [
+        28,
+        0
+      ],
+      "credits_end": [
+        43,
+        29
+      ]
+    },
+    "credit_schedule": {
+      "cards": 21,
+      "positions": [
+        [
+          28,
+          0
+        ],
+        [
+          28,
+          40
+        ],
+        [
+          29,
+          16
+        ],
+        [
+          29,
+          56
+        ],
+        [
+          30,
+          40
+        ],
+        [
+          31,
+          16
+        ],
+        [
+          31,
+          56
+        ],
+        [
+          32,
+          32
+        ],
+        [
+          33,
+          8
+        ],
+        [
+          33,
+          48
+        ],
+        [
+          34,
+          32
+        ],
+        [
+          35,
+          8
+        ],
+        [
+          35,
+          48
+        ],
+        [
+          36,
+          24
+        ],
+        [
+          37,
+          0
+        ],
+        [
+          38,
+          8
+        ],
+        [
+          39,
+          24
+        ],
+        [
+          41,
+          0
+        ],
+        [
+          41,
+          40
+        ],
+        [
+          42,
+          16
+        ],
+        [
+          42,
+          56
+        ]
+      ],
+      "entry_error_cs": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "end": [
+        43,
+        29
+      ]
+    },
+    "renderer_sha256": "318f4a3a52b890dbb9e57bb075e48154fb449c6187f6ad00deeedf757617262b",
+    "scene_sha256": "a33bb0da87c1557e4a42dd57e0596715ee43af466e8b180899564237d7d772c8"
+  },
+  "visual": {
+    "path": "build/visual-regressions/20261016-075323",
+    "passed": true,
+    "accepted": true,
+    "images": 14,
+    "reason": "Reviewed material palette changes; geometry and route unchanged"
+  },
+  "motion": {
+    "path": "build/motion-regressions/20261016-075555",
+    "frames": 1963,
+    "passed": true,
+    "accepted": true,
+    "host_bake_exact_matches": 1963,
+    "archive_sha256": "d45870dab0a6815aa4010ae1298749056929e6c0367debf74771db24b48496eb",
+    "streamed_archive": true
+  },
+  "release": {
+    "path": "build/releases/rt1715-25837c97-work.zip",
+    "passed": true,
+    "archive_sha256": "83548276b7bc6ab8527967b1b8bc94c2fe71560216b7fbcf71951d95dfa04f3e",
+    "packaged_files": 288,
+    "elapsed_seconds": 175.48,
+    "launcher": "sh HEADLESS.SH (unpacked, launched from parent directory)",
+    "sync": {
+      "swoosh": [
+        25,
+        6
+      ],
+      "overview": [
+        24,
+        54
+      ],
+      "flight_end": [
+        26,
+        57
+      ],
+      "credits_start": [
+        28,
+        0
+      ],
+      "credits_end": [
+        43,
+        29
+      ]
+    }
+  }
+}
