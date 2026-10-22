@@ -1550,7 +1550,10 @@ scroll bitmap from an explicitly supplied host font; regular builds use the
 bitmap directly. The water palette preserves tape-first/water-second fades.
 
 Selected reflection tape (2026-10-22): the improved 400x35 / 1x version,
-with round punches, uninterrupted blank feed leader and the ASCII Easter egg
+with rectangular punches, uninterrupted blank feed leader and the ASCII Easter egg
 THIS TAPE CANNOT PROVE WHAT IT SAYS. This is the default in full_build.py.
-full_tape_hd.py and benchmarks/tape-hd.json retain the unselected 800x70
-experiment for reference; it is not installed in the current full demo.
+Use full_water.tape(..., hole_shape="round") for the retained round 1x
+experiment. full_tape_hd.py and benchmarks/tape-hd.json retain the unselected
+800x70 experiment. Neither is installed in the current full demo.
+The latest diskette uses an 8-degree bank and non-overlapping label surfaces;
+dancing words use 640 dots with wider, centered depth layers.

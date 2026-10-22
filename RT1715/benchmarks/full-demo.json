@@ -7,7 +7,7 @@
   "uninterrupted_full_capture": "RT1715/build/full-integrated-v4/capture",
   "corrected_opening_through_lens_capture": "build/review-detail-fixes/capture-v2",
   "validation_limit": "The latest assembled full runtime has not been recaptured end-to-end. Continuous sequence and final scene captures are separate evidence.",
-  "host_tests": 16,
+  "host_tests": 17,
   "dosbox_cycles": 300000,
   "headless": true,
   "reviews": [
@@ -88,73 +88,77 @@
     {
       "part": "diskette-flight",
       "video": "02-diskette-flight.mp4",
-      "status": "ready for visual review",
+      "status": "Updated; music-aligned independent scene capture",
       "alignment": {
         "original": "RT1715/build/full-reference/capture",
-        "remake": "RT1715/build/review-final-first/capture-v2",
+        "remake": "RT1715/build/space-stable-label/capture",
         "reference_start": 79.78732129098536,
         "duration": 21.85959535427903,
-        "remake_offset": 0.0,
+        "remake_offset": -79.96794629098537,
         "audio_checks": [
           {
             "reference_seconds": 82.51977071027024,
-            "offset_seconds": 0.0,
-            "correlation": 0.9932880989106395,
+            "offset_seconds": -79.96794629098537,
+            "correlation": 0.9950177209270435,
             "reliable": true
           },
           {
             "reference_seconds": 84.91888679622178,
-            "offset_seconds": 0.0,
-            "correlation": 0.9951635319948297,
+            "offset_seconds": -79.96794629098537,
+            "correlation": 0.9953484021335569,
             "reliable": true
           },
           {
             "reference_seconds": 87.31800288217333,
-            "offset_seconds": 0.0,
-            "correlation": 0.9998803541045321,
+            "offset_seconds": -79.96794629098537,
+            "correlation": 0.99987803342819,
             "reliable": true
           },
           {
             "reference_seconds": 89.71711896812488,
-            "offset_seconds": 0.0,
-            "correlation": 0.8849060812852497,
+            "offset_seconds": -79.96794629098537,
+            "correlation": 0.8543548642364299,
             "reliable": true
           },
           {
             "reference_seconds": 92.11623505407641,
-            "offset_seconds": 0.0,
-            "correlation": 0.8158332968288113,
+            "offset_seconds": -79.96794629098537,
+            "correlation": 0.7708820252288763,
             "reliable": true
           },
           {
-            "reference_seconds": 94.51535114002796,
-            "offset_seconds": 0.0,
-            "correlation": 0.9913878189398524,
+            "reference_seconds": 94.51535114002797,
+            "offset_seconds": -79.96794629098537,
+            "correlation": 0.9913427864982607,
             "reliable": true
           },
           {
             "reference_seconds": 96.91446722597951,
-            "offset_seconds": 0.0,
-            "correlation": 0.9698677035071944,
+            "offset_seconds": -79.96794629098537,
+            "correlation": 0.9698323907789612,
             "reliable": true
           }
         ],
         "audio_source": "RT1715/build/full-reference/capture/full_000.wav",
         "time_stretch": false,
-        "fps": 70
+        "fps": 70,
+        "alignment_window": null,
+        "remake_missing_prefix_seconds": 0.18062500000000625,
+        "labels": [
+          "ORIGINAL SECOND REALITY",
+          "ROBOTRON 1715 / REVIEW"
+        ]
       },
       "scene_timing": {
-        "original_exit": {
-          "module": 0,
-          "order": 12,
-          "row": 42
-        },
-        "remake_exit": {
-          "module": 0,
-          "order": 12,
-          "row": 42
-        },
-        "copper_tick_difference_after_audio_alignment": 1.0
+        "validation": "Independent scene playback at its original music cue; not an uninterrupted full run.",
+        "tracker_exits": [
+          {
+            "executable": "U2A.EXE",
+            "module": 0,
+            "order": 12,
+            "row": 42
+          }
+        ]
       }
     },
     {
@@ -782,82 +786,94 @@
     {
       "part": "dots",
       "video": "12-dots.mp4",
-      "status": "ready for visual review",
+      "status": "Deeper 640-dot words; paired independent music-aligned captures",
       "alignment": {
-        "original": "RT1715/build/full-reference/capture",
-        "remake": "RT1715/build/review-mid/capture",
-        "reference_start": 372.7416916359901,
-        "duration": 37.41191678794624,
-        "remake_offset": 0.041625,
+        "original": "RT1715/build/dots-original-reference/capture",
+        "remake": "RT1715/build/dots-deeper/capture",
+        "reference_start": 0,
+        "duration": 40,
+        "remake_offset": 0.0,
         "audio_checks": [
           {
-            "reference_seconds": 376.7416916359901,
-            "offset_seconds": 0.041625,
-            "correlation": 0.9260830237270328,
+            "reference_seconds": 4.0,
+            "offset_seconds": 0.0,
+            "correlation": 0.9999755770319367,
             "reliable": true
           },
           {
-            "reference_seconds": 381.31034443398113,
-            "offset_seconds": 0.041625,
-            "correlation": 0.8284189249254089,
+            "reference_seconds": 9.0,
+            "offset_seconds": 0.0,
+            "correlation": 0.9994115821000858,
             "reliable": true
           },
           {
-            "reference_seconds": 385.87899723197216,
-            "offset_seconds": 0.041625,
-            "correlation": 0.8839719353293778,
+            "reference_seconds": 14.0,
+            "offset_seconds": 0.0,
+            "correlation": 0.9996931647744866,
             "reliable": true
           },
           {
-            "reference_seconds": 390.44765002996326,
-            "offset_seconds": 0.041625,
-            "correlation": 0.9776644152057694,
+            "reference_seconds": 19.0,
+            "offset_seconds": 0.0,
+            "correlation": 0.9968120394451049,
             "reliable": true
           },
           {
-            "reference_seconds": 395.0163028279543,
-            "offset_seconds": 0.041625,
-            "correlation": 0.9349856381920189,
+            "reference_seconds": 24.0,
+            "offset_seconds": 0.0,
+            "correlation": 0.9987702319823429,
             "reliable": true
           },
           {
-            "reference_seconds": 399.5849556259453,
-            "offset_seconds": 0.041625,
-            "correlation": 0.818314931925328,
+            "reference_seconds": 29.0,
+            "offset_seconds": 0.0,
+            "correlation": 0.9996163401469137,
             "reliable": true
           },
           {
-            "reference_seconds": 404.15360842393636,
-            "offset_seconds": 0.041625,
-            "correlation": 0.9395054272505413,
+            "reference_seconds": 34.0,
+            "offset_seconds": 0.0,
+            "correlation": 0.999302786729963,
             "reliable": true
           }
         ],
-        "audio_source": "RT1715/build/full-reference/capture/full_000.wav",
+        "audio_source": "RT1715/build/dots-original-reference/capture/full_000.wav",
         "time_stretch": false,
-        "fps": 70
+        "fps": 70,
+        "alignment_window": null,
+        "remake_missing_prefix_seconds": 0,
+        "labels": [
+          "ORIGINAL SECOND REALITY",
+          "ROBOTRON 1715 / REVIEW"
+        ]
       },
       "scene_timing": {
+        "validation": "Paired independent captures at the same music cue, not an uninterrupted full run.",
         "original_exit": {
+          "executable": "MINVBALL.EXE",
+          "phase": "exit",
           "module": 1,
           "order": 86,
-          "row": 58
+          "row": 58,
+          "retrace": 2836
         },
         "remake_exit": {
+          "executable": "MINVBALL.EXE",
+          "phase": "exit",
           "module": 1,
           "order": 86,
-          "row": 58
-        },
-        "copper_tick_difference_after_audio_alignment": -0.917
+          "row": 58,
+          "retrace": 2836
+        }
       }
     },
     {
       "part": "tape-reflections",
       "video": "13-tape-reflections.mp4",
-      "status": "Updated; original and remake captured independently at the same music cue",
+      "status": "Rectangular 1x punches selected; paired independent music-aligned captures",
       "alignment": {
         "original": "RT1715/build/tape-round-original/capture",
-        "remake": "RT1715/build/tape-round-feed/capture",
+        "remake": "RT1715/build/tape-rect-selected/capture",
         "reference_start": 0,
         "duration": 29,
         "remake_offset": 0.0,
@@ -909,30 +925,14 @@
         "time_stretch": false,
         "fps": 70,
         "alignment_window": null,
-        "remake_missing_prefix_seconds": 0
+        "remake_missing_prefix_seconds": 0,
+        "labels": [
+          "ORIGINAL SECOND REALITY",
+          "ROBOTRON 1715 / REVIEW"
+        ]
       },
       "scene_timing": {
-        "validation": "Paired independent scene captures, not an uninterrupted full run. One original soundtrack; no retiming.",
-        "original_exits": [
-          {
-            "executable": "RAYSCRL.EXE",
-            "phase": "exit",
-            "module": 1,
-            "order": 91,
-            "row": 61,
-            "retrace": 2058
-          }
-        ],
-        "remake_exits": [
-          {
-            "executable": "RAYSCRL.EXE",
-            "phase": "exit",
-            "module": 1,
-            "order": 91,
-            "row": 61,
-            "retrace": 2058
-          }
-        ]
+        "validation": "Independent matching music cue, not an uninterrupted full run."
       }
     },
     {
@@ -1304,7 +1304,10 @@
       "seven-shade-bevelled-water-font",
       "goedel-inspired-reflection-tape-ASCII",
       "water-modulated-submerged-lettering",
-      "round-tape-punches-and-continuous-blank-feed-leader"
+      "round-tape-punches-and-continuous-blank-feed-leader",
+      "Select rectangular 2x2 feed / 3x2 data punches at 400x35; retain phrase and continuous leader. Round 1x and 2x remain separate experiments.",
+      "Partition diskette jacket, label and printing into disjoint surface regions to remove painter-order overlap; reduce local bank from 15 to 8 degrees.",
+      "Increase dots from 512 to 640, centered depth slices 600 units apart instead of 250. U880: five complete layers + 40 dots; 1715: seven complete layers + 59 dots."
     ],
     "sources": {
       "ALKU.EXE": "RT1715/build/review-detail-fixes/dos/ALKU.EXE",
@@ -1802,7 +1805,7 @@
       "U2E.134": "35edefbc70dac3a5f8cb0c884ac74141d815990eb476b408e4838e4db3fc9267",
       "U2E.133": "4e705dea444936e148212ab1645a30c9e6340b5c37565bacbd08e8607e90c97b"
     },
-    "host_tests": 15,
+    "host_tests": 17,
     "headless": true,
     "captures": {
       "continuous_opening_to_unicorn": "build/review-mid/capture",
@@ -1818,17 +1821,136 @@
       "round_tape_reference": "build/tape-round-original/capture"
     },
     "validation_limit": "The latest assembled full runtime has not been recaptured end-to-end. Continuous sequence and final scene captures are separate evidence.",
-    "preserved": "build/dos and build/robotron-preview.mp4"
+    "preserved": "build/dos and build/robotron-preview.mp4",
+    "selected_tape": {
+      "date": "2026-10-22",
+      "version": "rectangular 1x",
+      "texture": [
+        400,
+        35
+      ],
+      "hole_shape": "rectangular",
+      "builder": "full_water.tape",
+      "sha256": "56db9c9451a139929c346770ae07e1a9dbe8a97410f7180103dc7e13c2142a13",
+      "not_selected": [
+        "full_water.tape(..., hole_shape=\"round\")",
+        "full_tape_hd 800x70 prototype"
+      ]
+    },
+    "latest_scene_captures": {
+      "rectangular_tape": "RT1715/build/tape-rect-selected/capture",
+      "stable_diskette": "RT1715/build/space-stable-label/capture",
+      "deeper_dots": "RT1715/build/dots-deeper/capture"
+    },
+    "latest_runtime_sha256": {
+      "RAYSCRL.EXE": "56db9c9451a139929c346770ae07e1a9dbe8a97410f7180103dc7e13c2142a13",
+      "U2A.002": "9cae22ac14e81676e56df2c7209ad3476b30dd55de825a299535aa240ad7b67d",
+      "MINVBALL.EXE": "2397c2080a39364d36f6b6193ea5a039ecfd1f9ee018f1f4b94aae0eae9b6284"
+    }
   },
   "selected_tape": {
     "date": "2026-10-22",
-    "version": "improved 1x",
+    "version": "rectangular 1x",
     "texture": [
       400,
       35
     ],
+    "hole_shape": "rectangular",
     "builder": "full_water.tape",
-    "sha256": "73164f7592bf517ab4026f2871b57032082c9030135ca41d2c614ddf4813ebdb",
-    "not_selected": "full_tape_hd 800x70 prototype"
+    "sha256": "56db9c9451a139929c346770ae07e1a9dbe8a97410f7180103dc7e13c2142a13",
+    "not_selected": [
+      "full_water.tape(..., hole_shape=\"round\")",
+      "full_tape_hd 800x70 prototype"
+    ]
+  },
+  "latest_scene_captures": {
+    "rectangular_tape": {
+      "dos_exit": "PASS",
+      "cycles": 300000,
+      "scenes": [
+        {
+          "executable": "RAYSCRL.EXE",
+          "phase": "entry",
+          "module": 1,
+          "order": 88,
+          "row": 1,
+          "retrace": 21
+        },
+        {
+          "executable": "RAYSCRL.EXE",
+          "phase": "exit",
+          "module": 1,
+          "order": 91,
+          "row": 61,
+          "retrace": 2058
+        }
+      ]
+    },
+    "stable_diskette": {
+      "dos_exit": "PASS",
+      "cycles": 300000,
+      "scenes": [
+        {
+          "executable": "U2A.EXE",
+          "phase": "entry",
+          "module": 0,
+          "order": 10,
+          "row": 1,
+          "retrace": 17
+        },
+        {
+          "executable": "U2A.EXE",
+          "phase": "exit",
+          "module": 0,
+          "order": 12,
+          "row": 42,
+          "retrace": 1499
+        }
+      ]
+    },
+    "deeper_dots": {
+      "dos_exit": "PASS",
+      "cycles": 300000,
+      "scenes": [
+        {
+          "executable": "MINVBALL.EXE",
+          "phase": "entry",
+          "module": 1,
+          "order": 75,
+          "row": 60,
+          "retrace": 256
+        },
+        {
+          "executable": "MINVBALL.EXE",
+          "phase": "exit",
+          "module": 1,
+          "order": 86,
+          "row": 58,
+          "retrace": 2836
+        }
+      ]
+    },
+    "dots_original_reference": {
+      "dos_exit": "PASS",
+      "cycles": 300000,
+      "scenes": [
+        {
+          "executable": "MINVBALL.EXE",
+          "phase": "entry",
+          "module": 1,
+          "order": 75,
+          "row": 60,
+          "retrace": 256
+        },
+        {
+          "executable": "MINVBALL.EXE",
+          "phase": "exit",
+          "module": 1,
+          "order": 86,
+          "row": 58,
+          "retrace": 2836
+        }
+      ]
+    }
   }
 }

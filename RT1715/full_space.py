@@ -27,25 +27,33 @@ def build(output):
     def solid(shape,z,depth,color):
         mesh=trimesh.creation.extrude_polygon(shape,depth,engine='earcut')
         mesh.apply_translation((0,0,z));parts.append((mesh,color))
-    solid(jacket,-1.2,2.4,8)
+    # The painter renderer has no depth buffer. Layered label polygons can
+    # exchange order with the jacket at a turn. Partition each cap instead:
+    # paper, ink and jacket occupy disjoint regions of the same surface.
+    shell=trimesh.creation.extrude_polygon(jacket,2.4,engine='earcut')
+    shell.apply_translation((0,0,-1.2))
+    shell.update_faces(abs(shell.face_normals[:,2])<.5)
+    parts.append((shell,8))
+    paper=box(-52,32,52,60)
+    stripe=box(-52,51,52,57)
+    lines=box(-44,38,27,39.8).union(box(-44,44,27,45.8))
+    regions=[(jacket.difference(paper),8),
+             (paper.difference(stripe.union(lines)),28),(stripe,16),(lines,8)]
+    for shape,color in regions:
+        for polygon in getattr(shape,'geoms',[shape]):
+            vertices,faces=trimesh.creation.triangulate_polygon(polygon,engine='earcut')
+            for side in (-1,1):
+                xyz=np.column_stack((vertices,np.full(len(vertices),side*1.2)))
+                mesh=trimesh.Trimesh(vertices=xyz,faces=faces,process=False)
+                if mesh.face_normals[0,2]*side<0:mesh.invert()
+                parts.append((mesh,color))
     # Exposed magnetic medium and hub reinforcement; the center stays open.
     medium=slot.union(hub).union(index).difference(circle(0,0,12))
     for part in getattr(medium,"geoms",[medium]):solid(part,-.18,.36,2)
-    # Single visible label surfaces avoid hidden coplanar back faces.
-    def label(x0,y0,x1,y1,z,color,side):
-        vertices=[(x0,y0,z),(x1,y0,z),(x1,y1,z),(x0,y1,z)]
-        faces=[[0,1,2],[0,2,3]]
-        if side<0:faces=[f[::-1] for f in faces]
-        parts.append((trimesh.Trimesh(vertices=vertices,faces=faces,process=False),color))
-    for side in (-1,1):
-        z=side*1.35
-        label(-52,32,52,60,z,28,side)
-        label(-52,51,52,57,z+side*.18,16,side)
-        for y in (38,44):label(-44,y,27,y+1.8,z+side*.18,8,side)
     bounds=np.array(old['bounds']);origin=bounds.mean(1)
     factor=min((bounds[:,1]-bounds[:,0])[:2]/133.35)
     triangles=[];colors=[]
-    angle=np.deg2rad(15);rotation=np.array([[1,0,0],[0,np.cos(angle),-np.sin(angle)],[0,np.sin(angle),np.cos(angle)]])
+    angle=np.deg2rad(8);rotation=np.array([[1,0,0],[0,np.cos(angle),-np.sin(angle)],[0,np.sin(angle),np.cos(angle)]])
     # Keep a shallow flight attitude; a small bank reveals the jacket details
     # without presenting the disk face-on like the first draft.
     for mesh,color in parts:
@@ -55,7 +63,7 @@ def build(output):
     # Retain the original trailing flare object: the old rasterizer does not
     # safely accept an empty or degenerate object in this animated slot.
     (output/'U2A.003').write_bytes((ROOT/'MAIN/DATA/U2A.003').read_bytes())
-    (output/'space.json').write_text(json.dumps({'replaced_slot':2,'pursuer_slot_1':'unchanged','animation':'unchanged original U2A tracks','explosion':'unchanged original PAM cue and animation','faces':len(triangles),'source':'explicit 133.35 mm 5.25-inch jacket with hub, head slot, index hole, write-protect notch and double-sided label','local_pitch_degrees':15},indent=2)+'\n')
+    (output/'space.json').write_text(json.dumps({'replaced_slot':2,'pursuer_slot_1':'unchanged','animation':'unchanged original U2A tracks','explosion':'unchanged original PAM cue and animation','faces':len(triangles),'source':'explicit 133.35 mm 5.25-inch jacket with hub, head slot, index hole, write-protect notch and double-sided label','local_pitch_degrees':8,'label_surface':'disjoint coplanar jacket, paper and ink; no overlapping decals'},indent=2)+'\n')
     return output
 
 if __name__=='__main__':print(build(HERE/'build/full-space'))

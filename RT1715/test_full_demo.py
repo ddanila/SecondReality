@@ -36,9 +36,35 @@ class FullDemoTests(unittest.TestCase):
             m=trimesh.Trimesh(vertices=mesh['vertices'],faces=[f['indices'] for f in mesh['faces']],process=False)
             center=np.mean(np.array(mesh['bounds']),axis=1)
             from keycaps import hits
-            direction=np.array([0.,-math.sin(math.radians(15)),math.cos(math.radians(15))])
+            direction=np.array([0.,-math.sin(math.radians(8)),math.cos(math.radians(8))])
             locations=hits(m,center+direction*10000,-direction)
             self.assertEqual(len(locations),0)
+            # Rays through paper and printed stripe cross only front and back,
+            # never an underlying jacket or stacked decal surface.
+            from build import ROOT
+            original=scene.decode((ROOT/'MAIN/DATA/U2A.002').read_bytes())
+            bounds=np.array(original['bounds']);origin=bounds.mean(1)
+            scale=min((bounds[:,1]-bounds[:,0])[:2]/133.35)
+            angle=math.radians(8)
+            rotation=np.array([[1,0,0],[0,math.cos(angle),-math.sin(angle)],[0,math.sin(angle),math.cos(angle)]])
+            for y in (35,38.9,48,54):
+                point=origin+rotation@np.array([13.,y,0.])*scale
+                distances=hits(m,point+direction*10000,-direction)
+                self.assertEqual(len(distances),2)
+
+
+    def test_dots_deeper_forms_fit_original_capacity(self):
+        import full_legacy,re
+        with tempfile.TemporaryDirectory() as d:
+            full_legacy.dots(Path(d))
+            header=(Path(d)/'FORM.H').read_text()
+            points=np.array([tuple(map(int,m)) for m in re.findall(r'\{(-?\d+),(-?\d+),(-?\d+)\}',header)]).reshape(3,640,3)
+            for form,layers in zip(points[1:],(6,8)):
+                depths=np.unique(form[:,2])
+                self.assertEqual(len(depths),layers)
+                np.testing.assert_array_equal(np.diff(depths),600)
+                self.assertEqual(depths[0],-depths[-1])
+            self.assertIn('dotnum=640;',(Path(d)/'MAIN.C').read_text())
 
     def test_water_relocation_preserves_code_stack_and_mask(self):
         from full_water import water_projection
@@ -256,7 +282,7 @@ int main(void) {
                 self.assertEqual(new[64772:],old[64772:])
                 self.assertLessEqual(max(new[772:64772]),15)
 
-    def test_tape_round_holes_leader_and_message(self):
+    def test_tape_rectangular_holes_leader_and_message(self):
         from full_water import tape,tape_center
         from full_build import unpack
         from build import ROOT
@@ -275,11 +301,16 @@ int main(void) {
             for x in range(0,400,8):self.assertEqual(strip[tape_center(x)-3,x],0)
             for x in range(320,384,8):
                 for dy in (-12,-9,-6,0,3,6,9,12):self.assertNotEqual(strip[tape_center(x)+dy,x],0)
-            # T has bit 2 set. Cross-section is circular, not a filled square.
+            # T has bit 2 set. Selected data punches are 3 by 2 rectangles.
             x=24;y=tape_center(x)-6
             self.assertEqual(strip[y,x],0)
             self.assertEqual(strip[y,x+1],0)
-            self.assertNotEqual(strip[y+1,x+1],0)
+            self.assertEqual(strip[y+1,x+1],0)
+            self.assertEqual(strip[y+1,x+2],0)
+            self.assertNotEqual(strip[y+1,x+3],0)
+            round_exe=tape(original,Path(d)/"round",hole_shape="round")[0].read_bytes()
+            round_strip=np.frombuffer(round_exe[at+delta+778:at+delta+778+14000],dtype=np.uint8).reshape(35,400)
+            self.assertNotEqual(round_strip[y+1,x+1],0)
             h=struct.unpack_from('<14H',raw);nh=struct.unpack_from('<14H',exe);base=h[4]*16
             self.assertEqual(nh[3],h[3]+1)
             self.assertEqual(nh[7:9],h[7:9])

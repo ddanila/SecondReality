@@ -227,8 +227,10 @@ def tunnel(output):
 def dots(output):
     output=Path(output);output.mkdir(parents=True,exist_ok=True)
     font=(HERE/'assets/full-demo/dots/tosm-chargen.bin').read_bytes()
+    # 640 remains below the original assembly's 1024-dot allocation.
+    # Wider, centered slices make the word depth visible during rotation.
     targets=[]
-    targets.append([((i%32-15.5)*650+((i%32)//8-1.5)*1400,(i//32-7.5)*800,0) for i in range(512)])
+    targets.append([((i%32-15.5)*650+((i%32)//8-1.5)*1400,(i//32-9.5)*800,0) for i in range(640)])
     for word in ('U880','1715'):
         pixels=[]
         for c,char in enumerate(word):
@@ -237,9 +239,10 @@ def dots(output):
                 for x in range(8):
                     if bits&(128>>x):pixels.append(((c*9+x-17)*750,(y-5.5)*1100))
         if not pixels:raise ValueError('Empty glyphs in captured character RAM')
-        targets.append([(*pixels[i%len(pixels)],(i//len(pixels))*250-500) for i in range(512)])
-    (output/'FORM.H').write_text('static int far forms[3][512][3]={'+','.join('{'+','.join('{'+','.join(str(round(v)) for v in point)+'}' for point in form)+'}' for form in targets)+'};\n')
+        targets.append([(*pixels[i%len(pixels)],((i//len(pixels))-((639//len(pixels))/2))*600) for i in range(640)])
+    (output/'FORM.H').write_text('static int far forms[3][640][3]={'+','.join('{'+','.join('{'+','.join(str(round(v)) for v in point)+'}' for point in form)+'}' for form in targets)+'};\n')
     source=(ROOT/'DOTS/MAIN.C').read_text(encoding='cp437')
+    source=source.replace('dotnum=512;','dotnum=640;')
     source=source.replace('mov\tal,color','mov\tal,byte ptr color')
     source=source.replace('int\tdottaul[1024];','int\tdottaul[1024];\n#include "FORM.H"')
     source=source.replace('int\ta,b,c,d,i,j,mode;','int\ta,b,c,d,i,j=0,mode;')
@@ -252,7 +255,7 @@ def dots(output):
             int local=frame-(form==0?500:(form==1?1000:1700));
             int burst=local<120?120-local:(local>510?local-510:0);
             int turn=isin(frame*3)/3,cs=icos(turn),sn=isin(turn);
-            for(a=0;a<512;a++) {
+            for(a=0;a<640;a++) {
                 long xx=forms[form][a][0],yy=forms[form][a][1];
                 int tx=(xx*cs-yy*sn)/256+isin(frame*2)*6;
                 int ty=(xx*sn+yy*cs)/256+icos(frame*3)*3;

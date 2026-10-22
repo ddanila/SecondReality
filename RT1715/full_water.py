@@ -204,7 +204,8 @@ def round_punch(image,x,y,radius):
                 if old>=192:image.putpixel((px,py),192+round((old-192)*(1-coverage)))
 
 
-def tape(released,output):
+def tape(released,output,hole_shape="rectangular"):
+    if hole_shape not in ("rectangular","round"):raise ValueError("Unknown tape hole shape")
     output=Path(output);output.mkdir(parents=True,exist_ok=True)
     old=(ROOT/'WATER/MIEKKA.SCI').read_bytes();new=bytearray(old)
     message=b'THIS TAPE CANNOT PROVE WHAT IT SAYS'
@@ -219,17 +220,20 @@ def tape(released,output):
     tracks=[-12,-9,-6,0,3,6,9,12]
     for x in range(0,400,8):
         center=tape_center(x)
-        round_punch(image,x,center-3,.65)
+        if hole_shape=="round":round_punch(image,x,center-3,.65)
+        else:draw.rectangle((x,center-3,x+1,center-2),fill=0)
     for i,value in enumerate(message):
         x=24+i*8;center=tape_center(x)
         for bit,dy in enumerate(tracks):
-            if value&(1<<bit):round_punch(image,x,center+dy,1.35)
+            if value&(1<<bit):
+                if hole_shape=="round":round_punch(image,x,center+dy,1.35)
+                else:draw.rectangle((x,center+dy,x+2,center+dy+1),fill=0)
     for i in range(64):
         new[10+(192+i)*3:13+(192+i)*3]=bytes((i,min(63,round(i*.88)),min(63,round(i*.59))))
     new[778:778+400*35]=image.tobytes()
     exe=replace_once(Path(released).read_bytes(),old,bytes(new))
     exe=tape_leader(exe)
     (output/'RAYSCRL.EXE').write_bytes(exe)
-    (output/'tape-encoding.json').write_text(json.dumps({'text':message.decode(),'encoding':'ASCII, eight data tracks; LSB first top to bottom; bytes left to right','row_x':'24+8*i','center_y':'17+round(3*sin(x/47))','track_y_offsets':tracks,'feed_y_offset':-3,'feed_x':'0..392 every 8 pixels; continues on blank leader','hole_radii':{'feed':.65,'data':1.35},'leader_columns':[320,383],'leader_center_y':'17+round(2*sin((x-320)*tau/64))'},indent=2)+'\n')
+    (output/'tape-encoding.json').write_text(json.dumps({'text':message.decode(),'encoding':'ASCII, eight data tracks; LSB first top to bottom; bytes left to right','row_x':'24+8*i','center_y':'17+round(3*sin(x/47))','track_y_offsets':tracks,'feed_y_offset':-3,'feed_x':'0..392 every 8 pixels; continues on blank leader','hole_shape':hole_shape,'hole_geometry':({'feed_radius':.65,'data_radius':1.35} if hole_shape=='round' else {'feed_size':[2,2],'data_size':[3,2]}),'leader_columns':[320,383],'leader_center_y':'17+round(2*sin((x-320)*tau/64))'},indent=2)+'\n')
     image.putpalette([v*4 for v in new[10:778]]);image.resize((800,70)).save(output/'tape-preview.png')
     return [output/'RAYSCRL.EXE']

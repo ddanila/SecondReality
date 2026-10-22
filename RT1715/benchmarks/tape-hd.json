@@ -108,7 +108,14 @@
   "validation_limit": "Independent scene captures; this experimental renderer has not been tested in an uninterrupted full demo.",
   "decision": {
     "date": "2026-10-22",
-    "selected": "improved 400x35 1x with rounded holes and continuous blank feed leader",
-    "reason": "user preferred the latest 1x result"
-  }
+    "selected": "rectangular 400x35 1x with continuous blank feed leader",
+    "reason": "user preferred rectangular holes; round 1x and 2x retained separately"
+  },
+  "decision_history": [
+    {
+      "date": "2026-10-22",
+      "selected": "improved 400x35 1x with rounded holes and continuous blank feed leader",
+      "reason": "user preferred the latest 1x result"
+    }
+  ]
 }

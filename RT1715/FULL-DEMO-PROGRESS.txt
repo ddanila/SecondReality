@@ -1,13 +1,13 @@
 SELECTED REFLECTION TAPE — 2026-10-22
 ====================================
 User review selected the latest improved 1x tape (400x35), not the untouched
-Second Reality sword asset: round data/feed holes, continuous blank feed
+Second Reality sword asset: rectangular data/feed holes, continuous blank feed
 leader, and ASCII "THIS TAPE CANNOT PROVE WHAT IT SAYS". full_build.py uses
 full_water.tape; build/full-robotron/dos contains this selected renderer.
-The 800x70 full_tape_hd experiment is retained for reference only and is not
-selected or installed. Keep the reviewed 3D flyover/credits standalone cut.
+The round 1x option (hole_shape="round") and 800x70 full_tape_hd experiment
+are retained separately for reference, not selected or installed. Keep the reviewed 3D flyover/credits standalone cut.
 
-Current validation: 16 host tests pass. Capture scope and limitations are
+Current validation: 17 host tests pass. Capture scope and limitations are
 recorded below and in benchmarks/full-demo.json and benchmarks/tape-hd.json.
 Videos/captures/build outputs are local ignored artifacts, not repo contents.
 
@@ -359,3 +359,26 @@ comparison or proof of minimum hardware requirements. At 300k both versions
 exit at M1 91:61 / retrace 2058. At 60k both finish at retrace 2057; startup
 phase puts 1x at row 60 and 2x at row 61. Detailed evidence and hashes are in
 benchmarks/tape-hd.json. No uninterrupted full-demo test of the prototype yet.
+
+Rectangular tape, steady diskette and deeper dots / 2026-10-22
+------------------------------------------------------------
+Select rectangular 2x2 feed / 3x2 data punches at 400x35; retain phrase and continuous leader. Round 1x and 2x remain separate experiments.
+Partition diskette jacket, label and printing into disjoint surface regions to remove painter-order overlap; reduce local bank from 15 to 8 degrees.
+Increase dots from 512 to 640, centered depth slices 600 units apart instead of 250. U880: five complete layers + 40 dots; 1715: seven complete layers + 59 dots.
+Round 1x runtime/capture remains at build/tape-round-feed; HD experiment at
+build/tape-hd. Reproduce round 1x with full_water.tape(released, output,
+hole_shape="round"); the default is now rectangular. The earlier round vs
+HD comparison is historical, not a comparison of the current selection.
+
+All three scene captures pass in headless DOSBox-X at 300000 cycles. Updated
+side-by-side reviews use one original soundtrack with no time stretching:
+  build/full-review/02-diskette-flight.mp4
+  build/full-review/12-dots.mp4
+  build/full-review/13-tape-reflections.mp4
+Diskette exits at module 0 / order 12 / row 42; dots at 1 / 86 / 58;
+tape at 1 / 91 / 61. Individual capture/audio alignment evidence is recorded
+in benchmarks/full-demo.json. This is not a new uninterrupted full capture.
+17 host tests pass, including label ray intersections (only front/back),
+rectangular punch dimensions, preserved round option, decoded Easter egg,
+continuous feed leader, and deeper dot layer spacing/capacity.
+The reviewed standalone flyover/credits remains unchanged.
