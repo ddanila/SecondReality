@@ -2,3 +2,7 @@
 numpy>=2.0
 trimesh>=4.12
 scipy>=1.15
+
+# Full-demo diskette jacket with explicit openings (host triangulation).
+shapely>=2.1,<3
+mapbox-earcut>=2,<3

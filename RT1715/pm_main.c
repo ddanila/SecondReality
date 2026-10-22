@@ -113,15 +113,25 @@ static int music_frame(unsigned *position) {
     frame=(long)rt_row_cs[ord-19][row]*70/100;
     frame+=(unsigned short)(tick-last_tick);return frame;
 }
+static int key_wall_palette;
 static void intro(unsigned char *palette) {
     unsigned char black[768];int b;
     /* Preserve the inherited 100-retrace pre-roll and Mode-X setup, but keep
      * every VGA page black instead of flashing the preceding scene white. */
-    rt_video_init();memset(black,0,sizeof(black));rt_palette(black);
+    rt_video_init();memset(black,0,sizeof(black));
+    {
+        FILE *wall=optional_file("U2E.KEY","rt");int r,g,blue,i;
+        if(wall) {
+            if(fscanf(wall,"%d %d %d",&r,&g,&blue)!=3 || r<0 || r>63 || g<0 || g>63 || blue<0 || blue>63)fail("Invalid key-wall color");
+            fclose(wall);key_wall_palette=1;
+            for(i=0;i<768;i+=3){black[i]=r;black[i+1]=g;black[i+2]=blue;}
+        }
+    }
+    rt_palette(black);
     for(b=0;b<50;b++) rt_wait();
     outp(0x3d4,9);outp(0x3d5,(inp(0x3d5)&0xf0)|0x80);rt_wait();
     for(b=0;b<49;b++) rt_wait();
-    memset(palette+252*3,0,12);rt_palette(palette);
+    memset(palette+252*3,0,12);if(!key_wall_palette)rt_palette(palette);
 }
 static rmatrix last_local,last_view;
 static int last_matrix_valid;
@@ -338,7 +348,7 @@ int main(int argc,char **argv) {
     do { pos=rt_snapshot(&tick);if((pos>>6)<19) rt_wait(); } while((pos>>6)<19 && !rt_dis(2));
     next_frame();currframe=2;
     while(!finished && !rt_dis(2)) {
-        render(page);rt_wait();rt_show_page(page);page=(page+1)&3;
+        render(page);rt_wait();if(key_wall_palette){rt_palette(materials+16);key_wall_palette=0;}rt_show_page(page);page=(page+1)&3;
         if(fade_end && currframe>=fade_start) {
             unsigned char dim[768];int scale=currframe>=fade_end?0:(fade_end-currframe)*64/(fade_end-fade_start);
             if(scale!=fade_scale) {

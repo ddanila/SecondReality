@@ -1,0 +1,361 @@
+SELECTED REFLECTION TAPE — 2026-10-22
+====================================
+User review selected the latest improved 1x tape (400x35), not the untouched
+Second Reality sword asset: round data/feed holes, continuous blank feed
+leader, and ASCII "THIS TAPE CANNOT PROVE WHAT IT SAYS". full_build.py uses
+full_water.tape; build/full-robotron/dos contains this selected renderer.
+The 800x70 full_tape_hd experiment is retained for reference only and is not
+selected or installed. Keep the reviewed 3D flyover/credits standalone cut.
+
+Current validation: 16 host tests pass. Capture scope and limitations are
+recorded below and in benchmarks/full-demo.json and benchmarks/tape-hd.json.
+Videos/captures/build outputs are local ignored artifacts, not repo contents.
+
+Full Robotron demo implementation / 2026-10-21
+============================================
+Work in progress, not a reviewed release. The accepted short flyover and
+technical-credits runtime in build/dos and its review movie are preserved.
+FULL-DEMO-PLAN.txt remains the content and timing contract.
+
+Host entry points
+-----------------
+build/host-python/bin/python full_build.py --output build/full-remake
+build/host-python/bin/python full_capture.py build/full-remake/dos \
+  --output build/full-remake/capture --cycles 300000 --timeout 1800
+build/host-python/bin/python full_compare.py build/full-reference/capture \
+  build/full-remake/capture review/part.mp4 --start SECONDS --duration SECONDS
+
+Run from RT1715. The native Watcom compiler, linker and JWasm are resolved
+by build.py from the sibling msdos toolchain. No compiler runs inside DOS.
+DOSBox-X uses SDL dummy video/audio and the existing no-confirmation config.
+The capture watchdog stops on DOS CPU exceptions and timeouts.
+Do not run several high-cycle DOSBox instances concurrently: they compete
+for host CPU and make test timeouts misleading.
+
+Released EXEs are unpacked on the host with Deark (local build/toolchain/deark,
+upstream https://github.com/jsummers/deark, tested commit
+8997059c4f32af79978fb6c83be7c1c26c259afa). Some have two compression layers,
+others only PKLITE. The source hash controls the decompression cache.
+
+Scene implementation
+--------------------
+Opening: original text renderer, released font, additional umlaut glyphs;
+Robotron facts, consolidated original people, BWS team, original Dolby gag.
+Space: source diskette mesh replaces main ship; original pursuer and paths.
+The released player now selects its existing VGA-reset initialization path.
+Its mode-3 entry depended on the original opening leaving specific VGA state;
+without the reset, the rebuilt opening caused corrupted space geometry.
+The patch changes one near-call target, retaining original flight/music cues.
+Title, monster, unicorn: generated Robotron drafts converted to VGA palettes.
+Keycap: sampled actual key geometry over PCB traces; original choreography.
+The body uses 13 faces to stay within the original 15 lighting banks; ink
+is drawn opaquely after the translucent pass, with backface/viewport checks.
+Tunnel: conductor bundles and row-triggered pulses on original path tables.
+Interference: green linear and circular interference; calibration overlay
+remains a visual polish candidate.
+Water: tape backdrop and real-ROM-font wording; original projection code.
+Lens: genuine UB880 die photograph, original binary lens algorithm untouched.
+The full launcher retains 178 retraces of the released decompressor startup
+interval at the reference 300k profile. Without that hold, the unchanged
+lens/zoom choreography begins and ends about 2.5 seconds too soon.
+Plasma: green activity and DIP-40 geometry; full-run cue test passes at 75:60.
+The released EXE exits the 2D plasma at palette phase 4; the checked-in C
+says phase 5 and misses the cube cue. The rebuild follows the released EXE.
+Convex screen clipping keeps pin spans inside the original assembly writer
+and its unrolled jump table. A host sanitizer test exercises clipped, thin,
+rotated and offscreen polygons; the complete animation also passes in DOS.
+Native rebuild fixes explicit far storage and volatile interrupt counters.
+Dots: byte grid, U880 and 1715 from DAC-captured TOS/M character RAM.
+Reflections: native tape sprite, real ASCII holes, original projection code.
+Terrain: original ray caster extended to a two-dimensional height/color map;
+99 DIP package placements from the current motherboard model, with decorative
+routes and exaggerated heights. Source uncertainty is recorded with the map.
+Flyover/technical credits: reviewed protected renderer and cards reused.
+Three caption-only edits connect the hardware tour to the full demo and add
+the CPU data/address widths. Pictures and reveal-animation bytes stay intact.
+For this full cut only, the last card ends at the original full-demo cue
+43:26 (10376 centiseconds); its final hold is 36 cs shorter, with the same
+36 cs fade. The other 20 cues and the standalone schedule stay intact.
+Final scroll: facts and attribution in old text slots; pacing directives kept.
+
+Do not treat this list as visual or timing acceptance. status.json identifies
+drafts; continuous playback and scene-by-scene comparisons are required.
+
+Evidence and review rules
+-------------------------
+assets/full-demo/reference-cues.json records the full original playback.
+Each capture retains its continuous WAV, mode-specific AVI files, paired
+scene-entry/exit tracker positions and retrace counts, and result.json.
+Smoke tests start individual scenes at a convenient tracker order; these
+are visual checks, not timing references. The launcher waits for the requested order and row before entering a scene,
+so stale positions from asynchronous music startup cannot select a wrong cue.
+Comparisons use one original audio track and waveform alignment at seven
+windows. At least five of seven audible windows must have correlation >=0.65
+(or all three if only three are audible); every window remains in the report.
+Never stretch video or audio to conceal drift. Drift over one VGA frame among
+reliable windows is rejected. Module restarts need separate validation.
+The copper-interrupt counter is useful for scene diagnostics; it can lose
+counts while DOS extender code masks interrupts, so its post-flyover delta
+is not a measurement of video frame drift. Tracker cues and audio govern sync.
+
+Review checkpoint
+-----------------
+build/full-review/index.html contains 18 separate side-by-side movies.
+Original is on the left, Robotron on the right, with one original soundtrack.
+index.json and each movie's JSON record capture sources, audio measurements
+and scene boundary diagnostics. No audio or video is stretched.
+
+build/full-integrated-v4/capture passed the uninterrupted full sequence,
+including the protected-mode flyover, all 21 cards and the original-length
+final scroll. The later keycap palette/ink and lens startup fixes passed
+continuous opening-through-lens playback in build/full-act-final/capture.
+Its lens exit is exactly M1 60:45. Technical credits in the full capture end
+at exactly M0 43:26. The final review index uses the corrected act capture
+for keycap and lens, and the full capture for the remaining parts.
+
+Latest assembled runtime: build/full-robotron/dos/FULL.EXE.
+That runtime includes both final local fixes; it has not been recorded again
+from start to finish after those two fixes. The complete preceding run and
+continuous corrected act are retained as separate evidence, not spliced into
+a supposedly single captured performance.
+
+Validation: nine host tests cover bitmap round trips across 64K, audio offset
+and drift detection (including weak windows), trace parsing, protected-mode
+sequence integration, clipping bounds with sanitizers, decodable tape holes,
+scroll pacing, credit image/cue preservation and short-build isolation.
+
+This is a first review draft, not an accepted artistic release. Title,
+monster and unicorn art await user review. Further visual candidates include
+a restrained CRT crosshair/border and faint chip traces around the 2D plasma;
+current versions establish those scenes through palette, motion and geometry.
+Keep the standalone build/dos and build/robotron-preview.mp4 as the reviewed
+short-cut baseline. No commit or push has been made for this implementation.
+
+Assets / attribution
+--------------------
+Title, monster, unicorn and water are generated review drafts. Prompts live
+in assets/full-demo/art/prompts.json. Drafts are not historical photography.
+The lens photograph is Richi's Lab's UB880 T3 (1985 Q1):
+https://www.richis-lab.de/uC18.htm
+https://www.richis-lab.de/images/uC/19x02.jpg
+CC BY-NC 4.0: https://creativecommons.org/licenses/by-nc/4.0/
+Policy: https://www.richis-lab.de/background.htm
+Changes: downsampling, palette reduction and viewport fitting. The original
+lens distorts it dynamically. See lens/provenance.json for the file hash.
+The license's noncommercial condition applies to redistribution of this asset.
+
+Tape Easter egg: ASCII bytes of
+ROBOTRON 1715 / SECOND REALITY / FUTURE CREW
+Bytes run left to right; eight data tracks run LSB first top to bottom,
+with a separate smaller feed hole. The generated tape-encoding.json records
+exact sprite coordinates so the content can be checked independently.
+
+Review corrections / 2026-10-21
+------------------------------
+Opening: actual slash glyph, blank space sentinel, full far-buffer clear,
+and a two-pixel gap below umlaut dots. The old slash mapped to an apostrophe;
+spaces sampled the Dolby artwork, and the text buffer clear used the wrong
+stride. Opening-only capture passes at the unchanged M0 10:00 exit.
+Diskette: explicit jacket openings, hub, head slot, index hole, write-protect
+notch and double-sided label. Shallow 15-degree bank preserves the released
+flight track while exposing details. Exposed medium is confined to openings
+so the legacy painter cannot draw large internal triangles over the jacket.
+Host generation additionally requires shapely and mapbox-earcut.
+Keycap: source-sampled rounded rectangular corners, larger legend, cream top
+and higher-contrast PCB checker areas with copper traces/pads. Opaque overlays
+restore the original framebuffer before the next legacy polygon update.
+Cable: visible sheath and cutaway entry, eight circular conductor bundles,
+original motion tables and 1060-frame duration. Bundle count is illustrative.
+Water: leaf silhouettes were baked into POS1/2/3 projection tables. New UV
+maps interpolate the original surface and use the replacement tape silhouette
+and holes for occlusion/shadow. Tables are appended after the original image
+plus reserved BSS/stack; only MZ size and three segment references change.
+Chip: bevelled dark package, separate plasma inset, bent metal legs, end
+notch and pin-one marker. Polygon/vertex storage expands with the mesh.
+Dots: readable U880/1715 holds with stronger rotation, drift, depth waves,
+and swirling dispersal/reformation inside the original duration.
+Reflected tape: continuous regular sprocket row, larger data holes and wider
+paper strip. ASCII Easter egg remains machine-decodable.
+Flyover: full-cut-only five-second pullback from a key side wall, narrow initial
+field of view, matching material color during the inherited preroll. All
+tracks and visibility after five seconds are identical to the reviewed cut.
+U2E.KEY enables this preroll; absent that file, old short-cut behavior remains.
+full_flyover.py rebuilds the full cut's visibility and drawing caches.
+
+Validation and updated video paths for this pass are recorded below after
+capture completion. The prior review checkpoint remains historical evidence.
+
+Correction-pass evidence
+------------------------
+13 host tests pass, including font spacing, diskette openings/attitude,
+water-table relocation and complete destination coverage, unchanged flyover
+tracks after five seconds, and decoding the wider tape's ASCII message.
+Headless DOSBox-X passes:
+- build/review-mid/capture: continuous opening through unicorn, 300k cycles.
+- build/review-final-first/capture-v2: final opening/diskette/keycap, 300k.
+- build/cable-final/capture: buffered cutaway, exit M1 18:56, 300k.
+- build/chip-final/capture: final chip/materials, exit M1 75:60, 300k.
+- capture/20261021-204856-140563: final key-wall flyover, 600k.
+  Overview 24:54; swoosh 25:06; ending 26:57, unchanged.
+
+The chip's rebuilt buffers share a segment but have distinct offsets. Texture
+and distortion-table segment addresses now include their paragraph offsets;
+otherwise metal sampled the dark package texture. The cable builds complete
+frames in RAM before copying them to VGA. Keycap overlay restoration is bounded
+to 8 KiB so it fits the original resident full-demo loader's memory budget.
+
+Latest runtime: build/full-robotron/dos/FULL.EXE. Exact replacement origins and
+hashes: build/full-robotron/review-corrections.json and benchmarks/full-demo.json.
+The reviewed build/dos and build/robotron-preview.mp4 remain unchanged.
+This latest assembled full runtime has NOT been recaptured end-to-end; the
+continuous sequence and final independent captures are separate evidence.
+The gallery identifies independent scene captures and retains their audio
+alignment windows. For the independent chip capture, matching uses the settled
+second half of the soundtrack: restarting mid-module changes held voices in
+its early audio. Both tracker endpoints match, and no footage is retimed.
+
+2026-10-22: opening tail, round keycap, cast tape shadows
+-----------------------------------------------------
+The last opening page could reappear as broken/doubled text after its fade.
+Near the panorama endpoint fmaketext is deliberately skipped; the previous
+page's XOR scrolling program therefore survived the empty-page clear.
+Case 4 now resets all four plane lists to empty before clearing the text.
+Headless isolated capture: build/opening-tail-fix/capture; clean landscape
+through the tail, unchanged exit M0 10:00 at retrace 5611.
+
+The keycap now retains the source model's square skirt, shoulder and raised
+round body instead of joining the bottom and top with one taper. Sixteen
+angular samples preserve the round silhouette. The opaque legend follows the
+sampled shallow dish. Fixed material palette banks allow multiple facets to
+share a bank without hidden facets freeing a bank still used by visible ones.
+Source meshes and their hashes remain recorded in key-source.json.
+
+Tape shadows use one shared perforated silhouette, displaced 18 pixels left
+and nine down. Separate palette banks darken both the water and projected
+letters to 30 percent of their unshadowed brightness. Shadowed water remains
+in the UV projection map; solid tape alone occludes it. This keeps the holes
+open and lets letters move continuously through the shade.
+
+14 host tests pass, including new shadow palette and text-contrast checks.
+Independent headless water capture: build/water-detail-fix/capture, exit
+M1 45:58. The continuous review-detail-fixes capture is checked separately
+before publishing updated scene comparisons and runtime provenance.
+
+Final validation: build/review-detail-fixes/capture-v2 passed uninterrupted
+from opening through lens at 300,000 cycles in headless DOSBox-X. Opening
+exits at M0 10:00, keycap at M1 13:49 and water at M1 45:58, matching the
+reference. The opening, keycap and water gallery videos pass the unchanged
+multi-window audio alignment checks and use one original soundtrack, without
+retiming. Latest binaries are installed in build/full-robotron/dos; source
+paths and hashes are updated in review-corrections.json and benchmarks.
+The first combined capture was stopped to apply the final palette-bank fix;
+capture-v2 is the final evidence. The whole assembled demo has not been
+recaptured end-to-end in this pass.
+
+Water entrance correction: separate palette groups restore the released
+two-stage fade. Tape uses indices 32..62; water 1..15 and shadow 16..30,
+with their projected text in 130..159. Original fade code and timing remain
+unchanged. Headless build/water-entrance-fix/capture passes, exit M1 45:58;
+14 tests pass, including palette-group separation. Updated independent water
+comparison passes original soundtrack alignment. Tape appears first against
+black, followed by water. Full runtime and provenance updated.
+
+Water artwork and shaded lettering; reflection-tape Easter egg
+-------------------------------------------------------------
+The static water-scene tape has smaller central feed holes and larger varied
+rounded data holes, with smooth paper edges. This is illustrative artwork;
+the exact ASCII Easter egg belongs to the separate tape-reflections scene.
+The preceding artwork is retained as water-draft-v1.png. Generation history
+and hashes are in assets/full-demo/art/prompts.json.
+
+The moving reflection tape now encodes THIS TAPE CANNOT PROVE WHAT IT SAYS.
+Its geometry and feed/data layout are unchanged. The host regression decodes
+the generated holes back into the exact phrase.
+
+Water lettering now uses a bevelled serif bitmap with seven gray levels and
+a dark extrusion instead of monochrome screen-ROM characters. Generator:
+full_water_font.py; normal builds use the checked-in bitmap. A small NASM
+pixel walker maps all seven levels independently of water color, including
+seven darker equivalents for the cast shadows. Its far jump and relocation
+are appended after the original reserved memory and generated UV tables.
+Original scroll motion, fade code, entrance staging and music waits remain.
+A regression verifies executable size, relocation, unchanged SS:SP and the
+unmodified surrounding original code. NASM is a host build dependency.
+
+15 host tests pass. Independent headless captures water-art-fix and tape-art-fix
+pass, but the reflection-only soundtrack does not reliably match the original.
+The longer tape-context-fix capture also fails strict audio matching; neither
+is presented as the final synchronized reflection review. Continuous capture
+from the opening through tape-reflections is used for final review validation.
+
+Final evidence: build/review-water-tape-art/capture passes continuously from
+opening through tape-reflections at 300,000 cycles, headless. Water exits
+M1 45:58; reflection tape exits M1 91:61, both matching the original. Both
+updated gallery clips pass strict multi-window audio checks using the one
+original soundtrack without retiming. Latest assets are installed in
+build/full-robotron/dos with updated hashes and source provenance. This pass
+does not constitute an end-to-end capture of the scenes after reflections.
+
+Submerged lettering correction
+-------------------------------
+The seven-gray ink mapper ignored the water color, making the lettering look
+like an opaque overlay. A 32-by-8 lookup now combines each local water color
+with every glyph shade. Water luminance controls transmission; a blue tint
+and caustic modulation keep the surface visible across the bevels. Shadow
+combinations remain at 30 percent brightness. The combined colors are
+quantized into 31 slots in the existing second-stage fade bank.
+
+15 host tests pass, including variation across a fixed lettering shade,
+darker shadow combinations, multiple retained bevel colors, fade-bank bounds
+and executable relocation. Headless build/water-submerged/capture passes
+at 300k cycles, exit M1 45:58 unchanged. The updated independent water
+comparison passes strict original-audio alignment without retiming. Latest
+full runtime and provenance updated; no new end-to-end full capture.
+
+Round reflection-tape holes and continuous feed leader
+-----------------------------------------------------
+The source strip now has paper and small feed holes across its entire width,
+including blank sections before and after the encoded text. Subpixel circular
+punch coverage gives larger data holes rounded rims; the feed radius is .65
+source pixels and data radius 1.35. The ASCII phrase is unchanged.
+
+The released effect clamps source column 390, stretching one final column
+indefinitely. A small relocated routine now wraps the blank 320..383 leader
+while maintaining the original per-frame stepping and music waits. The
+leader curve is periodic at the seam. A paragraph is added to the MZ header
+for the relocation; load-image addresses and SS:SP stay unchanged.
+
+15 host checks pass: phrase decoding, feed coverage, empty leader data tracks,
+round-hole coverage and original executable bytes outside the targeted
+patch/asset. Headless tape-round-feed capture passes at 300k, exit M1 91:61.
+The gallery comparison uses paired independent original/remake captures at
+the same music entry, one original soundtrack, strict audio alignment, no
+retiming. It is labelled separately from continuous full-run evidence.
+Latest full-runtime binary and provenance are updated; no full rerun here.
+
+Experimental 2x reflection-tape source
+------------------------------------
+full_tape_hd.py builds an isolated 800x70 source and a new per-destination
+sampler (full-scenes/tape-hd.asm). The screen remains 320x200. UV coordinates
+are reconstructed at half-texel increments within disconnected projected
+surfaces; simply doubling the source bitmap would not change the old grouped
+sampler. Original destination coverage, scene waits, palette fades and the
+ASCII phrase are retained. The blank feed leader continues periodically.
+
+Texture storage rises from 14,000 to 56,000 bytes. New compact maps contain
+37,058 / 36,872 / 51,224 bytes; candidate executable is 377,392 bytes. The
+prototype lives in build/tape-hd/dos, leaving full-robotron/dos unchanged.
+Review: build/tape-hd-review/tape-1x-vs-2x.mp4 (current 1x left, candidate 2x
+right, one identical soundtrack, zero measured audio offset, no retiming).
+
+16 host tests pass, including double-resolution ASCII decoding, feed holes,
+original screen-destination coverage, fine vertical coordinates, map/texture
+bounds, MZ relocation and fixed routine entry offsets. Headless DOSBox-X
+captures at 300,000 and 60,000 cycles pass. Both versions produce 700 changed
+frames in the same ten-second middle window, with no repeated frames. These
+are partial updates (three interleaved groups), about 23 full passes/second.
+This shows playback headroom at the tested settings, not an exact CPU-time
+comparison or proof of minimum hardware requirements. At 300k both versions
+exit at M1 91:61 / retrace 2058. At 60k both finish at retrace 2057; startup
+phase puts 1x at row 60 and 2x at row 61. Detailed evidence and hashes are in
+benchmarks/tape-hd.json. No uninterrupted full-demo test of the prototype yet.

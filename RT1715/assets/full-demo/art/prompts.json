@@ -1,0 +1,59 @@
+{
+  "tool": "built-in image_gen",
+  "status": "review drafts",
+  "prompts": [
+    [
+      "title",
+      "Use case: stylized-concept. Create a Robotron-themed replacement for the supplied 1993 DOS demo title image. Reference is pixel-aspect distorted; output LANDSCAPE 4:3 intended for 320x400 VGA stretched to 4:3. Text exactly ROBOTRON arched across the top and 1715 large across bottom. Instead of demon, an evocative industrial electronic sculptural emblem combining a large keycap, 5.25 inch floppy disk and DIP processor, centered between title lines. Pale ivory background, rich deep green and graphite shading, restrained amber highlights, hand-painted early-1990s demoscene pixel illustration, crisp bold readable shapes. No full computer reveal, no modern gadgets, no additional text or artist signature. Preserve dramatic original centered composition and broad margins. This is a new review draft, not photorealism.",
+      "title/output.001.png"
+    ],
+    [
+      "monster",
+      "Use case: precise-object-edit. Edit this original monster picture for Robotron 1715 demo. Keep the snarling horned monster FACE, round metallic frame, black surrounding background and humorous grotesque expression, centered 4:3 composition. Reimagine it as a retro-futuristic electronics technician: small green workwear collar just beneath the face with tiny robotron badge, a diagnostic probe held by a claw emerging at lower edge of round frame, faint PCB traces in the dark backdrop inside the circle. Green CRT light on one cheek, warm amber brown skin, aged steel ring. Retain strong face readability at 320x200, early 1990s DOS pixel-art/digital-painting look and rich original colors. No whole computer. No additional captions or signatures.",
+      "monster/original.png"
+    ],
+    [
+      "unicorn",
+      "Use case: precise-object-edit. Adapt this girl and unicorn fantasy illustration into a Robotron-themed DOS demo art draft. Source is VGA pixel-aspect distorted: output LANDSCAPE 4:3 with correctly proportioned figures, keeping original girl on left with sword, living white unicorn head on right, dramatic pose and fantasy atmosphere. Add a small robotron badge on rider armor and a 5.25-inch diskette pouch on her belt. Subtle copper circuit-trace patterns on unicorn harness and a softly glowing green horn. Behind them a dreamlike circuit-board landscape with chip mesas and distant capacitors, not a full computer. Green CRT light accents while retaining silver armor, warm golden hair, white horse and rich deep background tones. Early-1990s hand-painted demoscene pixel illustration, bold silhouettes, readable when reduced to VGA. No additional text, no artist signature.",
+      "unicorn/output.001.png"
+    ],
+    [
+      "water",
+      "Use case: precise-object-edit. Adapt this original early 1990s VGA water picture for a Robotron 1715 DOS demo. Preserve the dark blue rippling water, lighting, camera, and composition. Replace all foreground leaves and stems with a few curling cream-colored punched-paper tape fragments, mostly along the right edge and lower edge. Tape has eight data-hole lanes and a smaller sprocket lane, but is an artistic backdrop, no text. Keep the center-left water largely clear for animated scrolling text and reflections. Period hand-painted 320x200 pixel-art aesthetic, strong simple readable silhouettes, dark background. Output landscape 4:3. No machine, no labels, no letters.",
+      "FOREST/HILLBACK.CLX"
+    ]
+  ],
+  "edits": [
+    {
+      "asset": "unicorn-draft.png",
+      "tool": "built-in image_gen",
+      "prompt": "Keep the illustration unchanged except the belt diskette: replace with a 5.25-inch black flexible jacket, central opening, elongated read/write opening and cream label. No metal shutter or 3.5-inch styling."
+    },
+    {
+      "asset": "unicorn-draft.png",
+      "tool": "built-in image_gen",
+      "prompt": "Use case: precise-object-edit. Recompose this illustration into a PORTRAIT 3:4 image for a narrow DOS demo picture panel. Preserve the same blonde armored rider on left, living white unicorn head on right, electronic landscape, green glowing horn, circuit harness, warm hair, silver armor and 5.25-inch diskette on belt. Maintain natural proportions: do NOT squeeze or horizontally compress the figures. Fit the rider's head, torso and belt disk and unicorn's head comfortably into the portrait composition, trimming peripheral landscape and lower body as necessary. Same crisp early-1990s pixel illustration, no new text. Entire image should use portrait composition; no bars or border."
+    },
+    {
+      "asset": "water-draft.png",
+      "tool": "built-in image_gen",
+      "source": "water-draft-v1.png",
+      "prompt": "Preserve composition, water, lighting and VGA style. Change only tape perforations: small central feed holes, larger rounded varied data holes, regular grid with varying occupied/missing holes; remove old tiny edge perforations. No text or new objects."
+    }
+  ],
+  "files": {
+    "monster-draft.png": "b80b159d760e9858e7c0e08f4f31953be0aa82561ef93283dc4e2c9ba9f3a2c4",
+    "title-draft.png": "845534a70bf6fad8befe2eea8579360c08a75e3c43b89a40f80c23f56fae2321",
+    "unicorn-draft.png": "ec7fdbb53d1d0ed5233e77facf6ba2a751256af32ce2e0684d0ebd5b4a38aea0",
+    "water-draft.png": "9c675e9e7dfc3917ee3bb5dd7f5dca2a1024ae30129c558365f9f74fbc3eb889",
+    "water-draft-v1.png": "076fbbe70daff1cf9b06a43fed54c4965905b90481dab4c859a98a62719e391a",
+    "water-text-shaded.png": "46da55d7f3bb7f16b9c7c1028c72fd49e01f63a7865dffa3dfef22c7cd01ff41"
+  },
+  "water_text": {
+    "text": "EIGHT BITS. A WHOLE NEW WORLD.",
+    "font": "Times New Roman Bold, host system font, 30 pixels; font file not redistributed",
+    "generator": "RT1715/full_water_font.py",
+    "shading": "seven levels, distance-field bevel and two-pixel extrusion",
+    "normal_build": "uses checked-in 640x32 bitmap; no font installation needed"
+  }
+}

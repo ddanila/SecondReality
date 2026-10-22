@@ -1,0 +1,306 @@
+[
+  {
+    "executable": "ALKU.EXE",
+    "phase": "entry",
+    "module": 0,
+    "order": 0,
+    "row": 0,
+    "retrace": 1
+  },
+  {
+    "executable": "ALKU.EXE",
+    "phase": "exit",
+    "module": 0,
+    "order": 10,
+    "row": 0,
+    "retrace": 5613
+  },
+  {
+    "executable": "U2A.EXE",
+    "phase": "entry",
+    "module": 0,
+    "order": 10,
+    "row": 0,
+    "retrace": 5613
+  },
+  {
+    "executable": "U2A.EXE",
+    "phase": "exit",
+    "module": 0,
+    "order": 12,
+    "row": 42,
+    "retrace": 7103
+  },
+  {
+    "executable": "PAM.EXE",
+    "phase": "entry",
+    "module": 0,
+    "order": 12,
+    "row": 42,
+    "retrace": 7103
+  },
+  {
+    "executable": "PAM.EXE",
+    "phase": "exit",
+    "module": 0,
+    "order": 13,
+    "row": 21,
+    "retrace": 7480
+  },
+  {
+    "executable": "BEGLOGO.EXE",
+    "phase": "entry",
+    "module": 0,
+    "order": 13,
+    "row": 21,
+    "retrace": 7480
+  },
+  {
+    "executable": "BEGLOGO.EXE",
+    "phase": "exit",
+    "module": 0,
+    "order": 14,
+    "row": 4,
+    "retrace": 7641
+  },
+  {
+    "executable": "GLENZ.EXE",
+    "phase": "entry",
+    "module": 1,
+    "order": 14,
+    "row": 0,
+    "retrace": 7647
+  },
+  {
+    "executable": "GLENZ.EXE",
+    "phase": "exit",
+    "module": 1,
+    "order": 13,
+    "row": 49,
+    "retrace": 10711
+  },
+  {
+    "executable": "TUNNELI.EXE",
+    "phase": "entry",
+    "module": 1,
+    "order": 13,
+    "row": 49,
+    "retrace": 10711
+  },
+  {
+    "executable": "TUNNELI.EXE",
+    "phase": "exit",
+    "module": 1,
+    "order": 18,
+    "row": 56,
+    "retrace": 11775
+  },
+  {
+    "executable": "TECHNO.EXE",
+    "phase": "entry",
+    "module": 1,
+    "order": 18,
+    "row": 56,
+    "retrace": 11775
+  },
+  {
+    "executable": "TECHNO.EXE",
+    "phase": "exit",
+    "module": 1,
+    "order": 37,
+    "row": 50,
+    "retrace": 15759
+  },
+  {
+    "executable": "PANICEND.EXE",
+    "phase": "entry",
+    "module": 1,
+    "order": 37,
+    "row": 50,
+    "retrace": 15759
+  },
+  {
+    "executable": "PANICEND.EXE",
+    "phase": "exit",
+    "module": 1,
+    "order": 39,
+    "row": 21,
+    "retrace": 15901
+  },
+  {
+    "executable": "MNTSCRL.EXE",
+    "phase": "entry",
+    "module": 1,
+    "order": 42,
+    "row": 1,
+    "retrace": 16211
+  },
+  {
+    "executable": "MNTSCRL.EXE",
+    "phase": "exit",
+    "module": 1,
+    "order": 45,
+    "row": 58,
+    "retrace": 18223
+  },
+  {
+    "executable": "LNS&ZOOM.EXE",
+    "phase": "entry",
+    "module": 1,
+    "order": 45,
+    "row": 58,
+    "retrace": 18223
+  },
+  {
+    "executable": "LNS&ZOOM.EXE",
+    "phase": "exit",
+    "module": 1,
+    "order": 60,
+    "row": 45,
+    "retrace": 21428
+  },
+  {
+    "executable": "PLZPART.EXE",
+    "phase": "entry",
+    "module": 1,
+    "order": 60,
+    "row": 45,
+    "retrace": 21428
+  },
+  {
+    "executable": "PLZPART.EXE",
+    "phase": "exit",
+    "module": 1,
+    "order": 75,
+    "row": 60,
+    "retrace": 26145
+  },
+  {
+    "executable": "MINVBALL.EXE",
+    "phase": "entry",
+    "module": 1,
+    "order": 75,
+    "row": 60,
+    "retrace": 26145
+  },
+  {
+    "executable": "MINVBALL.EXE",
+    "phase": "exit",
+    "module": 1,
+    "order": 86,
+    "row": 58,
+    "retrace": 28725
+  },
+  {
+    "executable": "RAYSCRL.EXE",
+    "phase": "entry",
+    "module": 1,
+    "order": 86,
+    "row": 58,
+    "retrace": 28725
+  },
+  {
+    "executable": "RAYSCRL.EXE",
+    "phase": "exit",
+    "module": 1,
+    "order": 91,
+    "row": 61,
+    "retrace": 30791
+  },
+  {
+    "executable": "3DSINFLD.EXE",
+    "phase": "entry",
+    "module": 1,
+    "order": 91,
+    "row": 61,
+    "retrace": 30791
+  },
+  {
+    "executable": "3DSINFLD.EXE",
+    "phase": "exit",
+    "module": 1,
+    "order": 96,
+    "row": 57,
+    "retrace": 32828
+  },
+  {
+    "executable": "JPLOGO.EXE",
+    "phase": "entry",
+    "module": 1,
+    "order": 96,
+    "row": 57,
+    "retrace": 32828
+  },
+  {
+    "executable": "JPLOGO.EXE",
+    "phase": "exit",
+    "module": 1,
+    "order": 98,
+    "row": 50,
+    "retrace": 33615
+  },
+  {
+    "executable": "U2E.EXE",
+    "phase": "entry",
+    "module": 0,
+    "order": 98,
+    "row": 50,
+    "retrace": 33619
+  },
+  {
+    "executable": "U2E.EXE",
+    "phase": "exit",
+    "module": 0,
+    "order": 25,
+    "row": 21,
+    "retrace": 37523
+  },
+  {
+    "executable": "ENDLOGO.EXE",
+    "phase": "entry",
+    "module": 0,
+    "order": 25,
+    "row": 21,
+    "retrace": 37523
+  },
+  {
+    "executable": "ENDLOGO.EXE",
+    "phase": "exit",
+    "module": 0,
+    "order": 26,
+    "row": 56,
+    "retrace": 38130
+  },
+  {
+    "executable": "CRED.EXE",
+    "phase": "entry",
+    "module": 0,
+    "order": 26,
+    "row": 56,
+    "retrace": 38130
+  },
+  {
+    "executable": "CRED.EXE",
+    "phase": "exit",
+    "module": 0,
+    "order": 43,
+    "row": 26,
+    "retrace": 45754
+  },
+  {
+    "executable": "ENDSCRL.EXE",
+    "phase": "entry",
+    "module": 0,
+    "order": 43,
+    "row": 26,
+    "retrace": 45754
+  },
+  {
+    "executable": "ENDSCRL.EXE",
+    "phase": "exit",
+    "module": 0,
+    "order": 48,
+    "row": 3,
+    "retrace": 68721
+  }
+]

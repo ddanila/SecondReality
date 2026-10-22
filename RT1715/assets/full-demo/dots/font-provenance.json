@@ -1,0 +1,37 @@
+{
+  "source": "https://github.com/usovmv/robotron-1715m-fpga/releases/download/v0.1/Release-v0.1.zip",
+  "description": "TOS/M 1.0 character RAM after 100 million clocks; rows addressed as y*128+character",
+  "media": [
+    {
+      "file": "s550.bin",
+      "sha256": "37e58472a049e1785c3521ec6b23c2d269d93fa5fede696dc7bd72eabb4af031",
+      "size": 2048,
+      "role": "boot ROM",
+      "conversion": "Unmodified rom/s550.bin"
+    },
+    {
+      "file": "cas.bin",
+      "sha256": "8a085e4b8988c47de9ca05bdd65cfa7657d45b87efb72e3ee6a0bbcbf6bab23b",
+      "size": 256,
+      "role": "CAS PROM",
+      "conversion": "fpga/rtl/287.hex converted to 256 raw bytes using dac-emulation/tools/prepare_robotron_media.py"
+    },
+    {
+      "file": "tosm10.img",
+      "sha256": "f724763d5e48c0f15341e95d7b85f645533dd7dfa270cbce4e44d3025e62b23b",
+      "size": 819200,
+      "role": "TOS/M 1.0 boot disk",
+      "conversion": "tools/robotron_td0_to_raw.c with libdsk; 80 cylinders, 2 heads, sectors 1..5, 1024 bytes; all 800 reads succeeded"
+    },
+    {
+      "file": "s600.bin",
+      "size": 2048,
+      "sha256": "4b54891c02a8ec279e2b8aec03489a961fc8647e08ad2036dcf82d0634bf7273",
+      "source": "https://www.sax.de/~zander/pc1715/eprom/s600.bin",
+      "role": "K7658 reference keyboard firmware; specimen revision unverified"
+    }
+  ],
+  "font_sha256": "25c1d7b9c3c634bc2a116c278db24dbb32e379650266254606dec6412baf8132",
+  "wasm_sha256": "e6fd17d1c5a4cbe192a2ed519966c0b0b14029bd04eace85e7851da648592567",
+  "rights": "Historical third-party media; redistribution licence not established. Excluded from DAC MIT licence."
+}

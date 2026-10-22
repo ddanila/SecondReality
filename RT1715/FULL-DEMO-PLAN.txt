@@ -1,0 +1,351 @@
+Robotron 1715: full-demo adaptation
+==================================
+Recorded 2026-10-20.
+Status: implementation authorized 2026-10-21. Review each part separately
+using synchronized original/remake side-by-side videos and a shared soundtrack.
+Earlier implementation holds below record the planning history and are now
+superseded by this authorization. Robotron-themed artwork drafts were authorized on 2026-10-21.
+
+Direction and preserved baseline
+-------------------------------
+Adapt the whole original Second Reality demo to the Robotron 1715 topic.
+Keep the reviewed Robotron 3D flyover and technical credits as a preserved,
+selectable cut and a visual/timing regression reference. Do not replace that
+cut with the full-demo adaptation.
+
+This is a new planning thread, distinct from the optional chapters already
+implemented under EXPANSION-PLAN.txt. Their existence does not settle the
+content or order of the full-demo adaptation.
+
+First discussed part: original opening titles
+--------------------------------------------
+Replace the earliest opening credits with concise Robotron 1715 facts.
+The original ALKU/MAIN.C draws strings such as "A", "Future Crew",
+"Production", "First Presented" and "at Assembly 93" using prtc()/prt().
+These are runtime text composed from a proportional bitmap font, not complete
+title-card images. Font data is included through ALKU/INCLUDE.ASM.
+
+Candidate wording discussed (not a final approved card sequence):
+  Robotron / 1715
+  Made in / Sömmerda / East Germany
+  First Presented / in 1984
+
+Confirmed exception: keep the original "in Dolby Surround" title unchanged,
+including its artwork, placement and timing. The user wants to retain the joke.
+
+Historical facts researched:
+- Developed and manufactured in Sömmerda, East Germany (GDR), by
+  VEB Robotron Büromaschinenwerk "Ernst Thälmann" Sömmerda.
+- First presented in 1984; series production began in 1985.
+- These dates refer to the original PC 1715. Do not silently attribute them
+  to the specific 1715M variant without checking variant-specific evidence.
+
+Sources consulted:
+City of Sömmerda, local development and manufacturing:
+https://www.soemmerda.de/stadt/aktuelles/presse/einzelansicht/pc-1715-aus-soemmerda-ist-gefragtes-ausstellungsstueck-1-1-1-1-1?cHash=7a9b6411521070c3220a3db9dc5e8554&tx_news_pi1%5BcurrentPage%5D=119
+HTW Berlin computer museum, introduction in 1984:
+https://computermuseum.htw-berlin.de/exhibit/T/2007/06/00125
+Robotron Museum, series production in 1985:
+https://museum.robotron.de/unsere-ausstellung/objekt-des-monats
+
+Font preparation planned
+------------------------
+Support German spelling, especially Sömmerda, rather than requiring Soemmerda.
+Add ä, ö, ü, Ä, Ö, Ü and ß as needed in the original bitmap style.
+Extend the glyph atlas and character mapping; check unsigned-byte indexing,
+buffer capacity and glyph bounds. Convert UTF-8 authoring text to an explicit
+single-byte runtime encoding on the host.
+
+Timing is a hard constraint
+--------------------------
+Preserve the original opening's music cues, frame counts, fade durations,
+reading holds and transition timing precisely. Do not add time or new slots
+for the replacement facts.
+Fit wording into the existing slots through wording, layout or sizing.
+The candidate wording above is not permission to add extra title cards.
+Before implementation, record the original cue/frame baseline, including the
+opening's handoff to the following part. Do not infer numeric frame timings
+from this plan; they have not yet been measured.
+Verify the adaptation against that baseline in headless DOSBox-X, with no
+manual confirmation dialogs. Build and prepare assets on the host.
+
+Opening contributor credits and space sequence
+---------------------------------------------
+Preserve credit for the original demo's contributors. Consolidate repeated
+names so each person is mentioned once, combining their roles as needed.
+Audit the complete original contributor list before shortening it; do not
+silently omit anyone.
+
+Use available space to credit people associated with the original Robotron
+computer. Research and verify their contributions before selecting names.
+If individual attribution is unavailable, propose a documented development
+team or factory credit. Keep original-demo and original-computer credits
+clearly distinguished. Exact names, wording and slot allocation remain open.
+Keep the original sequence duration and music synchronization; check reading
+time before deciding how many additional credits fit.
+
+Confirmed object choice: replace the spaceship in the opening space sequence
+with a flying 5.25-inch diskette. The keyboard alternative is superseded.
+Use the existing diskette model as the starting point, subject to inspection
+at the scale and angles needed for this scene.
+Preserve the original flight, rotation and explosion cues and the timing of
+the surrounding credits. Retain the space/planet setting as the working
+direction; no replacement backdrop has been requested.
+
+Suggested explosion treatment, not yet approved in detail: separate the
+jacket, magnetic disk and label into recognizable fragments.
+Inspect the original scene and renderer before choosing its object format
+or adapting the improved Robotron renderer. Do not assume that the credits,
+planet and spaceship all share one rendering implementation.
+
+Main title artwork
+------------------
+Replace the original Second Reality title/demon composition with Robotron
+themed artwork. The original title is a bitmap (BEG/SRTITLE.LBM), displayed
+by BEG/BEG.C with a palette reveal.
+Candidate wording: "ROBOTRON" above "1715". The exact composition remains
+undecided; a computer illustration with a glowing green screen was suggested,
+not approved. Preserve the original image constraints and reveal/music timing.
+
+Rotating geometric object: keycap and PCB
+---------------------------------------
+Confirmed direction: replace the dancing/rotating geometric object with a
+single 3D Robotron keycap, first over a PCB-themed floor replacing the
+checkerboard, then in space. This supersedes the suggested U880-chip object.
+Derive the keycap from the existing accurate keyboard geometry, retaining
+its real profile and marking. The particular key remains to be selected.
+
+Keep the original choreography, musical accents, scene durations and
+transition timing. The PCB floor may use pads and traces as its visual
+pattern; its detailed design remains open.
+For the space portion, the proposed treatment is a translucent keycap with
+a solid, readable legend, retaining the original overlapping-face effect.
+Validate that treatment during implementation; it is not a physical claim
+about the real keycap material.
+
+Dot tunnel: inside the keyboard cable
+------------------------------------
+Accepted direction: reinterpret the flying dot-tube effect as a journey
+through the keyboard cable, following a keypress toward the computer.
+This connects the preceding keycap/PCB scene to the machine's interior.
+
+Preserve the original twisting tunnel, forward motion, scene duration and
+music synchronization. Arrange dots into several strands around the tunnel
+to suggest cable conductors. Send brighter pulses along the strands on the
+existing musical accents, using restrained green and amber colors related
+to the PCB scene.
+
+This is an artistic representation of data travelling through the cable,
+not a literal electrical simulation or a claim about conductor count or
+signal timing. Exact strand layout and palette remain implementation details
+to review against the original effect's readability and motion.
+
+This acceptance records the scene concept; the overall implementation hold
+remains in effect while the user explains the remaining scenes.
+
+Circular and linear interference: CRT coming to life
+---------------------------------------------------
+Accepted direction: reinterpret the interference sequence as the Robotron
+CRT coming to life, following the signal's journey through the keyboard cable.
+
+The circular portion suggests display adjustment through overlapping rings
+and a small central crosshair. The linear portion shifts toward scanlines
+and a rolling synchronization pattern, gradually settling into a stable
+display.
+
+Preserve the original interference motion, scene durations, musical accents
+and transitions. Use green on a nearly black background. A restrained screen
+border can establish the CRT setting without revealing the whole computer
+before the flyover.
+
+This is a stylized display-adjustment sequence, not a literal reconstruction
+of the Robotron boot process or evidence of an actual diagnostic routine.
+Exact framing and the final stable pattern remain to be designed.
+Implementation remains on hold while planning continues.
+
+Static monster picture: Robotron technician
+------------------------------------------
+Recorded art direction: reinterpret the monster as a retro-futuristic
+Robotron technician, retaining its pose, dramatic composition and some of
+its monstrous character to preserve the original humor.
+The user intends to modify the artwork; the final image remains pending.
+
+Suggested details:
+- A 5.25-inch diskette or diagnostic probe in place of the held object,
+  subject to checking the original artwork.
+- A small Robotron badge and workwear details.
+- Green CRT light on the face, with PCB traces or an electronics workbench
+  in the background.
+
+The guiding idea is "the creature maintaining the machine." Avoid revealing
+the whole computer ahead of the flyover. Preserve the original picture slot,
+display duration and transition/music timing. These details are visual
+suggestions, not claims about historical Robotron personnel or workwear.
+No artwork generation or implementation is authorized at this stage.
+
+Water and scrolling text: punch-tape fragments
+--------------------------------------------
+Accepted direction: retain the water effect, replace the floating leaves
+with small paper punch-tape fragments, and use Robotron-themed scrolling
+text. Preserve the original water motion, text timing, scene duration and
+musical transitions.
+
+The user accepted the suggested wording direction; two alternatives were
+offered, so the final choice remains open:
+  From Sömmerda, 1985
+  Into another reality
+
+  Eight bits.
+  A whole new world.
+
+Fit the selected text to the existing scrolling interval without extending
+the scene. The 1985 reference is to original PC 1715 series production,
+not an established introduction date for the specific 1715M variant.
+
+Punch tape is an artistic historical-computing motif here. Do not imply that
+the depicted Robotron configuration includes a paper-tape peripheral without
+supporting evidence. Preserve the floating fragments' light, organic motion
+and the scene's contrast with the preceding electronics imagery.
+Implementation remains on hold while planning continues.
+
+Magnifying glass: U880 die image
+-------------------------------
+Accepted direction: replace the face image with Robotron-related imagery,
+with a U880 die photograph as the preferred candidate.
+Keep the original magnifying-glass effect, lens movement, distortion,
+scene duration and music/transition timing unchanged.
+
+Before implementation, find an accurately identified U880 die image with
+suitable reuse permission and enough detail to remain interesting under
+the lens at the demo's resolution. Record provenance and required attribution
+in the companion documentation. Do not substitute a Z80 die photograph and
+label it U880. Exact image selection and crop remain open.
+Prepare the replacement to suit the original image/palette constraints;
+review legibility both outside and inside the unchanged lens.
+Implementation remains on hold while planning continues.
+
+Plasma and plasma cube: inside the U880
+-------------------------------------
+Accepted direction: continue from the U880 die image into a stylized view
+of processor activity.
+Retain the flowing plasma effect, framed by a faint pattern of chip traces
+suggesting activity spreading across silicon.
+Replace the plasma cube with a stylized chip package: a thin body and two
+rows of pins, with animated plasma on its broad faces.
+
+Preserve the original rotations, transitions, scene durations and musical
+timing. Use green and amber to connect with earlier PCB imagery, retaining
+brighter colors where needed for the plasma's visual clarity.
+This is artistic imagery, not a simulation of actual U880 circuitry.
+Review package proportions and plasma visibility during implementation.
+Implementation remains on hold while planning continues.
+
+Dancing dots: bits forming Robotron imagery
+------------------------------------------
+Accepted direction: keep the original fluid dot motion, with recognizable
+formations emerging as bits organize into output:
+- An eight-bit-wide grid suggesting bytes in memory.
+- Characters from the actual Robotron screen font.
+- A large "1715", briefly readable before dissolving back into motion.
+Keep dots visually simple and preserve the original musical accents,
+transitions and scene duration. Exact formation order and allocation to
+existing cues remain to be mapped.
+
+Reflective water reveal: encoded punched tape
+-------------------------------------------
+Requested direction: replace the sword emerging from reflective water with
+punched tape. The tape must carry a deliberate, decodable Easter egg rather
+than random holes.
+Proposed shape: a broad curling strip rising from the water, preserving a
+strong silhouette and the original reveal, reflection and musical timing.
+Inspect the scene's geometry/reflection implementation before settling how
+to render the strip and its holes.
+
+Proposed encoding: documented eight-channel ASCII with a separate feed-hole
+row. Choose and record bit order, reading direction and an identifiable
+message boundary so the pattern can actually be decoded. This is a chosen
+artistic encoding, not a claim about a Robotron peripheral or tape format.
+Exact message and encoding are pending user agreement.
+Consider using consistent encoded material for the earlier floating tape
+fragments as well; that linkage remains a proposal.
+Implementation remains on hold while planning continues.
+
+3D landscape: circuit board as terrain
+-------------------------------------
+Accepted direction: reinterpret the landscape as a flight across a circuit
+board viewed as terrain, inspired by the actual Robotron boards.
+PCB traces become roads and glowing channels; chip packages form ridges and
+plateaus; capacitors and connectors become distant towers.
+
+Preserve the original sweeping camera movement, horizon, scene duration,
+transitions and musical timing. Simplify source geometry and placement enough
+for the terrain to read clearly. Exact board selection and adaptation of the
+original terrain renderer remain to be investigated during implementation.
+
+Keep the scene inside the machine without revealing its complete exterior,
+distinguishing it from the reviewed later Robotron flyover. Narratively, the
+preceding punched tape introduces information, then this scene travels through
+the hardware. This is an artistic landscape, not a literal electrical map.
+Implementation remains on hold while planning continues.
+
+Girl and unicorn picture: fantasy in an electronic world
+-------------------------------------------------------
+Accepted art direction: retain the girl, living unicorn and original
+composition, adapting the illustration to a retro-futuristic Robotron theme.
+The user intends to modify the picture; final artwork remains pending.
+
+Suggested details:
+- A small Robotron badge and diskette pouch for the rider.
+- Subtle PCB-trace patterns on the unicorn's armor or harness, where suitable
+  for the original image, and a softly glowing green horn.
+- A dreamlike circuit-board landscape connecting to the preceding scene.
+- Green CRT lighting as an accent while retaining the richer original colors.
+
+Preserve the fantasy character rather than making everything mechanical.
+The guiding idea is a living unicorn travelling through an electronic world.
+Avoid showing the complete computer before the later flyover.
+Keep the original picture slot, display duration and transition/music timing.
+No artwork generation or implementation is authorized at this stage.
+
+3D flyover and its technical credits
+-----------------------------------
+Reuse the reviewed Robotron 3D flyover already implemented, including its
+keyboard/drives/monitor route, disk insertion and latch action, boot display,
+whole-machine reveal, drone swoosh and closing camera movement.
+This is the established scene for the full-demo sequence, not a request to
+redesign the flight. Preserve the standalone flyover/credits cut and its
+reviewed baseline.
+
+Requested follow-up: give the flyover's technical credits another editorial
+and visual polish pass. Review wording, factual accuracy, image selection,
+framing, legibility, repetition and transitions as candidates for improvement;
+specific changes have not yet been selected.
+Preserve the existing 21 credit slots, total duration and music cues. Retain
+verified Robotron facts and source provenance, and review proposed changes
+against the preserved baseline before accepting them.
+
+Final titles: original acknowledgments and Robotron information
+-------------------------------------------------------------
+Retain the most important material from the original ending credits and
+add information about the Robotron. Inspect and inventory the original
+ending before proposing what to retain, consolidate or replace.
+The exact selection of original material and Robotron information is pending.
+Do not treat "most important" as an already approved list of omissions.
+
+Coordinate with the opening contributor credits so every original contributor
+is acknowledged and names are not needlessly repeated. Preserve any required
+notices and provenance in companion documentation.
+Keep the final titles distinct from the flyover's technical credit cards,
+while checking both for repeated facts and opportunities to complement one
+another. Verify new historical or technical claims against sources.
+Preserve the original ending duration, music synchronization and transitions;
+fit the content to those slots rather than extending the soundtrack.
+Implementation remains on hold while planning continues.
+
+Next planning step
+------------------
+Implement the agreed sequence in isolated full-demo builds. Final wording, allocation
+to existing title slots, historical contributor research, and the rest of the
+full-demo sequence remain open.
+Keep the reviewed short build intact. Track implementation and validation
+separately; no scene is complete merely because its build runs.

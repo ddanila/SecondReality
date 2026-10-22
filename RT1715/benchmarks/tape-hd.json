@@ -1,0 +1,114 @@
+{
+  "status": "not selected after user review; retained experiment only",
+  "prototype": {
+    "texture": [
+      800,
+      70
+    ],
+    "screen": [
+      320,
+      200
+    ],
+    "texture_bytes": 56000,
+    "map_bytes": [
+      37058,
+      36872,
+      51224
+    ],
+    "exe_bytes": 377392,
+    "original_exe_bytes": 158000,
+    "sampling": "half-texel UVs reconstructed within disconnected projected surfaces",
+    "message": "THIS TAPE CANNOT PROVE WHAT IT SAYS",
+    "review_status": "experimental; not installed in full runtime"
+  },
+  "cadence": {
+    "1x_300k": {
+      "capture": "RT1715/build/tape-round-feed/capture",
+      "midscene_window_seconds": [
+        10,
+        20
+      ],
+      "frames": 701,
+      "changed_frames": 700,
+      "changed_frames_per_second": 70.0,
+      "longest_duplicate_frame_run": 0,
+      "exit": {
+        "executable": "RAYSCRL.EXE",
+        "phase": "exit",
+        "module": 1,
+        "order": 91,
+        "row": 61,
+        "retrace": 2058
+      }
+    },
+    "2x_300k": {
+      "capture": "RT1715/build/tape-hd/capture-v2",
+      "midscene_window_seconds": [
+        10,
+        20
+      ],
+      "frames": 701,
+      "changed_frames": 700,
+      "changed_frames_per_second": 70.0,
+      "longest_duplicate_frame_run": 0,
+      "exit": {
+        "executable": "RAYSCRL.EXE",
+        "phase": "exit",
+        "module": 1,
+        "order": 91,
+        "row": 61,
+        "retrace": 2058
+      }
+    },
+    "1x_60k": {
+      "capture": "RT1715/build/tape-hd/baseline/capture-60k",
+      "midscene_window_seconds": [
+        10,
+        20
+      ],
+      "frames": 701,
+      "changed_frames": 700,
+      "changed_frames_per_second": 70.0,
+      "longest_duplicate_frame_run": 0,
+      "exit": {
+        "executable": "RAYSCRL.EXE",
+        "phase": "exit",
+        "module": 1,
+        "order": 91,
+        "row": 60,
+        "retrace": 2057
+      }
+    },
+    "2x_60k": {
+      "capture": "RT1715/build/tape-hd/capture-60k",
+      "midscene_window_seconds": [
+        10,
+        20
+      ],
+      "frames": 701,
+      "changed_frames": 700,
+      "changed_frames_per_second": 70.0,
+      "longest_duplicate_frame_run": 0,
+      "exit": {
+        "executable": "RAYSCRL.EXE",
+        "phase": "exit",
+        "module": 1,
+        "order": 91,
+        "row": 61,
+        "retrace": 2057
+      }
+    }
+  },
+  "interpretation": "Both versions sustain 70 partial updates/s in the measured ten-second window at 300k and 60k cycles. The legacy renderer updates three disjoint pixel groups, so this is about 23 complete passes/s, not 70 complete redraws. This measures observed playback cadence, not exact CPU cost or a minimum hardware requirement.",
+  "host_tests": 16,
+  "candidate_sha256": "0793e6b5b5c7a07c8b0e53435bfd1e740eb2f1acdc6054850d1b6ae68f2b4479",
+  "baseline_sha256": "73164f7592bf517ab4026f2871b57032082c9030135ca41d2c614ddf4813ebdb",
+  "baseline_exe_bytes": 196099,
+  "review": "build/tape-hd-review/tape-1x-vs-2x.mp4",
+  "validation_limit": "Independent scene captures; this experimental renderer has not been tested in an uninterrupted full demo.",
+  "decision": {
+    "date": "2026-10-22",
+    "selected": "improved 400x35 1x with rounded holes and continuous blank feed leader",
+    "reason": "user preferred the latest 1x result"
+  }
+}

@@ -1,0 +1,1834 @@
+{
+  "date": "2026-10-22",
+  "branch": "rt1715",
+  "status": "full review draft; artistic approval pending",
+  "runtime": "RT1715/build/full-robotron/dos/FULL.EXE",
+  "runtime_sha256": "570d8b67c28dcb27963cbee14619e940a9d0ecf65fbc2b4b4bcd3c67b6d1a665",
+  "uninterrupted_full_capture": "RT1715/build/full-integrated-v4/capture",
+  "corrected_opening_through_lens_capture": "build/review-detail-fixes/capture-v2",
+  "validation_limit": "The latest assembled full runtime has not been recaptured end-to-end. Continuous sequence and final scene captures are separate evidence.",
+  "host_tests": 16,
+  "dosbox_cycles": 300000,
+  "headless": true,
+  "reviews": [
+    {
+      "part": "opening",
+      "video": "01-opening.mp4",
+      "status": "ready for visual review",
+      "alignment": {
+        "original": "RT1715/build/full-reference/capture",
+        "remake": "RT1715/build/review-detail-fixes/capture-v2",
+        "reference_start": 0,
+        "duration": 80.67305310618383,
+        "remake_offset": 0.0,
+        "audio_checks": [
+          {
+            "reference_seconds": 4.0,
+            "offset_seconds": 0.0,
+            "correlation": 0.9988667307900245,
+            "reliable": true
+          },
+          {
+            "reference_seconds": 15.778842184363972,
+            "offset_seconds": 0.0,
+            "correlation": 0.9954226135408638,
+            "reliable": true
+          },
+          {
+            "reference_seconds": 27.557684368727944,
+            "offset_seconds": 0.0,
+            "correlation": 0.9999243099837303,
+            "reliable": true
+          },
+          {
+            "reference_seconds": 39.336526553091915,
+            "offset_seconds": 0.0,
+            "correlation": 0.9883706029795409,
+            "reliable": true
+          },
+          {
+            "reference_seconds": 51.11536873745589,
+            "offset_seconds": 0.0,
+            "correlation": 0.9998372083145741,
+            "reliable": true
+          },
+          {
+            "reference_seconds": 62.89421092181986,
+            "offset_seconds": 0.0,
+            "correlation": 0.9995635366263516,
+            "reliable": true
+          },
+          {
+            "reference_seconds": 74.67305310618383,
+            "offset_seconds": 0.0,
+            "correlation": 0.9940351158430765,
+            "reliable": true
+          }
+        ],
+        "audio_source": "RT1715/build/full-reference/capture/full_000.wav",
+        "time_stretch": false,
+        "fps": 70,
+        "alignment_window": null,
+        "remake_missing_prefix_seconds": 0
+      },
+      "scene_timing": {
+        "original_exit": {
+          "module": 0,
+          "order": 10,
+          "row": 0
+        },
+        "remake_exit": {
+          "module": 0,
+          "order": 10,
+          "row": 0
+        },
+        "copper_tick_difference_after_audio_alignment": -2.0
+      }
+    },
+    {
+      "part": "diskette-flight",
+      "video": "02-diskette-flight.mp4",
+      "status": "ready for visual review",
+      "alignment": {
+        "original": "RT1715/build/full-reference/capture",
+        "remake": "RT1715/build/review-final-first/capture-v2",
+        "reference_start": 79.78732129098536,
+        "duration": 21.85959535427903,
+        "remake_offset": 0.0,
+        "audio_checks": [
+          {
+            "reference_seconds": 82.51977071027024,
+            "offset_seconds": 0.0,
+            "correlation": 0.9932880989106395,
+            "reliable": true
+          },
+          {
+            "reference_seconds": 84.91888679622178,
+            "offset_seconds": 0.0,
+            "correlation": 0.9951635319948297,
+            "reliable": true
+          },
+          {
+            "reference_seconds": 87.31800288217333,
+            "offset_seconds": 0.0,
+            "correlation": 0.9998803541045321,
+            "reliable": true
+          },
+          {
+            "reference_seconds": 89.71711896812488,
+            "offset_seconds": 0.0,
+            "correlation": 0.8849060812852497,
+            "reliable": true
+          },
+          {
+            "reference_seconds": 92.11623505407641,
+            "offset_seconds": 0.0,
+            "correlation": 0.8158332968288113,
+            "reliable": true
+          },
+          {
+            "reference_seconds": 94.51535114002796,
+            "offset_seconds": 0.0,
+            "correlation": 0.9913878189398524,
+            "reliable": true
+          },
+          {
+            "reference_seconds": 96.91446722597951,
+            "offset_seconds": 0.0,
+            "correlation": 0.9698677035071944,
+            "reliable": true
+          }
+        ],
+        "audio_source": "RT1715/build/full-reference/capture/full_000.wav",
+        "time_stretch": false,
+        "fps": 70
+      },
+      "scene_timing": {
+        "original_exit": {
+          "module": 0,
+          "order": 12,
+          "row": 42
+        },
+        "remake_exit": {
+          "module": 0,
+          "order": 12,
+          "row": 42
+        },
+        "copper_tick_difference_after_audio_alignment": 1.0
+      }
+    },
+    {
+      "part": "explosion",
+      "video": "03-explosion.mp4",
+      "status": "ready for visual review",
+      "alignment": {
+        "original": "RT1715/build/full-reference/capture",
+        "remake": "RT1715/build/full-integrated-v4/capture",
+        "reference_start": 101.04691664526439,
+        "duration": 5.97910567017664,
+        "remake_offset": 0.0,
+        "audio_checks": [
+          {
+            "reference_seconds": 101.79430485403647,
+            "offset_seconds": 0.0,
+            "correlation": 0.9997238766534987
+          },
+          {
+            "reference_seconds": 102.20835972947522,
+            "offset_seconds": 0.0,
+            "correlation": 0.9997571609927451
+          },
+          {
+            "reference_seconds": 102.62241460491396,
+            "offset_seconds": 0.0,
+            "correlation": 0.9979013941998621
+          },
+          {
+            "reference_seconds": 103.03646948035271,
+            "offset_seconds": 0.0,
+            "correlation": 0.9926963996073538
+          },
+          {
+            "reference_seconds": 103.45052435579146,
+            "offset_seconds": 0.0,
+            "correlation": 0.9908849768881162
+          },
+          {
+            "reference_seconds": 103.8645792312302,
+            "offset_seconds": 0.0,
+            "correlation": 0.9894473734502717
+          },
+          {
+            "reference_seconds": 104.27863410666895,
+            "offset_seconds": 0.0,
+            "correlation": 0.988083289492363
+          }
+        ],
+        "audio_source": "RT1715/build/full-reference/capture/full_000.wav",
+        "time_stretch": false,
+        "fps": 70
+      },
+      "scene_timing": {
+        "original_exit": {
+          "module": 0,
+          "order": 13,
+          "row": 21
+        },
+        "remake_exit": {
+          "module": 0,
+          "order": 13,
+          "row": 21
+        },
+        "copper_tick_difference_after_audio_alignment": 0.0
+      }
+    },
+    {
+      "part": "title",
+      "video": "04-title.mp4",
+      "status": "ready for visual review",
+      "alignment": {
+        "original": "RT1715/build/full-reference/capture",
+        "remake": "RT1715/build/full-integrated-v4/capture",
+        "reference_start": 106.42602231544103,
+        "duration": 2.8971777530462575,
+        "remake_offset": 0.0,
+        "audio_checks": [
+          {
+            "reference_seconds": 106.78816953457181,
+            "offset_seconds": 0.0,
+            "correlation": 0.9956648853903872
+          },
+          {
+            "reference_seconds": 106.81698342036925,
+            "offset_seconds": 0.0,
+            "correlation": 0.9950624413198916
+          },
+          {
+            "reference_seconds": 106.84579730616672,
+            "offset_seconds": 0.0,
+            "correlation": 0.995197920754414
+          },
+          {
+            "reference_seconds": 106.87461119196416,
+            "offset_seconds": 0.0,
+            "correlation": 0.9950750583076357
+          },
+          {
+            "reference_seconds": 106.90342507776161,
+            "offset_seconds": 0.0,
+            "correlation": 0.9940830980847983
+          },
+          {
+            "reference_seconds": 106.93223896355907,
+            "offset_seconds": 0.0,
+            "correlation": 0.9948015012421545
+          },
+          {
+            "reference_seconds": 106.96105284935652,
+            "offset_seconds": 0.0,
+            "correlation": 0.9944220045899959
+          }
+        ],
+        "audio_source": "RT1715/build/full-reference/capture/full_000.wav",
+        "time_stretch": false,
+        "fps": 70
+      },
+      "scene_timing": {
+        "original_exit": {
+          "module": 0,
+          "order": 14,
+          "row": 4
+        },
+        "remake_exit": {
+          "module": 0,
+          "order": 14,
+          "row": 4
+        },
+        "copper_tick_difference_after_audio_alignment": 1.0
+      }
+    },
+    {
+      "part": "keycap",
+      "video": "05-keycap.mp4",
+      "status": "ready for visual review",
+      "alignment": {
+        "original": "RT1715/build/full-reference/capture",
+        "remake": "RT1715/build/review-detail-fixes/capture-v2",
+        "reference_start": 108.80880917729647,
+        "duration": 44.317718231886545,
+        "remake_offset": 0.041625,
+        "audio_checks": [
+          {
+            "reference_seconds": 112.80880917729647,
+            "offset_seconds": 0.041625,
+            "correlation": 0.9002334982857481,
+            "reliable": true
+          },
+          {
+            "reference_seconds": 118.5284288826109,
+            "offset_seconds": 0.041625,
+            "correlation": 0.659210620776198,
+            "reliable": true
+          },
+          {
+            "reference_seconds": 124.24804858792531,
+            "offset_seconds": 0.041625,
+            "correlation": 0.9944954291356909,
+            "reliable": true
+          },
+          {
+            "reference_seconds": 129.96766829323974,
+            "offset_seconds": 0.041625,
+            "correlation": 0.928037665522009,
+            "reliable": true
+          },
+          {
+            "reference_seconds": 135.68728799855415,
+            "offset_seconds": 0.041625,
+            "correlation": 0.9886768629467841,
+            "reliable": true
+          },
+          {
+            "reference_seconds": 141.4069077038686,
+            "offset_seconds": 0.041625,
+            "correlation": 0.9744578335642349,
+            "reliable": true
+          },
+          {
+            "reference_seconds": 147.126527409183,
+            "offset_seconds": 0.041625,
+            "correlation": 0.9102327754250696,
+            "reliable": true
+          }
+        ],
+        "audio_source": "RT1715/build/full-reference/capture/full_000.wav",
+        "time_stretch": false,
+        "fps": 70,
+        "alignment_window": null,
+        "remake_missing_prefix_seconds": 0
+      },
+      "scene_timing": {
+        "original_exit": {
+          "module": 1,
+          "order": 13,
+          "row": 49
+        },
+        "remake_exit": {
+          "module": 1,
+          "order": 13,
+          "row": 49
+        },
+        "copper_tick_difference_after_audio_alignment": -0.917
+      }
+    },
+    {
+      "part": "cable",
+      "video": "06-cable.mp4",
+      "status": "Updated; music-aligned independent scene capture",
+      "alignment": {
+        "original": "RT1715/build/full-reference/capture",
+        "remake": "RT1715/build/cable-final/capture",
+        "reference_start": 152.526527409183,
+        "duration": 15.781348628827441,
+        "remake_offset": -149.83369041606025,
+        "audio_checks": [
+          {
+            "reference_seconds": 154.4991959877864,
+            "offset_seconds": -149.83369041606025,
+            "correlation": 0.9862069126515557,
+            "reliable": true
+          },
+          {
+            "reference_seconds": 156.1385312330565,
+            "offset_seconds": -149.83369041606025,
+            "correlation": 0.9013066036762496,
+            "reliable": true
+          },
+          {
+            "reference_seconds": 157.77786647832662,
+            "offset_seconds": -149.83369041606025,
+            "correlation": 0.9858818400740729,
+            "reliable": true
+          },
+          {
+            "reference_seconds": 159.41720172359672,
+            "offset_seconds": -149.83369041606025,
+            "correlation": 0.8598471533255897,
+            "reliable": true
+          },
+          {
+            "reference_seconds": 161.0565369688668,
+            "offset_seconds": -149.83369041606025,
+            "correlation": 0.9421038086773514,
+            "reliable": true
+          },
+          {
+            "reference_seconds": 162.6958722141369,
+            "offset_seconds": -149.83369041606025,
+            "correlation": 0.9963119944319538,
+            "reliable": true
+          },
+          {
+            "reference_seconds": 164.335207459407,
+            "offset_seconds": -149.83369041606025,
+            "correlation": 0.9707822726443299,
+            "reliable": true
+          }
+        ],
+        "audio_source": "RT1715/build/full-reference/capture/full_000.wav",
+        "time_stretch": false,
+        "fps": 70
+      },
+      "scene_timing": {
+        "validation": "Independent scene playback at its original music cue; not an uninterrupted full run.",
+        "tracker_exits": [
+          {
+            "executable": "TUNNELI.EXE",
+            "module": 1,
+            "order": 18,
+            "row": 56
+          }
+        ]
+      }
+    },
+    {
+      "part": "interference-and-monster",
+      "video": "07-interference-and-monster.mp4",
+      "status": "ready for visual review",
+      "alignment": {
+        "original": "RT1715/build/full-reference/capture",
+        "remake": "RT1715/build/full-integrated-v4/capture",
+        "reference_start": 167.70787603801043,
+        "duration": 57.44444824929373,
+        "remake_offset": 0.041625,
+        "audio_checks": [
+          {
+            "reference_seconds": 171.70787603801043,
+            "offset_seconds": 0.041625,
+            "correlation": 0.9913592878753491
+          },
+          {
+            "reference_seconds": 179.6152840795594,
+            "offset_seconds": 0.041625,
+            "correlation": 0.9909548501184164
+          },
+          {
+            "reference_seconds": 187.52269212110835,
+            "offset_seconds": 0.041625,
+            "correlation": 0.9657952506087069
+          },
+          {
+            "reference_seconds": 195.4301001626573,
+            "offset_seconds": 0.041625,
+            "correlation": 0.9721174035844646
+          },
+          {
+            "reference_seconds": 203.33750820420624,
+            "offset_seconds": 0.041625,
+            "correlation": 0.9628909797932005
+          },
+          {
+            "reference_seconds": 211.2449162457552,
+            "offset_seconds": 0.041625,
+            "correlation": 0.9864360959959465
+          },
+          {
+            "reference_seconds": 219.15232428730417,
+            "offset_seconds": 0.041625,
+            "correlation": 0.9823216539534374
+          }
+        ],
+        "audio_source": "RT1715/build/full-reference/capture/full_000.wav",
+        "time_stretch": false,
+        "fps": 70
+      },
+      "scene_timing": {
+        "original_exit": {
+          "module": 1,
+          "order": 37,
+          "row": 50
+        },
+        "remake_exit": {
+          "module": 1,
+          "order": 37,
+          "row": 50
+        },
+        "copper_tick_difference_after_audio_alignment": -0.917
+      }
+    },
+    {
+      "part": "monster-transition",
+      "video": "08-monster-transition.mp4",
+      "status": "ready for visual review",
+      "alignment": {
+        "original": "RT1715/build/full-reference/capture",
+        "remake": "RT1715/build/full-integrated-v4/capture",
+        "reference_start": 224.55232428730417,
+        "duration": 2.6260822418171963,
+        "remake_offset": 0.041625,
+        "audio_checks": [
+          {
+            "reference_seconds": 224.88058456753132,
+            "offset_seconds": 0.041625,
+            "correlation": 0.9249311815934381
+          },
+          {
+            "reference_seconds": 224.87551151442514,
+            "offset_seconds": 0.041625,
+            "correlation": 0.9250062767625953
+          },
+          {
+            "reference_seconds": 224.87043846131894,
+            "offset_seconds": 0.041625,
+            "correlation": 0.9248565457279151
+          },
+          {
+            "reference_seconds": 224.86536540821277,
+            "offset_seconds": 0.041625,
+            "correlation": 0.9249592283304394
+          },
+          {
+            "reference_seconds": 224.8602923551066,
+            "offset_seconds": 0.041625,
+            "correlation": 0.9253829909255121
+          },
+          {
+            "reference_seconds": 224.8552193020004,
+            "offset_seconds": 0.041625,
+            "correlation": 0.9254022309154679
+          },
+          {
+            "reference_seconds": 224.85014624889422,
+            "offset_seconds": 0.041625,
+            "correlation": 0.9253963835298872
+          }
+        ],
+        "audio_source": "RT1715/build/full-reference/capture/full_000.wav",
+        "time_stretch": false,
+        "fps": 70
+      },
+      "scene_timing": {
+        "original_exit": {
+          "module": 1,
+          "order": 39,
+          "row": 21
+        },
+        "remake_exit": {
+          "module": 1,
+          "order": 39,
+          "row": 21
+        },
+        "copper_tick_difference_after_audio_alignment": -0.917
+      }
+    },
+    {
+      "part": "water",
+      "video": "09-water.mp4",
+      "status": "Updated; music-aligned independent scene capture",
+      "alignment": {
+        "original": "RT1715/build/full-reference/capture",
+        "remake": "RT1715/build/water-submerged/capture",
+        "reference_start": 231.00154381759552,
+        "duration": 29.307587820677455,
+        "remake_offset": -231.04004381759552,
+        "audio_checks": [
+          {
+            "reference_seconds": 234.6649922951802,
+            "offset_seconds": -231.04004381759552,
+            "correlation": 0.9858583267264025,
+            "reliable": true
+          },
+          {
+            "reference_seconds": 237.99510743943154,
+            "offset_seconds": -231.04004381759552,
+            "correlation": 0.9245907795100115,
+            "reliable": true
+          },
+          {
+            "reference_seconds": 241.3252225836829,
+            "offset_seconds": -231.04004381759552,
+            "correlation": 0.9999345649112429,
+            "reliable": true
+          },
+          {
+            "reference_seconds": 244.65533772793424,
+            "offset_seconds": -231.04004381759552,
+            "correlation": 0.8913037284422148,
+            "reliable": true
+          },
+          {
+            "reference_seconds": 247.9854528721856,
+            "offset_seconds": -231.04004381759552,
+            "correlation": 0.9914609298452396,
+            "reliable": true
+          },
+          {
+            "reference_seconds": 251.31556801643694,
+            "offset_seconds": -231.04004381759552,
+            "correlation": 0.9870257215984114,
+            "reliable": true
+          },
+          {
+            "reference_seconds": 254.6456831606883,
+            "offset_seconds": -231.04004381759552,
+            "correlation": 0.999958812224938,
+            "reliable": true
+          }
+        ],
+        "audio_source": "RT1715/build/full-reference/capture/full_000.wav",
+        "time_stretch": false,
+        "fps": 70,
+        "alignment_window": null,
+        "remake_missing_prefix_seconds": 0.03849999999999909
+      },
+      "scene_timing": {
+        "validation": "Independent scene playback at its original music cue; not an uninterrupted full run.",
+        "tracker_exits": [
+          {
+            "executable": "MNTSCRL.EXE",
+            "module": 1,
+            "order": 45,
+            "row": 58
+          }
+        ]
+      }
+    },
+    {
+      "part": "die-lens",
+      "video": "10-die-lens.mp4",
+      "status": "ready for visual review",
+      "alignment": {
+        "original": "RT1715/build/full-reference/capture",
+        "remake": "RT1715/build/full-act-final/capture",
+        "reference_start": 259.709131638273,
+        "duration": 46.32953228890221,
+        "remake_offset": 0.041625,
+        "audio_checks": [
+          {
+            "reference_seconds": 263.709131638273,
+            "offset_seconds": 0.041625,
+            "correlation": 0.9857310323161359,
+            "reliable": true
+          },
+          {
+            "reference_seconds": 269.7640536864234,
+            "offset_seconds": 0.041625,
+            "correlation": 0.9865996481603804,
+            "reliable": true
+          },
+          {
+            "reference_seconds": 275.8189757345737,
+            "offset_seconds": 0.041625,
+            "correlation": 0.9906709377496316,
+            "reliable": true
+          },
+          {
+            "reference_seconds": 281.8738977827241,
+            "offset_seconds": 0.041625,
+            "correlation": 0.993960610620615,
+            "reliable": true
+          },
+          {
+            "reference_seconds": 287.9288198308745,
+            "offset_seconds": 0.041625,
+            "correlation": 0.9816795900289358,
+            "reliable": true
+          },
+          {
+            "reference_seconds": 293.9837418790248,
+            "offset_seconds": 0.041625,
+            "correlation": 0.9874334142514312,
+            "reliable": true
+          },
+          {
+            "reference_seconds": 300.0386639271752,
+            "offset_seconds": 0.041625,
+            "correlation": 0.9758397963497919,
+            "reliable": true
+          }
+        ],
+        "audio_source": "RT1715/build/full-reference/capture/full_000.wav",
+        "time_stretch": false,
+        "fps": 70
+      },
+      "scene_timing": {
+        "original_exit": {
+          "module": 1,
+          "order": 60,
+          "row": 45
+        },
+        "remake_exit": {
+          "module": 1,
+          "order": 60,
+          "row": 45
+        },
+        "copper_tick_difference_after_audio_alignment": -0.917
+      }
+    },
+    {
+      "part": "plasma-and-chip",
+      "video": "11-plasma-and-chip.mp4",
+      "status": "Updated; music-aligned independent scene capture",
+      "alignment": {
+        "original": "RT1715/build/full-reference/capture",
+        "remake": "RT1715/build/chip-final/capture",
+        "reference_start": 305.4386639271752,
+        "duration": 67.90302770881488,
+        "remake_offset": -303.01911789087694,
+        "audio_checks": [
+          {
+            "reference_seconds": 339.4386639271752,
+            "offset_seconds": -303.0176178908769,
+            "correlation": 0.5850386787424702,
+            "reliable": false
+          },
+          {
+            "reference_seconds": 344.08866392717516,
+            "offset_seconds": -303.01924289087697,
+            "correlation": 0.4974223015757111,
+            "reliable": false
+          },
+          {
+            "reference_seconds": 348.7386639271752,
+            "offset_seconds": -303.01924289087697,
+            "correlation": 0.7510909752905007,
+            "reliable": true
+          },
+          {
+            "reference_seconds": 353.3886639271752,
+            "offset_seconds": -303.0176178908769,
+            "correlation": 0.7814706805587865,
+            "reliable": true
+          },
+          {
+            "reference_seconds": 358.0386639271752,
+            "offset_seconds": -303.01911789087694,
+            "correlation": 0.721407588429671,
+            "reliable": true
+          },
+          {
+            "reference_seconds": 362.6886639271752,
+            "offset_seconds": -303.01911789087694,
+            "correlation": 0.7372656477544283,
+            "reliable": true
+          },
+          {
+            "reference_seconds": 367.33866392717516,
+            "offset_seconds": -303.0176178908769,
+            "correlation": 0.7984549600231862,
+            "reliable": true
+          }
+        ],
+        "audio_source": "RT1715/build/full-reference/capture/full_000.wav",
+        "time_stretch": false,
+        "fps": 70,
+        "alignment_window": [
+          30,
+          37.9
+        ]
+      },
+      "scene_timing": {
+        "validation": "Independent scene playback at its original music cue; not an uninterrupted full run.",
+        "tracker_exits": [
+          {
+            "executable": "PLZPART.EXE",
+            "module": 1,
+            "order": 75,
+            "row": 60
+          }
+        ]
+      }
+    },
+    {
+      "part": "dots",
+      "video": "12-dots.mp4",
+      "status": "ready for visual review",
+      "alignment": {
+        "original": "RT1715/build/full-reference/capture",
+        "remake": "RT1715/build/review-mid/capture",
+        "reference_start": 372.7416916359901,
+        "duration": 37.41191678794624,
+        "remake_offset": 0.041625,
+        "audio_checks": [
+          {
+            "reference_seconds": 376.7416916359901,
+            "offset_seconds": 0.041625,
+            "correlation": 0.9260830237270328,
+            "reliable": true
+          },
+          {
+            "reference_seconds": 381.31034443398113,
+            "offset_seconds": 0.041625,
+            "correlation": 0.8284189249254089,
+            "reliable": true
+          },
+          {
+            "reference_seconds": 385.87899723197216,
+            "offset_seconds": 0.041625,
+            "correlation": 0.8839719353293778,
+            "reliable": true
+          },
+          {
+            "reference_seconds": 390.44765002996326,
+            "offset_seconds": 0.041625,
+            "correlation": 0.9776644152057694,
+            "reliable": true
+          },
+          {
+            "reference_seconds": 395.0163028279543,
+            "offset_seconds": 0.041625,
+            "correlation": 0.9349856381920189,
+            "reliable": true
+          },
+          {
+            "reference_seconds": 399.5849556259453,
+            "offset_seconds": 0.041625,
+            "correlation": 0.818314931925328,
+            "reliable": true
+          },
+          {
+            "reference_seconds": 404.15360842393636,
+            "offset_seconds": 0.041625,
+            "correlation": 0.9395054272505413,
+            "reliable": true
+          }
+        ],
+        "audio_source": "RT1715/build/full-reference/capture/full_000.wav",
+        "time_stretch": false,
+        "fps": 70
+      },
+      "scene_timing": {
+        "original_exit": {
+          "module": 1,
+          "order": 86,
+          "row": 58
+        },
+        "remake_exit": {
+          "module": 1,
+          "order": 86,
+          "row": 58
+        },
+        "copper_tick_difference_after_audio_alignment": -0.917
+      }
+    },
+    {
+      "part": "tape-reflections",
+      "video": "13-tape-reflections.mp4",
+      "status": "Updated; original and remake captured independently at the same music cue",
+      "alignment": {
+        "original": "RT1715/build/tape-round-original/capture",
+        "remake": "RT1715/build/tape-round-feed/capture",
+        "reference_start": 0,
+        "duration": 29,
+        "remake_offset": 0.0,
+        "audio_checks": [
+          {
+            "reference_seconds": 3.625,
+            "offset_seconds": 0.0,
+            "correlation": 0.999999987047411,
+            "reliable": true
+          },
+          {
+            "reference_seconds": 6.916666666666666,
+            "offset_seconds": 0.0,
+            "correlation": 0.9999990312578501,
+            "reliable": true
+          },
+          {
+            "reference_seconds": 10.208333333333332,
+            "offset_seconds": 0.0,
+            "correlation": 0.9999605507072089,
+            "reliable": true
+          },
+          {
+            "reference_seconds": 13.5,
+            "offset_seconds": 0.0,
+            "correlation": 0.9997440447496817,
+            "reliable": true
+          },
+          {
+            "reference_seconds": 16.791666666666664,
+            "offset_seconds": 0.0,
+            "correlation": 0.9999982729574574,
+            "reliable": true
+          },
+          {
+            "reference_seconds": 20.083333333333332,
+            "offset_seconds": 0.0,
+            "correlation": 0.9992819613723147,
+            "reliable": true
+          },
+          {
+            "reference_seconds": 23.375,
+            "offset_seconds": 0.0,
+            "correlation": 0.9997414983638326,
+            "reliable": true
+          }
+        ],
+        "audio_source": "RT1715/build/tape-round-original/capture/full_000.wav",
+        "time_stretch": false,
+        "fps": 70,
+        "alignment_window": null,
+        "remake_missing_prefix_seconds": 0
+      },
+      "scene_timing": {
+        "validation": "Paired independent scene captures, not an uninterrupted full run. One original soundtrack; no retiming.",
+        "original_exits": [
+          {
+            "executable": "RAYSCRL.EXE",
+            "phase": "exit",
+            "module": 1,
+            "order": 91,
+            "row": 61,
+            "retrace": 2058
+          }
+        ],
+        "remake_exits": [
+          {
+            "executable": "RAYSCRL.EXE",
+            "phase": "exit",
+            "module": 1,
+            "order": 91,
+            "row": 61,
+            "retrace": 2058
+          }
+        ]
+      }
+    },
+    {
+      "part": "pcb-landscape",
+      "video": "14-pcb-landscape.mp4",
+      "status": "ready for visual review",
+      "alignment": {
+        "original": "RT1715/build/full-reference/capture",
+        "remake": "RT1715/build/full-integrated-v4/capture",
+        "reference_start": 439.03167822389634,
+        "duration": 29.664292440715695,
+        "remake_offset": 0.041625,
+        "audio_checks": [
+          {
+            "reference_seconds": 442.7397147789858,
+            "offset_seconds": 0.041625,
+            "correlation": 0.874773512078268
+          },
+          {
+            "reference_seconds": 446.1144180007419,
+            "offset_seconds": 0.041625,
+            "correlation": 0.9301187478152589
+          },
+          {
+            "reference_seconds": 449.48912122249806,
+            "offset_seconds": 0.041625,
+            "correlation": 0.912467218820408
+          },
+          {
+            "reference_seconds": 452.8638244442542,
+            "offset_seconds": 0.041625,
+            "correlation": 0.9396567450163554
+          },
+          {
+            "reference_seconds": 456.2385276660103,
+            "offset_seconds": 0.041625,
+            "correlation": 0.9359319986530996
+          },
+          {
+            "reference_seconds": 459.61323088776646,
+            "offset_seconds": 0.041625,
+            "correlation": 0.9028094856189702
+          },
+          {
+            "reference_seconds": 462.9879341095226,
+            "offset_seconds": 0.041625,
+            "correlation": 0.8517639732025892
+          }
+        ],
+        "audio_source": "RT1715/build/full-reference/capture/full_000.wav",
+        "time_stretch": false,
+        "fps": 70
+      },
+      "scene_timing": {
+        "original_exit": {
+          "module": 1,
+          "order": 96,
+          "row": 57
+        },
+        "remake_exit": {
+          "module": 1,
+          "order": 96,
+          "row": 57
+        },
+        "copper_tick_difference_after_audio_alignment": -0.917
+      }
+    },
+    {
+      "part": "unicorn",
+      "video": "15-unicorn.mp4",
+      "status": "ready for visual review",
+      "alignment": {
+        "original": "RT1715/build/full-reference/capture",
+        "remake": "RT1715/build/full-integrated-v4/capture",
+        "reference_start": 468.095970664612,
+        "duration": 11.829061438803755,
+        "remake_offset": 0.041625,
+        "audio_checks": [
+          {
+            "reference_seconds": 469.5746033444625,
+            "offset_seconds": 0.041625,
+            "correlation": 0.9739205211330288,
+            "reliable": true
+          },
+          {
+            "reference_seconds": 470.71990269097967,
+            "offset_seconds": 0.041625,
+            "correlation": 0.9922605637446298,
+            "reliable": true
+          },
+          {
+            "reference_seconds": 471.8652020374968,
+            "offset_seconds": 0.041625,
+            "correlation": 0.994288182730369,
+            "reliable": true
+          },
+          {
+            "reference_seconds": 473.0105013840139,
+            "offset_seconds": 0.041625,
+            "correlation": 0.9934060815933083,
+            "reliable": true
+          },
+          {
+            "reference_seconds": 474.15580073053104,
+            "offset_seconds": 0.041625,
+            "correlation": 0.9867644560197977,
+            "reliable": true
+          },
+          {
+            "reference_seconds": 475.3011000770482,
+            "offset_seconds": 0.041625,
+            "correlation": 0.5454172970284988,
+            "reliable": false
+          },
+          {
+            "reference_seconds": 476.4463994235653,
+            "offset_seconds": -0.986625,
+            "correlation": 0.47837119131391126,
+            "reliable": false
+          }
+        ],
+        "audio_source": "RT1715/build/full-reference/capture/full_000.wav",
+        "time_stretch": false,
+        "fps": 70
+      },
+      "scene_timing": {
+        "original_exit": {
+          "module": 1,
+          "order": 98,
+          "row": 50
+        },
+        "remake_exit": {
+          "module": 1,
+          "order": 98,
+          "row": 50
+        },
+        "copper_tick_difference_after_audio_alignment": 1.083
+      }
+    },
+    {
+      "part": "robotron-flyover",
+      "video": "16-robotron-flyover.mp4",
+      "status": "Updated; music-aligned independent scene capture",
+      "alignment": {
+        "original": "RT1715/build/full-reference/capture",
+        "remake": "RT1715/capture/20261021-204856-140563",
+        "reference_start": 479.3821048426219,
+        "duration": 64.96378163969979,
+        "remake_offset": -479.8184798426219,
+        "audio_checks": [
+          {
+            "reference_seconds": 483.3821048426219,
+            "offset_seconds": -479.8184798426219,
+            "correlation": 0.9038783593664143,
+            "reliable": true
+          },
+          {
+            "reference_seconds": 492.5427351159052,
+            "offset_seconds": -479.8184798426219,
+            "correlation": 0.9132074868803268,
+            "reliable": true
+          },
+          {
+            "reference_seconds": 501.7033653891885,
+            "offset_seconds": -479.8184798426219,
+            "correlation": 0.9374263886202558,
+            "reliable": true
+          },
+          {
+            "reference_seconds": 510.8639956624718,
+            "offset_seconds": -479.8184798426219,
+            "correlation": 0.8768094982058245,
+            "reliable": true
+          },
+          {
+            "reference_seconds": 520.0246259357551,
+            "offset_seconds": -479.81860484262194,
+            "correlation": 0.8267726650439743,
+            "reliable": true
+          },
+          {
+            "reference_seconds": 529.1852562090384,
+            "offset_seconds": -479.8184798426219,
+            "correlation": 0.6042567620166396,
+            "reliable": false
+          },
+          {
+            "reference_seconds": 538.3458864823217,
+            "offset_seconds": -479.81860484262194,
+            "correlation": 0.7071941806122447,
+            "reliable": true
+          }
+        ],
+        "audio_source": "RT1715/build/full-reference/capture/full_000.wav",
+        "time_stretch": false,
+        "fps": 70,
+        "alignment_window": null,
+        "remake_missing_prefix_seconds": 0.4363749999999982
+      },
+      "scene_timing": {
+        "validation": "Independent scene playback at its original music cue; not an uninterrupted full run."
+      }
+    },
+    {
+      "part": "technical-credits",
+      "video": "18-technical-credits.mp4",
+      "status": "ready for visual review",
+      "alignment": {
+        "original": "RT1715/build/full-reference/capture",
+        "remake": "RT1715/build/full-integrated-v4/capture",
+        "reference_start": 543.7458864823218,
+        "duration": 109.38064092686128,
+        "remake_offset": 0.08,
+        "audio_checks": [
+          {
+            "reference_seconds": 547.7458864823218,
+            "offset_seconds": 0.08,
+            "correlation": 0.9985595268868814
+          },
+          {
+            "reference_seconds": 564.3093266367987,
+            "offset_seconds": 0.08,
+            "correlation": 0.9705947393645047
+          },
+          {
+            "reference_seconds": 580.8727667912756,
+            "offset_seconds": 0.08,
+            "correlation": 0.911715464703075
+          },
+          {
+            "reference_seconds": 597.4362069457525,
+            "offset_seconds": 0.08,
+            "correlation": 0.9385807392453515
+          },
+          {
+            "reference_seconds": 613.9996471002293,
+            "offset_seconds": 0.08,
+            "correlation": 0.9603892386116325
+          },
+          {
+            "reference_seconds": 630.5630872547061,
+            "offset_seconds": 0.08,
+            "correlation": 0.9987153202585333
+          },
+          {
+            "reference_seconds": 647.126527409183,
+            "offset_seconds": 0.08,
+            "correlation": 0.8901645440747443
+          }
+        ],
+        "audio_source": "RT1715/build/full-reference/capture/full_000.wav",
+        "time_stretch": false,
+        "fps": 70
+      },
+      "scene_timing": {
+        "original_exit": {
+          "module": 0,
+          "order": 43,
+          "row": 26
+        },
+        "remake_exit": {
+          "module": 0,
+          "order": 43,
+          "row": 26
+        },
+        "copper_tick_difference_after_audio_alignment": -9.607
+      }
+    },
+    {
+      "part": "final-scroll",
+      "video": "19-final-scroll.mp4",
+      "status": "ready for visual review",
+      "alignment": {
+        "original": "RT1715/build/full-reference/capture",
+        "remake": "RT1715/build/full-integrated-v4/capture",
+        "reference_start": 652.526527409183,
+        "duration": 328.2974003367292,
+        "remake_offset": 0.08,
+        "audio_checks": [
+          {
+            "reference_seconds": 656.526527409183,
+            "offset_seconds": 0.08,
+            "correlation": 0.9993449832100801
+          },
+          {
+            "reference_seconds": 709.5760941319712,
+            "offset_seconds": 0.08,
+            "correlation": 0.9937846437929144
+          },
+          {
+            "reference_seconds": 762.6256608547594,
+            "offset_seconds": 0.08,
+            "correlation": 0.9889962843750886
+          },
+          {
+            "reference_seconds": 815.6752275775476,
+            "offset_seconds": 0.08,
+            "correlation": 0.9920312906826345
+          },
+          {
+            "reference_seconds": 868.7247943003358,
+            "offset_seconds": 0.08,
+            "correlation": 0.9999992914620621
+          },
+          {
+            "reference_seconds": 921.774361023124,
+            "offset_seconds": 0.08,
+            "correlation": 0.9936253170767537
+          },
+          {
+            "reference_seconds": 974.8239277459122,
+            "offset_seconds": 0.08,
+            "correlation": 0.9868774704202549
+          }
+        ],
+        "audio_source": "RT1715/build/full-reference/capture/full_000.wav",
+        "time_stretch": false,
+        "fps": 70
+      },
+      "scene_timing": {
+        "original_exit": {
+          "module": 0,
+          "order": 48,
+          "row": 3
+        },
+        "remake_exit": {
+          "module": 0,
+          "order": 48,
+          "row": 3
+        },
+        "copper_tick_difference_after_audio_alignment": -9.607
+      }
+    }
+  ],
+  "preserved_short": "RT1715/build/dos and RT1715/build/robotron-preview.mp4",
+  "creative_candidates": [
+    "Restrained CRT crosshair/border",
+    "Faint chip traces framing 2D plasma"
+  ],
+  "assets": {
+    "RT1715/assets/full-demo/art/monster-draft.png": "b80b159d760e9858e7c0e08f4f31953be0aa82561ef93283dc4e2c9ba9f3a2c4",
+    "RT1715/assets/full-demo/art/prompts.json": "fca5d8013b40c0257319221ccfc0167b33616034b9fe5808d21afc52650d9a89",
+    "RT1715/assets/full-demo/art/title-draft.png": "845534a70bf6fad8befe2eea8579360c08a75e3c43b89a40f80c23f56fae2321",
+    "RT1715/assets/full-demo/art/unicorn-draft.png": "ec7fdbb53d1d0ed5233e77facf6ba2a751256af32ce2e0684d0ebd5b4a38aea0",
+    "RT1715/assets/full-demo/art/water-draft.png": "076fbbe70daff1cf9b06a43fed54c4965905b90481dab4c859a98a62719e391a",
+    "RT1715/assets/full-demo/dots/font-provenance.json": "cd67660419b3e3fa61d30269294cd09f043b2086ce7d11ed589d76965e215137",
+    "RT1715/assets/full-demo/dots/tosm-chargen.bin": "25c1d7b9c3c634bc2a116c278db24dbb32e379650266254606dec6412baf8132",
+    "RT1715/assets/full-demo/lens/provenance.json": "23c2bd0739ea200e48f9f016d75a730d8e940baa24e1fbc21b0113c2b666aa62",
+    "RT1715/assets/full-demo/lens/ub880-die.jpg": "969496e4995724b409caeb3b68e49674cee614bfd32530af3364abedb32a0545",
+    "RT1715/assets/full-demo/reference-cues.json": "df2c49d7934c983d9a069e96bb6bfa6bd7ddcc5669f1ea5cb0721085ddad3002"
+  },
+  "review_corrections": {
+    "date": "2026-10-22",
+    "changes": [
+      "opening-font",
+      "diskette-model-and-bank",
+      "keycap-and-PCB-floor",
+      "cable-cutaway",
+      "water-tape-occlusion",
+      "DIP40-and-material-addressing",
+      "dot-choreography",
+      "tape-sprocket-row",
+      "key-wall-flight-reveal",
+      "opening-tail-empty-XOR-list",
+      "round-keycap-shoulder-and-stable-palette",
+      "perforated-tape-water-and-letter-shadows",
+      "tape-first-water-second-original-palette-fade",
+      "water-tape-central-feed-varied-data-art",
+      "seven-shade-bevelled-water-font",
+      "goedel-inspired-reflection-tape-ASCII",
+      "water-modulated-submerged-lettering",
+      "round-tape-punches-and-continuous-blank-feed-leader"
+    ],
+    "sources": {
+      "ALKU.EXE": "RT1715/build/review-detail-fixes/dos/ALKU.EXE",
+      "U2A.002": "RT1715/build/review-final-first/dos/U2A.002",
+      "U2A.003": "RT1715/build/review-final-first/dos/U2A.003",
+      "GLENZ.EXE": "RT1715/build/review-detail-fixes/dos/GLENZ.EXE",
+      "MNTSCRL.EXE": "RT1715/build/water-submerged/dos/MNTSCRL.EXE",
+      "O2.SCI": "RT1715/build/water-submerged/dos/O2.SCI",
+      "MINVBALL.EXE": "RT1715/build/review-mid/dos/MINVBALL.EXE",
+      "RAYSCRL.EXE": "RT1715/build/tape-round-feed/dos/RAYSCRL.EXE",
+      "TUNNELI.EXE": "RT1715/build/cable-final/dos/TUNNELI.EXE",
+      "PLZPART.EXE": "RT1715/build/chip-final/dos/PLZPART.EXE",
+      "U2E.177": "RT1715/build/review-flight-v2/dos/U2E.177",
+      "U2E.183": "RT1715/build/review-flight-v2/dos/U2E.183",
+      "U2E.148": "RT1715/build/review-flight-v2/dos/U2E.148",
+      "U2E.184": "RT1715/build/review-flight-v2/dos/U2E.184",
+      "U2E.170": "RT1715/build/review-flight-v2/dos/U2E.170",
+      "U2E.146": "RT1715/build/review-flight-v2/dos/U2E.146",
+      "U2E.179": "RT1715/build/review-flight-v2/dos/U2E.179",
+      "U2E.141": "RT1715/build/review-flight-v2/dos/U2E.141",
+      "U2E.115": "RT1715/build/review-flight-v2/dos/U2E.115",
+      "U2E.112": "RT1715/build/review-flight-v2/dos/U2E.112",
+      "U2E.124": "RT1715/build/review-flight-v2/dos/U2E.124",
+      "U2E.123": "RT1715/build/review-flight-v2/dos/U2E.123",
+      "U2E.140": "RT1715/build/review-flight-v2/dos/U2E.140",
+      "U2E.147": "RT1715/build/review-flight-v2/dos/U2E.147",
+      "U2E.178": "RT1715/build/review-flight-v2/dos/U2E.178",
+      "U2E.171": "RT1715/build/review-flight-v2/dos/U2E.171",
+      "U2E.185": "RT1715/build/review-flight-v2/dos/U2E.185",
+      "U2E.182": "RT1715/build/review-flight-v2/dos/U2E.182",
+      "U2E.176": "RT1715/build/review-flight-v2/dos/U2E.176",
+      "U2E.149": "RT1715/build/review-flight-v2/dos/U2E.149",
+      "U2E.122": "RT1715/build/review-flight-v2/dos/U2E.122",
+      "U2E.125": "RT1715/build/review-flight-v2/dos/U2E.125",
+      "U2E.0AB": "RT1715/build/review-flight-v2/dos/U2E.0AB",
+      "U2E.113": "RT1715/build/review-flight-v2/dos/U2E.113",
+      "U2E.114": "RT1715/build/review-flight-v2/dos/U2E.114",
+      "U2E.066": "RT1715/build/review-flight-v2/dos/U2E.066",
+      "U2E.092": "RT1715/build/review-flight-v2/dos/U2E.092",
+      "U2E.059": "RT1715/build/review-flight-v2/dos/U2E.059",
+      "U2E.095": "RT1715/build/review-flight-v2/dos/U2E.095",
+      "U2E.061": "RT1715/build/review-flight-v2/dos/U2E.061",
+      "U2E.057": "RT1715/build/review-flight-v2/dos/U2E.057",
+      "U2E.00M": "RT1715/build/review-flight-v2/dos/U2E.00M",
+      "U2E.068": "RT1715/build/review-flight-v2/dos/U2E.068",
+      "U2E.050": "RT1715/build/review-flight-v2/dos/U2E.050",
+      "U2E.209": "RT1715/build/review-flight-v2/dos/U2E.209",
+      "U2E.004": "RT1715/build/review-flight-v2/dos/U2E.004",
+      "U2E.003": "RT1715/build/review-flight-v2/dos/U2E.003",
+      "U2E.207": "RT1715/build/review-flight-v2/dos/U2E.207",
+      "U2E.035": "RT1715/build/review-flight-v2/dos/U2E.035",
+      "U2E.032": "RT1715/build/review-flight-v2/dos/U2E.032",
+      "U2E.200": "RT1715/build/review-flight-v2/dos/U2E.200",
+      "U2E.051": "RT1715/build/review-flight-v2/dos/U2E.051",
+      "U2E.056": "RT1715/build/review-flight-v2/dos/U2E.056",
+      "U2E.069": "RT1715/build/review-flight-v2/dos/U2E.069",
+      "U2E.060": "RT1715/build/review-flight-v2/dos/U2E.060",
+      "U2E.094": "RT1715/build/review-flight-v2/dos/U2E.094",
+      "U2E.093": "RT1715/build/review-flight-v2/dos/U2E.093",
+      "U2E.067": "RT1715/build/review-flight-v2/dos/U2E.067",
+      "U2E.058": "RT1715/build/review-flight-v2/dos/U2E.058",
+      "U2E.201": "RT1715/build/review-flight-v2/dos/U2E.201",
+      "U2E.033": "RT1715/build/review-flight-v2/dos/U2E.033",
+      "U2E.034": "RT1715/build/review-flight-v2/dos/U2E.034",
+      "U2E.206": "RT1715/build/review-flight-v2/dos/U2E.206",
+      "U2E.EXE": "RT1715/build/review-flight-v2/dos/U2E.EXE",
+      "U2E.002": "RT1715/build/review-flight-v2/dos/U2E.002",
+      "U2E.208": "RT1715/build/review-flight-v2/dos/U2E.208",
+      "U2E.005": "RT1715/build/review-flight-v2/dos/U2E.005",
+      "U2E.027": "RT1715/build/review-flight-v2/dos/U2E.027",
+      "U2E.215": "RT1715/build/review-flight-v2/dos/U2E.215",
+      "U2E.018": "RT1715/build/review-flight-v2/dos/U2E.018",
+      "U2E.212": "RT1715/build/review-flight-v2/dos/U2E.212",
+      "U2E.020": "RT1715/build/review-flight-v2/dos/U2E.020",
+      "U2E.224": "RT1715/build/review-flight-v2/dos/U2E.224",
+      "U2E.016": "RT1715/build/review-flight-v2/dos/U2E.016",
+      "U2E.029": "RT1715/build/review-flight-v2/dos/U2E.029",
+      "U2E.011": "RT1715/build/review-flight-v2/dos/U2E.011",
+      "U2E.223": "RT1715/build/review-flight-v2/dos/U2E.223",
+      "U2E.045": "RT1715/build/review-flight-v2/dos/U2E.045",
+      "U2E.089": "RT1715/build/review-flight-v2/dos/U2E.089",
+      "U2E.042": "RT1715/build/review-flight-v2/dos/U2E.042",
+      "U2E.074": "RT1715/build/review-flight-v2/dos/U2E.074",
+      "U2E.080": "RT1715/build/review-flight-v2/dos/U2E.080",
+      "U2E.087": "RT1715/build/review-flight-v2/dos/U2E.087",
+      "U2E.073": "RT1715/build/review-flight-v2/dos/U2E.073",
+      "U2E.222": "RT1715/build/review-flight-v2/dos/U2E.222",
+      "U2E.010": "RT1715/build/review-flight-v2/dos/U2E.010",
+      "U2E.017": "RT1715/build/review-flight-v2/dos/U2E.017",
+      "U2E.225": "RT1715/build/review-flight-v2/dos/U2E.225",
+      "U2E.028": "RT1715/build/review-flight-v2/dos/U2E.028",
+      "U2E.021": "RT1715/build/review-flight-v2/dos/U2E.021",
+      "U2E.213": "RT1715/build/review-flight-v2/dos/U2E.213",
+      "U2E.214": "RT1715/build/review-flight-v2/dos/U2E.214",
+      "U2E.026": "RT1715/build/review-flight-v2/dos/U2E.026",
+      "U2E.019": "RT1715/build/review-flight-v2/dos/U2E.019",
+      "U2E.072": "RT1715/build/review-flight-v2/dos/U2E.072",
+      "U2E.086": "RT1715/build/review-flight-v2/dos/U2E.086",
+      "U2E.081": "RT1715/build/review-flight-v2/dos/U2E.081",
+      "U2E.075": "RT1715/build/review-flight-v2/dos/U2E.075",
+      "U2E.088": "RT1715/build/review-flight-v2/dos/U2E.088",
+      "U2E.043": "RT1715/build/review-flight-v2/dos/U2E.043",
+      "U2E.044": "RT1715/build/review-flight-v2/dos/U2E.044",
+      "U2E.136": "RT1715/build/review-flight-v2/dos/U2E.136",
+      "U2E.109": "RT1715/build/review-flight-v2/dos/U2E.109",
+      "U2E.131": "RT1715/build/review-flight-v2/dos/U2E.131",
+      "U2E.107": "RT1715/build/review-flight-v2/dos/U2E.107",
+      "U2E.138": "RT1715/build/review-flight-v2/dos/U2E.138",
+      "U2E.100": "RT1715/build/review-flight-v2/dos/U2E.100",
+      "U2E.154": "RT1715/build/review-flight-v2/dos/U2E.154",
+      "U2E.198": "RT1715/build/review-flight-v2/dos/U2E.198",
+      "U2E.153": "RT1715/build/review-flight-v2/dos/U2E.153",
+      "U2E.165": "RT1715/build/review-flight-v2/dos/U2E.165",
+      "U2E.191": "RT1715/build/review-flight-v2/dos/U2E.191",
+      "U2E.196": "RT1715/build/review-flight-v2/dos/U2E.196",
+      "U2E.162": "RT1715/build/review-flight-v2/dos/U2E.162",
+      "U2E.101": "RT1715/build/review-flight-v2/dos/U2E.101",
+      "U2E.106": "RT1715/build/review-flight-v2/dos/U2E.106",
+      "U2E.139": "RT1715/build/review-flight-v2/dos/U2E.139",
+      "U2E.130": "RT1715/build/review-flight-v2/dos/U2E.130",
+      "U2E.137": "RT1715/build/review-flight-v2/dos/U2E.137",
+      "U2E.108": "RT1715/build/review-flight-v2/dos/U2E.108",
+      "U2E.163": "RT1715/build/review-flight-v2/dos/U2E.163",
+      "U2E.197": "RT1715/build/review-flight-v2/dos/U2E.197",
+      "U2E.VIS": "RT1715/build/review-flight-v2/dos/U2E.VIS",
+      "U2E.190": "RT1715/build/review-flight-v2/dos/U2E.190",
+      "U2E.164": "RT1715/build/review-flight-v2/dos/U2E.164",
+      "U2E.199": "RT1715/build/review-flight-v2/dos/U2E.199",
+      "U2E.152": "RT1715/build/review-flight-v2/dos/U2E.152",
+      "U2E.155": "RT1715/build/review-flight-v2/dos/U2E.155",
+      "U2E.111": "RT1715/build/review-flight-v2/dos/U2E.111",
+      "U2E.129": "RT1715/build/review-flight-v2/dos/U2E.129",
+      "U2E.116": "RT1715/build/review-flight-v2/dos/U2E.116",
+      "U2E.120": "RT1715/build/review-flight-v2/dos/U2E.120",
+      "U2E.AA": "RT1715/build/review-flight-v2/dos/U2E.AA",
+      "U2E.118": "RT1715/build/review-flight-v2/dos/U2E.118",
+      "U2E.127": "RT1715/build/review-flight-v2/dos/U2E.127",
+      "U2E.187": "RT1715/build/review-flight-v2/dos/U2E.187",
+      "U2E.173": "RT1715/build/review-flight-v2/dos/U2E.173",
+      "U2E.174": "RT1715/build/review-flight-v2/dos/U2E.174",
+      "U2E.180": "RT1715/build/review-flight-v2/dos/U2E.180",
+      "U2E.142": "RT1715/build/review-flight-v2/dos/U2E.142",
+      "U2E.189": "RT1715/build/review-flight-v2/dos/U2E.189",
+      "U2E.145": "RT1715/build/review-flight-v2/dos/U2E.145",
+      "U2E.119": "RT1715/build/review-flight-v2/dos/U2E.119",
+      "U2E.126": "RT1715/build/review-flight-v2/dos/U2E.126",
+      "U2E.121": "RT1715/build/review-flight-v2/dos/U2E.121",
+      "U2E.128": "RT1715/build/review-flight-v2/dos/U2E.128",
+      "U2E.117": "RT1715/build/review-flight-v2/dos/U2E.117",
+      "U2E.0AA": "RT1715/build/review-flight-v2/dos/U2E.0AA",
+      "U2E.110": "RT1715/build/review-flight-v2/dos/U2E.110",
+      "U2E.144": "RT1715/build/review-flight-v2/dos/U2E.144",
+      "U2E.143": "RT1715/build/review-flight-v2/dos/U2E.143",
+      "U2E.188": "RT1715/build/review-flight-v2/dos/U2E.188",
+      "U2E.KEY": "RT1715/build/review-flight-v2/dos/U2E.KEY",
+      "U2E.181": "RT1715/build/review-flight-v2/dos/U2E.181",
+      "U2E.175": "RT1715/build/review-flight-v2/dos/U2E.175",
+      "U2E.172": "RT1715/build/review-flight-v2/dos/U2E.172",
+      "U2E.186": "RT1715/build/review-flight-v2/dos/U2E.186",
+      "U2E.038": "RT1715/build/review-flight-v2/dos/U2E.038",
+      "U2E.007": "RT1715/build/review-flight-v2/dos/U2E.007",
+      "U2E.203": "RT1715/build/review-flight-v2/dos/U2E.203",
+      "U2E.031": "RT1715/build/review-flight-v2/dos/U2E.031",
+      "U2E.009": "RT1715/build/review-flight-v2/dos/U2E.009",
+      "U2E.036": "RT1715/build/review-flight-v2/dos/U2E.036",
+      "U2E.204": "RT1715/build/review-flight-v2/dos/U2E.204",
+      "U2E.096": "RT1715/build/review-flight-v2/dos/U2E.096",
+      "U2E.062": "RT1715/build/review-flight-v2/dos/U2E.062",
+      "U2E.065": "RT1715/build/review-flight-v2/dos/U2E.065",
+      "U2E.091": "RT1715/build/review-flight-v2/dos/U2E.091",
+      "U2E.053": "RT1715/build/review-flight-v2/dos/U2E.053",
+      "U2E.098": "RT1715/build/review-flight-v2/dos/U2E.098",
+      "U2E.054": "RT1715/build/review-flight-v2/dos/U2E.054",
+      "U2E.008": "RT1715/build/review-flight-v2/dos/U2E.008",
+      "U2E.BKC": "RT1715/build/review-flight-v2/dos/U2E.BKC",
+      "U2E.205": "RT1715/build/review-flight-v2/dos/U2E.205",
+      "U2E.037": "RT1715/build/review-flight-v2/dos/U2E.037",
+      "U2E.030": "RT1715/build/review-flight-v2/dos/U2E.030",
+      "U2E.202": "RT1715/build/review-flight-v2/dos/U2E.202",
+      "U2E.039": "RT1715/build/review-flight-v2/dos/U2E.039",
+      "U2E.006": "RT1715/build/review-flight-v2/dos/U2E.006",
+      "U2E.001": "RT1715/build/review-flight-v2/dos/U2E.001",
+      "U2E.055": "RT1715/build/review-flight-v2/dos/U2E.055",
+      "U2E.052": "RT1715/build/review-flight-v2/dos/U2E.052",
+      "U2E.099": "RT1715/build/review-flight-v2/dos/U2E.099",
+      "U2E.090": "RT1715/build/review-flight-v2/dos/U2E.090",
+      "U2E.064": "RT1715/build/review-flight-v2/dos/U2E.064",
+      "U2E.063": "RT1715/build/review-flight-v2/dos/U2E.063",
+      "U2E.097": "RT1715/build/review-flight-v2/dos/U2E.097",
+      "U2E.041": "RT1715/build/review-flight-v2/dos/U2E.041",
+      "U2E.079": "RT1715/build/review-flight-v2/dos/U2E.079",
+      "U2E.046": "RT1715/build/review-flight-v2/dos/U2E.046",
+      "U2E.084": "RT1715/build/review-flight-v2/dos/U2E.084",
+      "U2E.070": "RT1715/build/review-flight-v2/dos/U2E.070",
+      "U2E.048": "RT1715/build/review-flight-v2/dos/U2E.048",
+      "U2E.077": "RT1715/build/review-flight-v2/dos/U2E.077",
+      "U2E.083": "RT1715/build/review-flight-v2/dos/U2E.083",
+      "U2E.023": "RT1715/build/review-flight-v2/dos/U2E.023",
+      "U2E.211": "RT1715/build/review-flight-v2/dos/U2E.211",
+      "U2E.216": "RT1715/build/review-flight-v2/dos/U2E.216",
+      "U2E.024": "RT1715/build/review-flight-v2/dos/U2E.024",
+      "U2E.220": "RT1715/build/review-flight-v2/dos/U2E.220",
+      "U2E.012": "RT1715/build/review-flight-v2/dos/U2E.012",
+      "U2E.015": "RT1715/build/review-flight-v2/dos/U2E.015",
+      "U2E.227": "RT1715/build/review-flight-v2/dos/U2E.227",
+      "U2E.218": "RT1715/build/review-flight-v2/dos/U2E.218",
+      "U2E.PRS": "RT1715/build/review-flight-v2/dos/U2E.PRS",
+      "U2E.049": "RT1715/build/review-flight-v2/dos/U2E.049",
+      "U2E.082": "RT1715/build/review-flight-v2/dos/U2E.082",
+      "U2E.076": "RT1715/build/review-flight-v2/dos/U2E.076",
+      "U2E.071": "RT1715/build/review-flight-v2/dos/U2E.071",
+      "U2E.085": "RT1715/build/review-flight-v2/dos/U2E.085",
+      "U2E.078": "RT1715/build/review-flight-v2/dos/U2E.078",
+      "U2E.047": "RT1715/build/review-flight-v2/dos/U2E.047",
+      "U2E.040": "RT1715/build/review-flight-v2/dos/U2E.040",
+      "U2E.226": "RT1715/build/review-flight-v2/dos/U2E.226",
+      "U2E.014": "RT1715/build/review-flight-v2/dos/U2E.014",
+      "U2E.219": "RT1715/build/review-flight-v2/dos/U2E.219",
+      "U2E.013": "RT1715/build/review-flight-v2/dos/U2E.013",
+      "U2E.221": "RT1715/build/review-flight-v2/dos/U2E.221",
+      "U2E.025": "RT1715/build/review-flight-v2/dos/U2E.025",
+      "U2E.217": "RT1715/build/review-flight-v2/dos/U2E.217",
+      "U2E.210": "RT1715/build/review-flight-v2/dos/U2E.210",
+      "U2E.022": "RT1715/build/review-flight-v2/dos/U2E.022",
+      "U2E.150": "RT1715/build/review-flight-v2/dos/U2E.150",
+      "U2E.168": "RT1715/build/review-flight-v2/dos/U2E.168",
+      "U2E.157": "RT1715/build/review-flight-v2/dos/U2E.157",
+      "U2E.195": "RT1715/build/review-flight-v2/dos/U2E.195",
+      "U2E.161": "RT1715/build/review-flight-v2/dos/U2E.161",
+      "U2E.159": "RT1715/build/review-flight-v2/dos/U2E.159",
+      "U2E.166": "RT1715/build/review-flight-v2/dos/U2E.166",
+      "U2E.192": "RT1715/build/review-flight-v2/dos/U2E.192",
+      "U2E.132": "RT1715/build/review-flight-v2/dos/U2E.132",
+      "U2E.135": "RT1715/build/review-flight-v2/dos/U2E.135",
+      "U2E.103": "RT1715/build/review-flight-v2/dos/U2E.103",
+      "U2E.104": "RT1715/build/review-flight-v2/dos/U2E.104",
+      "U2E.158": "RT1715/build/review-flight-v2/dos/U2E.158",
+      "U2E.193": "RT1715/build/review-flight-v2/dos/U2E.193",
+      "U2E.167": "RT1715/build/review-flight-v2/dos/U2E.167",
+      "U2E.160": "RT1715/build/review-flight-v2/dos/U2E.160",
+      "U2E.194": "RT1715/build/review-flight-v2/dos/U2E.194",
+      "U2E.169": "RT1715/build/review-flight-v2/dos/U2E.169",
+      "U2E.156": "RT1715/build/review-flight-v2/dos/U2E.156",
+      "U2E.151": "RT1715/build/review-flight-v2/dos/U2E.151",
+      "U2E.105": "RT1715/build/review-flight-v2/dos/U2E.105",
+      "U2E.102": "RT1715/build/review-flight-v2/dos/U2E.102",
+      "U2E.134": "RT1715/build/review-flight-v2/dos/U2E.134",
+      "U2E.133": "RT1715/build/review-flight-v2/dos/U2E.133"
+    },
+    "runtime_sha256": {
+      "ALKU.EXE": "ef69f7aedba378e48b15f26738f09a22f59e51055a2b084de19df0e6926da6ae",
+      "U2A.002": "909742d71ba64f54d7ce5a3424e47650eaa3181b2805ae23957f562b0949c8f5",
+      "U2A.003": "4bd72dc7e4ff2c8b00bae2c12a767944352d8c29ae5735a9336f425734899387",
+      "GLENZ.EXE": "19857f11a75a2440dfd7cfe3cd7688b387e4c3f62f97d3c628118c43d2e7a8be",
+      "MNTSCRL.EXE": "19602ca5965704a86eb761b1cfe7fe9719f2e7fa06dcedbd768cc48beaf19421",
+      "O2.SCI": "24b6e5a5ed63888944125002ffadb2a99d38f6f4b31bf0770e819a2a3bfb94b0",
+      "MINVBALL.EXE": "196ce25e10fd817f9987e751efa821caa98971d50af175bf3a352109e0f33338",
+      "RAYSCRL.EXE": "73164f7592bf517ab4026f2871b57032082c9030135ca41d2c614ddf4813ebdb",
+      "TUNNELI.EXE": "ae42eb5dd9e1a303e20f1ab227628afd7d3165da5a742df3d51bcaf23dddfd3e",
+      "PLZPART.EXE": "bab14415d20300a0f393b98ccc2717d9f03e00a9d5bf24e8754fbbe6562c8d20",
+      "U2E.177": "f180ea114935efde8a439b49de1945809318e17d43b775b900b1f2c7ae7ef87d",
+      "U2E.183": "71f69f66c7bc046063f9526e931a86989f95c32316d286e0d8ad27a9c80c38c5",
+      "U2E.148": "2a8241ced6fcc9aa46f32af8c9c236b1f476d688104296d63ee33a6859fbce39",
+      "U2E.184": "c0e3124d9aedb7bf803a81436cb08f88bfa1265172af82640b8fb969d6767c2b",
+      "U2E.170": "bec3ff550083ce40424a640e40e23c97f68853f0d412a7f27f7ad076f09d27cc",
+      "U2E.146": "00d23f1086e4d393b50855ea12271ee7813d83ff8bc03b83318dee34c599a915",
+      "U2E.179": "a15cbca1b6a28ab96f5a53ed6d9da85b771a822b00669aa0cb3cffacc06cd416",
+      "U2E.141": "5433b0ad76f1887d796c3c553987981ce9ff80add5ea1fa235c0835e9943f1a4",
+      "U2E.115": "7b3809aa75276b5fea2d7089bac124c4a3c0f59b673579a8f1b36037dc714833",
+      "U2E.112": "7993667c3862261e9056b78caa9994675b3057bde3911611aa78e860782cd22f",
+      "U2E.124": "19e270583ce8d0eb5d1715533c001ebd4ad09e916e51219ffc6fcd38b140a087",
+      "U2E.123": "5ae8be1604a1653ac50e4a9a353c142c282989f3c2cb101969d601a4d788dd4c",
+      "U2E.140": "33a0936c319b73e0b85aaa1dcfea06038318d63dfc48cc3c570495397cac126b",
+      "U2E.147": "8d9996498440d6a2f34e3d38be9a6bfeb1f245ae96d941c37b66bc386ace1af9",
+      "U2E.178": "b4e196932cec9cfef7d4cc239b014e692c0a2393c740c5227ee61b30de3ad56c",
+      "U2E.171": "70fb0c289ab44bfd618e5fb991e5b58c67eb4bb6c8c87b92f6491535bd091d86",
+      "U2E.185": "1d6dfda030a6d56624824f37dc9778187eba51914ad158e108cfd38c0b03d481",
+      "U2E.182": "2e4798df5bad59d56ab23121d860010dfb4b19b7f8adda14f9f79fe5b24b2c08",
+      "U2E.176": "2c0ad76c521d770d78b9cfbce573284a1cead9119adaeff85ebabcf11d160ce5",
+      "U2E.149": "154e785568318eaf6212980fe6653e8aca75ad12d6d343e4401398d089cab804",
+      "U2E.122": "0d649502c4864f84ecca42310b8f99e98af0b7f788f8eeb74b7df853a02cc10b",
+      "U2E.125": "304e7208ec20d08565e96f2eeda322a633c7fded35a5ac59d28c1bf24b9aaac7",
+      "U2E.0AB": "9e30fc97dc94f63091abdfe502a7e1ded138a58b13d95fbbdd3fa06974d6ff02",
+      "U2E.113": "2ae0219ba60cb30bc86f9fdd89a43f8f58e6e290258283817c371f46c0a233d3",
+      "U2E.114": "19b63fcd2d63531bbcead5900c6ad42c86bcbc3abc4b32510894442dd4f3e693",
+      "U2E.066": "b6f3eb12f4e72e382ec5672c2215d8adb2ee62a5e090d453021640d101cba298",
+      "U2E.092": "a46b5170036b7bc2545c852266dcd267a330d1a0eb24532c114e78563fae0fb4",
+      "U2E.059": "9d5767931c9d3fb50eff3ce8f04b2dc7695332a8c543c2f3ea86bc661038142b",
+      "U2E.095": "7338bc92312db86a738ab6365a29afd631b63f5345f66aeba61e9c1a4dfd6450",
+      "U2E.061": "788bb1097c36ed65fda63d0a13e84c3693d4f1991633f1a811a20f24058842ff",
+      "U2E.057": "b06a07b1b550d1d89859aa37564dbeb1cbb8bffb7d335f80f998581c54bc6574",
+      "U2E.00M": "928e3b3c95e930430bd49a512e1c096117307aa8fca919feafe2d1f098718578",
+      "U2E.068": "2054f28c6c47fbed2a56f26c74677c16357a37e6103b7fd01837fbb01d11a181",
+      "U2E.050": "ec87458b0ceefa8ba947aba0a653201eb7f57898116c55238c45d6c73fa3b622",
+      "U2E.209": "0eaa3652cfb9baafbc241295485c11c63457378842f82b49b1c7279d4de33860",
+      "U2E.004": "68b48c23deaa77ca41eb044f2552b4e66978b1ce1e896ffa9f32022b406edead",
+      "U2E.003": "724086032bbeabecb1739cdecbd3a652caa4e1fa37a0e4bc82847020d5f35c72",
+      "U2E.207": "8a07e12b8eefbc9a02eaa49f382df696cf57d83dc787eaf8c5d27ad24d92c9c1",
+      "U2E.035": "bc21abbe52c0aafe6cb8da33a13f49e2739641efd22f21c3294e675ca8afbeec",
+      "U2E.032": "09589619a47fc5344f752e224ff17b2b44a1f178ca8c0213560fa50c0e20d88c",
+      "U2E.200": "3fad9488cd148580af631b8db52a81751f71e49853d0b5cd13691156ea543a6b",
+      "U2E.051": "b8d93531e464da6ec815c837c1b442f32c4061e2dab72971749b888fd0723c96",
+      "U2E.056": "4ccf3c3fbc41f6b25056aa98c3c4f12e0ebd066e88cfa3c0565ccfb80b72362d",
+      "U2E.069": "8ea16337358cfab006e5c41286d7973507a3fe103f7fbba2a7276141fb3d90f6",
+      "U2E.060": "3d4ce21e73403af924a214647a9fe26e875a06c6ff0cd743e644b94599952739",
+      "U2E.094": "391a2cbba7b0308d316d6798fd34eed753bc554568d51b2615ec14ca260ed929",
+      "U2E.093": "d0fe8e61cd8f45acfc7996985427d72cd95a61d6b3d6102edb2aec7c5bfbdd39",
+      "U2E.067": "f928428e8d173d47f281b99c324931924536b32f978d5cc68356f22481783174",
+      "U2E.058": "79b6ebc98253e05283f2c4f390a7516f0d5b97727e88b7bb779afc434b3caabb",
+      "U2E.201": "6bf867f766e412155f2638950fc1bb185a2826b634c4dad002073b6ce74ad005",
+      "U2E.033": "83f87e76607e7c5199bc5e4fb36c53423432091ab268c65b6ec15bde1c5fa4a3",
+      "U2E.034": "c900e695930f40d626f5dd279cbb7bbb4a9d16206ace7c925b23e4beb516bf24",
+      "U2E.206": "00340386f7508e7813fb49341f8d517810895c62cb461647aee7b3bd2cd78e16",
+      "U2E.EXE": "9b7406e4e3ed0a99191a84471d6f5d29e45b9d3295c3f472fb12ab2a7167e8d3",
+      "U2E.002": "55c6282d2d8ead894ead76d7cca3e271e8e83e312b29a463a27e6bea38c666c4",
+      "U2E.208": "cc076d3536fa9fb7ba442ca920d57f4753f130f8767f1bf70e40edb5163641be",
+      "U2E.005": "c1709f22175876fd7023be24f5c65005c203ba0dd4e78f73964f34ff66eba911",
+      "U2E.027": "b8127f4c16b972f1746d45317034e3d506be91c665fb2b89be90412677e6cae5",
+      "U2E.215": "d262f4a1fb5cb1551dea72a2657a251fd8b089861fa914c984b9c1a0c6ea39e3",
+      "U2E.018": "8edd7fe774bed7fc8e7819d8aca087e2dec25acb410818dee9782d0bf3429022",
+      "U2E.212": "77ac0518b610d2269697a6fa3b4d5c5755616c91e0b64233d599045a8bc8006b",
+      "U2E.020": "5c8037b46364882e6f55d39878acd4abec9d791e0a70dbd8e4fa34969e192d99",
+      "U2E.224": "76b0a6ec1896f0fcbbd515725ae9a8c494d64e636052e0ff2c0cd39c1cde89f5",
+      "U2E.016": "0df178c106379972239d82573dc23b519d5e58fb24ffe34e41be806bcb84ac25",
+      "U2E.029": "9be52ab32558a45f4ea21bd49a67d2cf36a372ded5d63a5335a7bf54097d6329",
+      "U2E.011": "4a35a04167060743d260d2d5e025571a036e5a4a0907d28ce1b9350d86c59500",
+      "U2E.223": "faf9c96028abb56a5fc92ed43e64789ae3ad3ffa6e5161bf68059eba826502d9",
+      "U2E.045": "5ef2cfdc9316e33ea3b55a05da0b27f228f2cf02f61ea114c9a7e2abd1a7e599",
+      "U2E.089": "1d925119706fa85fb1af4f13bfa08057194807a0ca8f264dc57196c13978f2f4",
+      "U2E.042": "96a33d16205f185bc7eaa4d20c68c292b23db440bffd308aa7a0d45ee58d6560",
+      "U2E.074": "96590f888d9f1d92b00dd9c915b57709978fbc5045f6b1d6b0c733d5d5008d42",
+      "U2E.080": "69615b0a56cb5b2d8bc864fd39348f396ed1a076774f54a7a43b85faa6b44a9c",
+      "U2E.087": "167888c0d41b2a79fcbab1c717f11ec6502057e093d079d6b5a113236348139b",
+      "U2E.073": "96d029ba8827f2fbd9813327327bf7cb7d3721299341627cd6aa0cea33b28046",
+      "U2E.222": "eefdecb9b71e8df06f4d529cf1dd8f019f700e30a1754731bef74cc639e83264",
+      "U2E.010": "84feee584d5827c57bcd345f58ddb4ba0d591552ddc23025316c12d58b429c54",
+      "U2E.017": "7a8ed21d8057509c208966d903c432b5ba8adacc6107e612d62451f03b95bae9",
+      "U2E.225": "fb33b266d8c1b2f577dc9bf8fb2e8fdd401505d16ceb96590e0338c1229edf97",
+      "U2E.028": "9eb6c9d695e2f55e8f7f4fb48e3b5681caa3ad766c614b9c18c658963ff79c66",
+      "U2E.021": "2745c63a9e71c845f94601fa6347cab5524f86d4af0dded67e73759680417ede",
+      "U2E.213": "fb5f57b1210cff11f1ed84c8174057e91265a13b6a257272b1bb1ed2b949a025",
+      "U2E.214": "6e9b689e94f9aa6db256ef9e5f681c76f4ffc5258f64716a35e106f000e43c43",
+      "U2E.026": "6ab3a503bb90be410e759fa355a7c6156fd86161b6eedcf27b5bddaabe61679e",
+      "U2E.019": "57afad40394681c8c8b4fbca0ac8b5356ef8f3b5eaaa4ddee0b8970e3859e311",
+      "U2E.072": "41e90f79ce2bd4e1d70863a01ff547e57e36c9aa02dfc740005f06a3cfb3b4dd",
+      "U2E.086": "05a0087eed7d95b4344252932d5dd5c5e8d7ee43b7eb7755a76234179cf63f0c",
+      "U2E.081": "a3f6d85429c65946ab192b0c0af9e3703311ea437710b534aa714ee207ee1e59",
+      "U2E.075": "ddd8bb27b6eec8cb5fb100b12adaf2f83398e57194b331a109d53befe5fd0b39",
+      "U2E.088": "5377355ed400b2726040cda5b845fdb0bb207e61f3c21f6b31536f2687b8cc97",
+      "U2E.043": "97db9dc342aa6331204ff83f957e5f484e24cfa659f73ba9930be8ad29d51023",
+      "U2E.044": "58f0c5ac9c8cbbd3f7db72cc7fc399047d16d9b5419b6623c61764c69dc23246",
+      "U2E.136": "f5bca08de2722803f1fc2a9904408ca9c53b9b646fb2c6dedd2a0426a174147f",
+      "U2E.109": "0136a4e0c9f79c506a084047fbc2f9bdcc187fdf9cb614d788fcc52ecb94bfb6",
+      "U2E.131": "6d538ada0d8f35eccbc1223a075bc7502794bd5c3820c5041961be8e281c3c99",
+      "U2E.107": "ac4c8cde8492db79eff22c22e1f79a511aeb1379b250a95b26f75dcfbaa5b7a4",
+      "U2E.138": "ee4c4a2e9fe572e713274843e51407f242872213722ea325ffafd3a93925c1ac",
+      "U2E.100": "4e198299d4fbfa7c02e17d6333e012b0c953e3c4186780ca96753498a4e129be",
+      "U2E.154": "c20b4202259ff8580135b1dfa13b31104c80ad94d967640e041e99912ab3db67",
+      "U2E.198": "dbd4f2179abe751d47fecff9d978b9aa8d2506c44e4e8e780be58f6cdb893e24",
+      "U2E.153": "6eccf580c0dcbf6260cb06286d0846d090a25e069127b2a58c083ede6e34f939",
+      "U2E.165": "c1179dea18ddc8f94a6d7839375323fb9aa07c414542bcec249a93fafdbbcb3d",
+      "U2E.191": "05fbb91d4305532f704739ff801bdf4934d40281d8c0e5353a67d08a6c5efdb7",
+      "U2E.196": "f68b058439a5f8ed3ddb11cb0926c07d44e6351cab30a37de16a6ee6b3648e6a",
+      "U2E.162": "6407829179e38e43bc7ba788eb85dbb61bb4721e7bf76977bbddd1d06c0f6570",
+      "U2E.101": "2f76fc9dcba757bf546418eed87adb98c4e57c82de07669098d3b215637b0769",
+      "U2E.106": "91ec42d94274b8be2335563d2f1791774e50dbdca1d2e12cd011c12ece19e9fc",
+      "U2E.139": "b089d307db2f823ec9239e19817c441ecd981d8783d857d3852d8cdcba8f54d8",
+      "U2E.130": "ae84f7c7d19bd56e3ec89aa1accebfa9c199e37ac777c50c0897015bed7ac7f4",
+      "U2E.137": "1b60f6d18a4f36060fdb71970f8734fc24a54913c88ce7a16b55685416824d13",
+      "U2E.108": "9bfbe3669b40b69c58d0daaf252f63b839699003418101b06f7bac32d7ebec33",
+      "U2E.163": "709eb78119adeea779b36f86235aa9c9f6915bcef783446dac6300119c2d386d",
+      "U2E.197": "879728331a3cb00b02255771ec86636bb35cdb1469504b0f57f022f9ca260dd4",
+      "U2E.VIS": "28fe4ebdc6dcf45eb0f767aa0e2785550010c9efa73667f0580258e39ca6d00e",
+      "U2E.190": "94d998ae8a3eab50e3bf1d94cd5e4e5628f1c64a6fd78f14c7d242ed22cb553e",
+      "U2E.164": "e4748f0f9e0881be8bccd507b7c617d3dc19fe8d829512acd01d8eb363eb5de9",
+      "U2E.199": "5ee9a549637bc19bd264aa4df5f3636a4796b203bde8431b47b6fe0c8dff1b73",
+      "U2E.152": "378d7580905ad6bd4d191ca72d4904959bd918f3dc9e0df486e14ad693bf0b94",
+      "U2E.155": "af7bbed54dbcdc7747cf6349613adf2de7344c32303a6849396621121e0e7a0b",
+      "U2E.111": "65da2641e90945d5a4163a86d6442ed0a89b793470447b42211d463c7736cb90",
+      "U2E.129": "2a000a4113671c14c1c9600c2759214a50b642b5d12107b651f1c5d31f292f7a",
+      "U2E.116": "aa64bbd715d95833d0558cde3aeaa5434f128029a8fec078f4acd388754c2cfc",
+      "U2E.120": "299bb84a765723afb3a5806128cfbd9fdf29dcfc94063e029f2953ea5346c271",
+      "U2E.AA": "fea9a36e0a1fb394d37bf72b41dae0bbee04b4eb73debcb3b5f01f7bd8f23829",
+      "U2E.118": "e2620676a648806d044b28ba08d7b09bb638b395de02efb3387c8019ad653b6d",
+      "U2E.127": "af96a2cc407c24291b61bae77a5d035b8c930304334dd16c6a96173e8a797692",
+      "U2E.187": "dae0ad62fee2bda5489833f3abbd38b5302381a2ec414a796cf5915c49ec62e7",
+      "U2E.173": "2968fd0b25b71ec555ab1ce6c5a2cc7cac74bbcd164e174b1bf34b794f0bcf41",
+      "U2E.174": "407bae61342bb86688a91392a3604ea8fcfa2244a14524197427d67b10ba54f1",
+      "U2E.180": "046b5a7d01807f0ff8ead37312b364fed81adae2a5920d162410bc825089dd65",
+      "U2E.142": "9345ed7e9e7c7874832a42225734aea2e38d7e2ee05f1570fa89947de79a8375",
+      "U2E.189": "5fa3a4128b08c7527a51711974ffaa7dc2e91edce4411dbb0f29103ce9c835d9",
+      "U2E.145": "8b9637c268eafceaf2ab8c6075ae2a1a6d4a47378490320155ff019b36693dbd",
+      "U2E.119": "3b2787f51b7dabdb7b37c01279798d16cde92b7dbf94d38a7cd334cf25bc12da",
+      "U2E.126": "49861b51332c76775fdf6060473ccc45d357148c46fce6a6a0ec85bf4ef57cd0",
+      "U2E.121": "495b7db06f3185aa63c081250721588348838959aa233c00304510c71294dbf3",
+      "U2E.128": "113bf77479d3ff768c5c4e7088b27dcc9b7f7a447483c6dc5292e2cf893bc3e3",
+      "U2E.117": "927ef691cfc203934a3e18071a5e736173830b4016578b8dd9b03bb1332bb0f2",
+      "U2E.0AA": "b15348c8f462384c01e83b6d499c6faf3f96808f5aa07c6bab4b65b36b4445d4",
+      "U2E.110": "95c8a08533bf9692dbb566a47f8ed15d3e9d64ee77b357be4efe0c1ac7b56320",
+      "U2E.144": "f6a1b9cfee0ef9b5d249b13969fbbe62d45dad30188c3c0bc93edea8c4d7a864",
+      "U2E.143": "77ad99dcc650b71c386717ad8ada94fceae45f7fdc3f8f1da305272f3bcfe3e3",
+      "U2E.188": "b316b594d0b64ebaa657f0da39d9bce39b366b3924d801e78dfa1f17bec23e35",
+      "U2E.KEY": "b3f1eb525a817dd2dc29c538aaab2fc61c4b83c82d44b96adcf2f1e59c22109d",
+      "U2E.181": "86e5f458ade2789f45e033f1350d764ee3efe635561bfdd534cc0b64747fdb99",
+      "U2E.175": "3e506a7c33ccff6e37d6c08353b29f8a3c94bd06416c3d43bef6e436e21b98cc",
+      "U2E.172": "35d396dff16b71145b362059ba5a8c6cddbee3f3621d88f37ac4814c814e4ca7",
+      "U2E.186": "5e3557c4c3e72cf52f5ce814726c2f446a57a9551df4a2ac9a0943d72043ba53",
+      "U2E.038": "c9e7c8f36ac913fe34c5723bcc066c8cd5c7ce63b806900fce1acda86e9a0667",
+      "U2E.007": "e36672f6bc391ff7526eb4e0a7dfd773fab199ae5616ad5d2bf3c885bf280e72",
+      "U2E.203": "165eaa89a0b547e0acaf403f0f42d377050ae1cf4aff6cb592a2b8ae871bfe75",
+      "U2E.031": "881f17722f207d1427150dfce33837497d81e00774105c763fbf25974d3c0229",
+      "U2E.009": "5e9cc41305622cc980c8c8d885e03ac7451541a17ca82a1cf69d0f56d009e516",
+      "U2E.036": "5164fa7ac013b2661da199b0f365c5c7a725f1e4ce027532a406226fcf0aba39",
+      "U2E.204": "8a0598af60f0a7d45448b7c71d3d979db19d886748834a4c5c116b1140142816",
+      "U2E.096": "58983a79daec13ddab483c3b961e860cd202c9005e59baf0a020cdbf32f3503a",
+      "U2E.062": "fc3e066fd8b612a50631d3126041af2d054140035a2fc8dd94dc0206403ed392",
+      "U2E.065": "03267e8e5b89b1cbce466613e09691f86b94e947fcaf2630f8d9fdefa6191b7a",
+      "U2E.091": "6ad33d72fcbbe9e729fe3b8448ea6e94c0f1919c9e1f7cbfc50f59d4312d1046",
+      "U2E.053": "c8366276bbadfe8d6356321c8c78de2ad8a0c779e5821b62b6645288cb20e26e",
+      "U2E.098": "95dffd5b467a46257b47448b1e4759a1f8d5da39cee54f86a7a82dd3515c74c6",
+      "U2E.054": "47015976b738c4747da76cbab189b98ecb6f2df731404a1f3bb4aa121e473b76",
+      "U2E.008": "21f2e9bc056df358f6bd19f110dc892c29f14cae60453d288867beb9b048a910",
+      "U2E.BKC": "ca859eef6770a1ce2131ce30cca9c6bc9635577b01632bec60107337e9f930d2",
+      "U2E.205": "c1d034287fae3097ec6a45522c4f9077acfbe1aed9a23bf17fdec45b89dba32d",
+      "U2E.037": "61e1c991189624858a4bc63c13a02a26b67910d167ea746f8c360ddb41679460",
+      "U2E.030": "74bc41ed3ca35a618fed23708923eb46ae26440b70ef74051e9b1f9059281374",
+      "U2E.202": "9838fcd341ac80dc69c91162e1c0f1ba0548c246910e489ac919325500150aff",
+      "U2E.039": "af9635a8a474d56963ba8f456ad6251929fb42d88f23b9741bb125e730f1c20d",
+      "U2E.006": "01bc37762c7a1a9d421465855802fc9823d5e646a1f9f76180ba0559396c7f64",
+      "U2E.001": "99d9cd406ea56e806b27dc6f212badc0c65e84025bff54d39caf479088ab9054",
+      "U2E.055": "9d16b0cd92814e80467333393daf0977bbc116cf3277af0be118a7fa54eba364",
+      "U2E.052": "abab1f7377d77b7cf30ce5d9b2f15dd9b4dd562405fc135d0b5b92ec6a37ae06",
+      "U2E.099": "ab97bd608fccaaeb34aa85a000f3eee9c5643bc00b6ac6337788adcb5aed0d9a",
+      "U2E.090": "769fc11e01f2f24f5ba4781293b6638a66e091b51507801023acf153ad1d1d1f",
+      "U2E.064": "845b25a90ff9088caaeea0106f60c7dc1075dc5154f836b32149adb61bf9c85e",
+      "U2E.063": "299816d94715e1d404e90c6e4e68efa994d1c809c9b2a0ac640f1e0cbf6be5ac",
+      "U2E.097": "e6ad14c2207be18b5f389cd3bfecff45adc1f0ce0bda526a30c2383698e78cd9",
+      "U2E.041": "5a90e3b8cffb8dde191eca723e42e00c35ab999232188e9e217f0a277d92325d",
+      "U2E.079": "8326edebd02bff8079fa0e481450704c01ea2f8968ddd0575c8d7cf0e9610740",
+      "U2E.046": "7ba9be8f690af70dd559dda13a0828880047767905eacacaf68f1a138b7e7049",
+      "U2E.084": "3f357abd5f9aa63024c46b872a8a66c5428dfcad37d4658434ab7bb4dcf55597",
+      "U2E.070": "e2c61cce8d1c9bd9ada8a593b4730b756d5a86b18a602c6d31129e19e65f53d7",
+      "U2E.048": "4b030065c1dd93c5f3552783b900e51fa7dcfcdf58d70813a08b84b2eb9e069c",
+      "U2E.077": "99df7b3b3b529ded8355a065af5ebb6a937b6edf84efa71aa3cdfa212f10d777",
+      "U2E.083": "9e360aa3b6db151f8c7f9a6cd131ee7d52b202a67661b199b018ec9ff16a8480",
+      "U2E.023": "b411afc64779864bfa2c3347d82e54ec631ea21de128f1b862d79518b800caeb",
+      "U2E.211": "67094bd24a1c0d509aa5c408820bc5e6baca05e6ebce0388eb2c105ac4020863",
+      "U2E.216": "f8b7dc7c294206d945664bd533ac2523d6931ec11c8ec594df803b2fb94e0895",
+      "U2E.024": "d17bb5309642cf51e22386272ca956cafbe0980afc9e228e4ad746839ed14091",
+      "U2E.220": "76b0a6ec1896f0fcbbd515725ae9a8c494d64e636052e0ff2c0cd39c1cde89f5",
+      "U2E.012": "3450f1bbf8ca05eb7a96f7b7fad7f0da503014a0841f11ccbd93253351d1ff40",
+      "U2E.015": "88ea4ddc36478be513fbfbaf7b5ceb5912a699990fb5861d3ed841eb334e3f25",
+      "U2E.227": "faf9c96028abb56a5fc92ed43e64789ae3ad3ffa6e5161bf68059eba826502d9",
+      "U2E.218": "b49103752b89aea2d037e1ff1cf0585bccb7ed587ef6169878abe0893a713c72",
+      "U2E.PRS": "dc7c89cfc7c886ea26c6da4676d5f6f357d3283bc714c7b1c690a8cf5c00eb63",
+      "U2E.049": "bdadfe106b0ae25522284f04837a9fcf3414e05bfa453c113d85d4349b29bb29",
+      "U2E.082": "aad69137c9a01c636ff6bbf0f9db6a72fff3cacd2b1dfc54f29a35e1e7875a2c",
+      "U2E.076": "574468c052e508aed68e4dd8b693040929b711696c0cbb04ed8c4e04cb2bef4d",
+      "U2E.071": "ac76560794c83ca21a3923425503c97e90933aae2432d8a3cd5a0b549752ce64",
+      "U2E.085": "4224eb21149fa57dd2f8c36c9ed50df79b639df6daea32df30ce763beae0a85e",
+      "U2E.078": "333decf7342ac0de466b0614c8beeeee717de1c76a34a4d20979ab7926e1e5cf",
+      "U2E.047": "0375865091439567524598bacffa8ccbcdc49df9f50538b3fb1999957e44c475",
+      "U2E.040": "947833a27ceaac41972d15c09535c7f83cb0a6fcaacb0a7301758536543b87c0",
+      "U2E.226": "eefdecb9b71e8df06f4d529cf1dd8f019f700e30a1754731bef74cc639e83264",
+      "U2E.014": "7867ce73f9d464807e27c5a0fddff369ddc57f244900668f46a933a9df467f2d",
+      "U2E.219": "e77ceae3f0dde50ef251310b1b810f25dd72ce1ebc44b47d1b3db54e76aaee66",
+      "U2E.013": "bc620b8c49b50acb02e30d5be7315fb949501eda23558041f8bd8e58b58d96c9",
+      "U2E.221": "fb33b266d8c1b2f577dc9bf8fb2e8fdd401505d16ceb96590e0338c1229edf97",
+      "U2E.025": "eaa875dd9f6ed6e9b2116457edaf346f0daf51b2cd5950f20059e0d49540ded0",
+      "U2E.217": "6dffe06a98dae2f34a239b2cc2e61bfb2c08762b77de08ee81607691b327515f",
+      "U2E.210": "3af27fa665315de2847084300d45efc6ed803a6ac94ed53eb853a4deb9c14153",
+      "U2E.022": "e9545509a25221028d6a7c8895b3b55131ea34576f3767b802ebad7065341459",
+      "U2E.150": "7023a876e8fab99e686ddd06a667da2f70291a4984038032b80e0180e98718c5",
+      "U2E.168": "13b9dc277cf91b6d8d995d35d33ef59abceaad46b2d3337b9eb42e6b829273ad",
+      "U2E.157": "463d7ed6ca7868054a4b1ea8d8649d64b2092f2dc688285371bcff6ba0bc2765",
+      "U2E.195": "24a84eeea12aea71b5b90ddff610aad7a868f001c8cbba5394e3ba86aefc07e8",
+      "U2E.161": "2faee0ddc5b1f13772765ae7095c78e4f66038f25e8a8ba17d757432feed2b6b",
+      "U2E.159": "e18dee83a4246878a75626944360b4dda0901e8aba0c9697d509a738934e9c2e",
+      "U2E.166": "91fa90d1ce60132b3ef814011b72323e0baa20c90335d021573b916d83888c72",
+      "U2E.192": "047d2925c73704cc28d79128dd2af603e59df7287e9dbdca0cd94531acaa1cf3",
+      "U2E.132": "75ca2180706100a70ca2bcf0db9cbb6219dc1905f0591f00b32cab10666340be",
+      "U2E.135": "d2a083bd2e2782e3f43a14e70523400e34d415c7aa1e274cd5b5384c87e3f0c7",
+      "U2E.103": "aac7fcba82eea6d93f6025a204401b1ceef275dde78198b3a3cd3987b47bb33a",
+      "U2E.104": "1619bf25216952a27dc423745e59fcc6f76c0ab73a7b565dfbc877443a7715f1",
+      "U2E.158": "f1d78d1809dfa8c608b3433508fe55e15fad955bbc51ec15c4e8c00b10c9547c",
+      "U2E.193": "3b791f437e1e4069bc629182c176db7fd13ac04297012648286fb64028fca4f0",
+      "U2E.167": "7e21dd5116f1b2c803b491e90f974299e78096d18c4d041771eb59061019ea73",
+      "U2E.160": "2601ab268fcadfaeaea6ed6fc5031fff2c710525c67e32d9ed5ba201c9722c71",
+      "U2E.194": "5ae1238541a40802214e560b52024e3da66063ddb5e4ac234e44ff6b30b49997",
+      "U2E.169": "cc499234993cb699126f98b77a952e68f5f043ee7ea31ca31e100ced0e365c77",
+      "U2E.156": "79b6091703064e25bd5ab0efed5a7a18f99d63294a7889957ec58e467edc2d0e",
+      "U2E.151": "1eb547dc25c3ac18a8cf8afb1a8273cbbe1aeb32a3711f7af0a94c965a62f139",
+      "U2E.105": "f6745a974f2dccd110493d241ffc483aeb8e65d745fe7b68ad4b1b2b496fcb49",
+      "U2E.102": "94349d72616a975086995a2f901fff4c097864add6f6f735ada738585ce425bd",
+      "U2E.134": "35edefbc70dac3a5f8cb0c884ac74141d815990eb476b408e4838e4db3fc9267",
+      "U2E.133": "4e705dea444936e148212ab1645a30c9e6340b5c37565bacbd08e8607e90c97b"
+    },
+    "host_tests": 15,
+    "headless": true,
+    "captures": {
+      "continuous_opening_to_unicorn": "build/review-mid/capture",
+      "final_opening_to_cable": "build/review-final-first/capture-v2",
+      "final_cable": "build/cable-final/capture",
+      "final_chip": "build/chip-final/capture",
+      "final_flyover": "capture/20261021-204856-140563",
+      "opening_through_lens_details": "build/review-detail-fixes/capture-v2",
+      "water_entrance": "build/water-entrance-fix/capture",
+      "water_and_tape_final": "build/review-water-tape-art/capture",
+      "water_submerged": "build/water-submerged/capture",
+      "round_tape": "build/tape-round-feed/capture",
+      "round_tape_reference": "build/tape-round-original/capture"
+    },
+    "validation_limit": "The latest assembled full runtime has not been recaptured end-to-end. Continuous sequence and final scene captures are separate evidence.",
+    "preserved": "build/dos and build/robotron-preview.mp4"
+  },
+  "selected_tape": {
+    "date": "2026-10-22",
+    "version": "improved 1x",
+    "texture": [
+      400,
+      35
+    ],
+    "builder": "full_water.tape",
+    "sha256": "73164f7592bf517ab4026f2871b57032082c9030135ca41d2c614ddf4813ebdb",
+    "not_selected": "full_tape_hd 800x70 prototype"
+  }
+}

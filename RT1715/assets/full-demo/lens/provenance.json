@@ -1,0 +1,11 @@
+{
+  "author": "Richi\u2019s Lab",
+  "title": "Mikroelektronik Karl Marx UB880, T3 (1985 Q1)",
+  "source": "https://www.richis-lab.de/uC18.htm",
+  "image": "https://www.richis-lab.de/images/uC/19x02.jpg",
+  "license": "CC BY-NC 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-nc/4.0/",
+  "permission": "https://www.richis-lab.de/background.htm",
+  "sha256": "969496e4995724b409caeb3b68e49674cee614bfd32530af3364abedb32a0545",
+  "changes": "Downsampled and palette-quantized for VGA; original lens mapping retained."
+}
