@@ -53,6 +53,8 @@ def build(original,remake,output,only=None):
 def update_scene(original,remake,output,label,remake_start,alignment_window=None):
     """Replace one review from an independently captured matching music cue."""
     original,remake,output=map(Path,(original,remake,output))
+    if label=='diskette-flight':
+        raise ValueError('Diskette flight inherits the opening framebuffer; use a continuous opening-to-space capture with build(..., only=["diskette-flight"]).')
     if json.loads((remake/'result.json').read_text())['dos_exit']!='PASS':
         raise ValueError('Independent review requires successful DOS capture')
     index=json.loads((output/'index.json').read_text())

@@ -88,54 +88,54 @@
     {
       "part": "diskette-flight",
       "video": "02-diskette-flight.mp4",
-      "status": "Updated; music-aligned independent scene capture",
+      "status": "ready for visual review",
       "alignment": {
         "original": "RT1715/build/full-reference/capture",
-        "remake": "RT1715/build/space-stable-label/capture",
+        "remake": "RT1715/build/space-background-continuous/capture",
         "reference_start": 79.78732129098536,
         "duration": 21.85959535427903,
-        "remake_offset": -79.96794629098537,
+        "remake_offset": 0.0,
         "audio_checks": [
           {
             "reference_seconds": 82.51977071027024,
-            "offset_seconds": -79.96794629098537,
-            "correlation": 0.9950177209270435,
+            "offset_seconds": 0.0,
+            "correlation": 0.9932880989106395,
             "reliable": true
           },
           {
             "reference_seconds": 84.91888679622178,
-            "offset_seconds": -79.96794629098537,
-            "correlation": 0.9953484021335569,
+            "offset_seconds": 0.0,
+            "correlation": 0.9951635319948297,
             "reliable": true
           },
           {
             "reference_seconds": 87.31800288217333,
-            "offset_seconds": -79.96794629098537,
-            "correlation": 0.99987803342819,
+            "offset_seconds": 0.0,
+            "correlation": 0.9998803541045321,
             "reliable": true
           },
           {
             "reference_seconds": 89.71711896812488,
-            "offset_seconds": -79.96794629098537,
-            "correlation": 0.8543548642364299,
+            "offset_seconds": 0.0,
+            "correlation": 0.8849060812852497,
             "reliable": true
           },
           {
             "reference_seconds": 92.11623505407641,
-            "offset_seconds": -79.96794629098537,
-            "correlation": 0.7708820252288763,
+            "offset_seconds": 0.0,
+            "correlation": 0.8158332968288113,
             "reliable": true
           },
           {
-            "reference_seconds": 94.51535114002797,
-            "offset_seconds": -79.96794629098537,
-            "correlation": 0.9913427864982607,
+            "reference_seconds": 94.51535114002796,
+            "offset_seconds": 0.0,
+            "correlation": 0.9913878189398524,
             "reliable": true
           },
           {
             "reference_seconds": 96.91446722597951,
-            "offset_seconds": -79.96794629098537,
-            "correlation": 0.9698323907789612,
+            "offset_seconds": 0.0,
+            "correlation": 0.9698677035071944,
             "reliable": true
           }
         ],
@@ -143,22 +143,24 @@
         "time_stretch": false,
         "fps": 70,
         "alignment_window": null,
-        "remake_missing_prefix_seconds": 0.18062500000000625,
+        "remake_missing_prefix_seconds": 0,
         "labels": [
           "ORIGINAL SECOND REALITY",
           "ROBOTRON 1715 / REVIEW"
         ]
       },
       "scene_timing": {
-        "validation": "Independent scene playback at its original music cue; not an uninterrupted full run.",
-        "tracker_exits": [
-          {
-            "executable": "U2A.EXE",
-            "module": 0,
-            "order": 12,
-            "row": 42
-          }
-        ]
+        "original_exit": {
+          "module": 0,
+          "order": 12,
+          "row": 42
+        },
+        "remake_exit": {
+          "module": 0,
+          "order": 12,
+          "row": 42
+        },
+        "copper_tick_difference_after_audio_alignment": 1.0
       }
     },
     {
@@ -1307,7 +1309,8 @@
       "round-tape-punches-and-continuous-blank-feed-leader",
       "Select rectangular 2x2 feed / 3x2 data punches at 400x35; retain phrase and continuous leader. Round 1x and 2x remain separate experiments.",
       "Partition diskette jacket, label and printing into disjoint surface regions to remove painter-order overlap; reduce local bank from 15 to 8 degrees.",
-      "Increase dots from 512 to 640, centered depth slices 600 units apart instead of 250. U880: five complete layers + 40 dots; 1715: seven complete layers + 59 dots."
+      "Increase dots from 512 to 640, centered depth slices 600 units apart instead of 250. U880: five complete layers + 40 dots; 1715: seven complete layers + 59 dots.",
+      "Replace standalone diskette review with continuous opening-to-flight capture to preserve inherited stars/landscape; no renderer changes."
     ],
     "sources": {
       "ALKU.EXE": "RT1715/build/review-detail-fixes/dos/ALKU.EXE",
@@ -1840,7 +1843,8 @@
     "latest_scene_captures": {
       "rectangular_tape": "RT1715/build/tape-rect-selected/capture",
       "stable_diskette": "RT1715/build/space-stable-label/capture",
-      "deeper_dots": "RT1715/build/dots-deeper/capture"
+      "deeper_dots": "RT1715/build/dots-deeper/capture",
+      "diskette_background_continuous": "RT1715/build/space-background-continuous/capture"
     },
     "latest_runtime_sha256": {
       "RAYSCRL.EXE": "56db9c9451a139929c346770ae07e1a9dbe8a97410f7180103dc7e13c2142a13",
@@ -1949,6 +1953,60 @@
           "order": 86,
           "row": 58,
           "retrace": 2836
+        }
+      ]
+    },
+    "diskette_background_continuous": {
+      "dos_exit": "PASS",
+      "cycles": 300000,
+      "scenes": [
+        {
+          "executable": "ALKU.EXE",
+          "phase": "entry",
+          "module": 0,
+          "order": 0,
+          "row": 0,
+          "retrace": 1
+        },
+        {
+          "executable": "ALKU.EXE",
+          "phase": "exit",
+          "module": 0,
+          "order": 10,
+          "row": 0,
+          "retrace": 5611
+        },
+        {
+          "executable": "U2A.EXE",
+          "phase": "entry",
+          "module": 0,
+          "order": 10,
+          "row": 0,
+          "retrace": 5611
+        },
+        {
+          "executable": "U2A.EXE",
+          "phase": "exit",
+          "module": 0,
+          "order": 12,
+          "row": 42,
+          "retrace": 7104
+        },
+        {
+          "executable": "PAM.EXE",
+          "phase": "entry",
+          "module": 0,
+          "order": 12,
+          "row": 42,
+          "retrace": 7104
+        },
+        {
+          "executable": "PAM.EXE",
+          "phase": "exit",
+          "module": 0,
+          "order": 13,
+          "row": 21,
+          "retrace": 7480
         }
       ]
     }

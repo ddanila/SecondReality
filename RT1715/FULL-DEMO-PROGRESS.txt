@@ -382,3 +382,17 @@ in benchmarks/full-demo.json. This is not a new uninterrupted full capture.
 rectangular punch dimensions, preserved round option, decoded Easter egg,
 continuous feed leader, and deeper dot layer spacing/capacity.
 The reviewed standalone flyover/credits remains unchanged.
+
+Diskette background review correction / 2026-10-22
+-------------------------------------------------
+The prior independent space-stable-label capture started on a blank VGA
+framebuffer. U2A deliberately waits for the flight cue while displaying the
+background inherited from ALKU, so that capture incorrectly showed black
+until the diskette arrived. No change to the demo renderer was needed.
+Replaced 02-diskette-flight.mp4 using the continuous opening -> flight ->
+explosion capture at build/space-background-continuous/capture. Verified the
+landscape/stars at 81 seconds, before the diskette arrives. All seven audio
+alignment windows pass; U2A exits at module 0 / order 12 / row 42 as before.
+full_review.update_scene now rejects standalone diskette reviews; use
+full_review.build(..., only=['diskette-flight']) with a continuous capture.
+17 host tests pass. No runtime geometry, timing or soundtrack changes.
